@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/homeScreenLayout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".homescreen">
+
+    <!-- YouTube Photo -->
+    <ImageView
+        android:id="@+id/imageViewYouTube"
+        android:layout_width="92dp"
+        android:layout_height="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="21dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/youtube2"
+        android:background="@null" />
+
+    <!-- Search View -->
+
+    <!-- SwipeRefreshLayout and RecyclerView for swiping videos -->
+
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="371dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="14dp"
+        android:background="@color/constant_white" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="614dp"
+        android:layout_above="@id/bottomNavigation"
+        android:layout_below="@id/searchView"
+        android:layout_marginTop="47dp"
+        android:layout_marginBottom="16dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewVideos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Switch Mode -->
+
+    <!-- Bottom Navigation -->
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewYouTube"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-29dp"
+        android:layout_marginEnd="11dp"
+        android:text="Night Mode" />
+
+    <RelativeLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@null"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/imageViewHome"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:background="@null"
+            android:src="@drawable/home" />
+
+        <ImageView
+            android:id="@+id/imageViewLightning"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:layout_toEndOf="@id/imageViewHome"
+            android:layout_marginStart="16dp"
+            android:background="@null"
+            android:src="@drawable/trends" />
+
+        <ImageView
+            android:id="@+id/buttonUpload"
+            android:layout_width="62dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="28dp"
+            android:layout_toEndOf="@id/imageViewLightning"
+            android:background="@null"
+            android:src="@drawable/plus" />
+
+        <ImageView
+            android:id="@+id/imageViewPlay"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="28dp"
+            android:layout_toEndOf="@id/buttonUpload"
+            android:background="@null"
+            android:src="@drawable/subscriptions" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewPerson"
+            android:layout_width="46dp"
+            android:layout_height="38dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:src="@drawable/person"
+            app:shapeAppearanceOverlay="@style/CircularImageView" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
