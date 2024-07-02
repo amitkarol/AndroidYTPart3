@@ -16,7 +16,6 @@
         android:src="@drawable/person"
         app:shapeAppearanceOverlay="@style/CircularImageView" />
 
-
     <!-- Display Name -->
     <TextView
         android:id="@+id/textViewDisplayName"
@@ -28,7 +27,22 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+    <!-- Button next to Display Name -->
+
     <!-- User Name -->
+
+
+    <Button
+        android:id="@+id/buttonEdit"
+        style="@style/TransparentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textViewDisplayName"
+        android:layout_marginStart="47dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@id/textViewDisplayName"
+        android:text="Edit details" />
+
     <TextView
         android:id="@+id/textViewUserName"
         android:layout_width="wrap_content"

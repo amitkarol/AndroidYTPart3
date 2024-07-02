@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ public class UserPage extends BaseActivity {
     private TextView textViewUserName;
     private TextView textViewNumVideos;
     private RecyclerView recyclerViewUserVideos;
+    private Button buttonEdit;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class UserPage extends BaseActivity {
         textViewUserName = findViewById(R.id.textViewUserName);
         textViewNumVideos = findViewById(R.id.textViewNumVideos);
         recyclerViewUserVideos = findViewById(R.id.recyclerViewUserVideos);
+        buttonEdit = findViewById(R.id.buttonEdit);
 
         // Get the user object from the intent
         user user = (user) getIntent().getSerializableExtra("user");
@@ -58,6 +61,13 @@ public class UserPage extends BaseActivity {
             recyclerViewUserVideos.setLayoutManager(new LinearLayoutManager(this));
             recyclerViewUserVideos.setAdapter(adapter);
         }
+
+        // Set the button edit listener
+        buttonEdit.setOnClickListener(v -> {
+            Intent editUserIntent = new Intent(UserPage.this, EditUserActivity.class);
+            editUserIntent.putExtra("user", user);
+            startActivity(editUserIntent);
+        });
 
         // Initialize Bottom Navigation (example, you can add listeners as needed)
         ImageView imageViewHome = findViewById(R.id.imageViewHome);

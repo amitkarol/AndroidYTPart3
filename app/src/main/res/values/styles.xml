@@ -29,4 +29,12 @@
     <style name="RedButton">
         <item name="android:backgroundTint">@color/custom_red</item>
     </style>
+
+    <style name="TransparentButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/black</item> <!-- You can change this color as needed -->
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

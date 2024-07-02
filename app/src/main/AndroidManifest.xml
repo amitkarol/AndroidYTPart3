@@ -21,9 +21,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".EditUserActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_user"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
             android:name=".UserPage"
-            android:exported="false" />
-        <!-- Activities -->
+            android:exported="false" /> <!-- Activities -->
         <activity
             android:name=".BaseActivity"
             android:exported="false"

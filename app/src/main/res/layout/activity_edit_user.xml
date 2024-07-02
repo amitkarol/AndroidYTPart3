@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title at the top of the screen -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit User Details"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        app:shapeAppearanceOverlay="@style/CircularImageView"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- User Photo -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/userPhotoImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:background="@android:color/white"
+        app:shapeAppearanceOverlay="@style/CircularImageView"
+        android:contentDescription="User Photo"
+        android:layout_marginBottom="16dp"
+        />
+
+    <!-- Button to change user photo -->
+    <Button
+        android:id="@+id/changePhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="Change Photo"
+        android:textSize="14sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Box for changing first name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="First Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/firstNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_border"/>
+
+    <!-- Box for changing last name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Last Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/lastNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_border"/>
+
+    <!-- Box for changing display name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Display Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/displayNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Display Name"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_border"/>
+
+    <!-- Save button -->
+    <!-- Save button -->
+    <Button
+        android:id="@+id/saveUserButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:padding="12dp"
+        android:textSize="16sp"
+        style="@style/TransparentButton"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

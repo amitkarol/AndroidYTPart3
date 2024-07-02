@@ -76,5 +76,6 @@
     <string name="share_instagram">share to instagram</string>
     <string name="share_whatsapp">share via watsapp\n</string>
     <string name="share_email">share via email</string>
+    <string name="title_activity_edit_user">EditUserActivity</string>
 
 </resources>
