@@ -19,7 +19,7 @@
 
     <!-- Search View -->
 
-    <!-- SwipeRefreshLayout and RecyclerView for swiping videos -->
+    <!-- SwipeRefreshLayout and RecyclerView for swiping Videos -->
 
     <SearchView
         android:id="@+id/searchView"

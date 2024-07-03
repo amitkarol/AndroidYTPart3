@@ -9,13 +9,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
 import com.google.android.material.imageview.ShapeableImageView;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.FragmentActivity;
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.entities.VideoManager;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
 import com.example.myapplication.Fragments.Comments;
 
 public class videowatching extends FragmentActivity {
@@ -30,8 +31,8 @@ public class videowatching extends FragmentActivity {
     private Button commentsButton;
     private Button editButton;
     private ImageButton pauseResumeButton;
-    private video currentVideo;
-    private user loggedInUser;
+    private Video currentVideo;
+    private User loggedInUser;
     private GestureDetectorCompat gestureDetector;
     private ShapeableImageView userPhotoImageView;
 
@@ -66,7 +67,7 @@ public class videowatching extends FragmentActivity {
             Uri data = intent.getData();
             if (data != null) {
                 // Handle deep link
-                String videoId = data.getQueryParameter("id");
+                int videoId = Integer.parseInt(data.getQueryParameter("id"));
                 currentVideo = getVideoById(videoId);
             } else {
                 // Handle normal intent
@@ -74,7 +75,7 @@ public class videowatching extends FragmentActivity {
                 currentVideo = getVideoByTitle(title);
             }
 
-            loggedInUser = (user) intent.getSerializableExtra("user");
+            loggedInUser = (User) intent.getSerializableExtra("user");
 
             if (currentVideo != null) {
                 // Set data to views
@@ -175,17 +176,17 @@ public class videowatching extends FragmentActivity {
         }
     }
 
-    private video getVideoById(String id) {
-        for (video video : VideoManager.getInstance().getVideoList()) {
-            if (video.getId().equals(id)) {
+    private Video getVideoById(int id) {
+        for (Video video : VideoManager.getInstance().getVideoList()) {
+            if (video.getId() == id) {
                 return video;
             }
         }
         return null;
     }
 
-    private video getVideoByTitle(String title) {
-        for (video video : VideoManager.getInstance().getVideoList()) {
+    private Video getVideoByTitle(String title) {
+        for (Video video : VideoManager.getInstance().getVideoList()) {
             if (video.getTitle().equals(title)) {
                 return video;
             }

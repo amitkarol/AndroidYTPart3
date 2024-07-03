@@ -12,9 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 public class EditVideoActivity extends BaseActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
@@ -22,8 +22,8 @@ public class EditVideoActivity extends BaseActivity {
     private EditText titleEditText;
     private EditText descriptionEditText;
     private ImageView thumbnailImageView;
-    private video currentVideo;
-    private user loggedInUser;
+    private Video currentVideo;
+    private User loggedInUser;
     private Uri selectedImageUri;
 
     @Override
@@ -43,9 +43,9 @@ public class EditVideoActivity extends BaseActivity {
 
         // Retrieve data from the intent
         Intent intent = getIntent();
-        currentVideo = (video) intent.getSerializableExtra("video");
-        loggedInUser = (user) intent.getSerializableExtra("user");
-        video originVideo = new video(currentVideo);
+        currentVideo = (Video) intent.getSerializableExtra("video");
+        loggedInUser = (User) intent.getSerializableExtra("user");
+        Video originVideo = new Video(currentVideo);
 
         // Populate fields if data is available
         if (currentVideo != null) {

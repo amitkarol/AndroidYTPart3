@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/imageViewUserPhoto"
         android:layout_below="@id/textViewUserName"
-        android:text="0 videos"
+        android:text="0 Videos"
         android:textSize="14sp" />
 
     <!-- RecyclerView for User's Videos -->

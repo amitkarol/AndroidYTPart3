@@ -6,21 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class video implements Serializable {
-    private String id;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+@Entity
+public class Video implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String title;
     private String description;
     private String thumbnailUrl; // For external images
     private int thumbnailResId; // For drawable resource IDs
     private String videoUrl;
-    private user user; // Add this line
+    private User user; // Add this line
     private int viewCount;
     private int likeCount;
     private Map<String, Boolean> userLikes; // Track likes per user
     private List<Comment> comments;
 
-    public video(String id, String title, String description, String thumbnailUrl, int thumbnailResId, String videoUrl, user user, int viewCount, int likeCount) {
-        this.id = id;
+    public Video(String title, String description, String thumbnailUrl, int thumbnailResId, String videoUrl, User user, int viewCount, int likeCount) {
         this.title = title;
         this.description = description;
         this.thumbnailUrl = thumbnailUrl;
@@ -34,7 +37,7 @@ public class video implements Serializable {
     }
 
     // Copy constructor
-    public video(video original) {
+    public Video(Video original) {
         this.id = original.id;
         this.title = original.title;
         this.description = original.description;
@@ -49,11 +52,11 @@ public class video implements Serializable {
 
     // Getters and setters
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -97,11 +100,11 @@ public class video implements Serializable {
         this.videoUrl = videoUrl;
     }
 
-    public user getUser() { // Add this method
+    public User getUser() { // Add this method
         return user;
     }
 
-    public void setUser(user user) { // Add this method
+    public void setUser(User user) { // Add this method
         this.user = user;
     }
 

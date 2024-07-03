@@ -11,14 +11,14 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 public class uploadvideo extends BaseActivity {
 
     private static final int REQUEST_VIDEO_PICK = 101;
     private VideoView videoView;
     private Uri selectedVideoUri;
-    private user loggedInUser;
+    private User loggedInUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class uploadvideo extends BaseActivity {
         setContentView(R.layout.uploadvideo);
 
         // Get the logged-in user from the intent
-        loggedInUser = (user) getIntent().getSerializableExtra("user");
+        loggedInUser = (User) getIntent().getSerializableExtra("user");
 
         Button closeButton = findViewById(R.id.closeButton);
         closeButton.setOnClickListener(v -> {

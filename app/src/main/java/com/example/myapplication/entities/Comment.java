@@ -3,15 +3,20 @@ package com.example.myapplication.entities;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class Comment implements Serializable {
-    private user user;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private User user;
     private String text;
     private String timestamp;
     private String photoUri;
 
     // Constructor
-    public Comment(user user, String text, String photoUri) {
+    public Comment(User user, String text, String photoUri) {
         this.user = user;
         this.text = text;
         this.photoUri = photoUri;
@@ -28,11 +33,11 @@ public class Comment implements Serializable {
     }
 
     // Other getters and setters
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

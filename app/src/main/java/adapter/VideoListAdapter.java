@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.ThemeUtil;
 import com.example.myapplication.UserPage;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.Video;
+import com.example.myapplication.entities.User;
 import com.example.myapplication.videowatching;
 
 import java.io.InputStream;
@@ -29,12 +29,12 @@ import java.util.List;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.ViewHolder> {
 
-    private List<video> videoList;
-    private List<video> filteredVideoList;
+    private List<Video> videoList;
+    private List<Video> filteredVideoList;
     private Context context;
-    private user loggedInUser;
+    private User loggedInUser;
 
-    public VideoListAdapter(List<video> videoList, Context context, user loggedInUser) {
+    public VideoListAdapter(List<Video> videoList, Context context, User loggedInUser) {
         this.videoList = videoList;
         this.filteredVideoList = new ArrayList<>(videoList);
         this.context = context;
@@ -66,7 +66,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     @Override
     @RequiresApi(api = Build.VERSION_CODES.P)
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        video video = filteredVideoList.get(position);
+        Video video = filteredVideoList.get(position);
 
         holder.titleTextView.setText(video.getTitle());
         holder.channelTextView.setText(video.getUser().getEmail());
@@ -139,7 +139,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         if (query.isEmpty()) {
             filteredVideoList.addAll(videoList);
         } else {
-            for (video video : videoList) {
+            for (Video video : videoList) {
                 if (video.getTitle().toLowerCase().contains(query.toLowerCase())) {
                     filteredVideoList.add(video);
                 }

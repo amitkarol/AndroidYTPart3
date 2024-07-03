@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.entities.Comment;
-import com.example.myapplication.entities.user;
-import com.example.myapplication.entities.video;
+import com.example.myapplication.entities.Video;
+import com.example.myapplication.entities.User;
 import com.example.myapplication.login;
 
 import adapter.CommentsAdapter;
@@ -30,12 +30,12 @@ public class Comments extends DialogFragment {
     private RecyclerView commentsRecyclerView;
     private CommentsAdapter commentsAdapter;
     private List<Comment> commentList;
-    private video currentVideo;
-    private user loggedInUser;
+    private Video currentVideo;
+    private User loggedInUser;
     private EditText commentEditText;
     private Button addCommentButton;
 
-    public Comments(video currentVideo, user loggedInUser) {
+    public Comments(Video currentVideo, User loggedInUser) {
         this.currentVideo = currentVideo;
         this.loggedInUser = loggedInUser;
     }

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.Fragments.EditCommentDialog;
 import com.example.myapplication.R;
 import com.example.myapplication.entities.Comment;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 import java.util.List;
 
@@ -25,9 +25,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     private List<Comment> commentList;
     private FragmentActivity activity;
-    private user loggedInUser;
+    private User loggedInUser;
 
-    public CommentsAdapter(FragmentActivity activity, List<Comment> commentList, user loggedInUser) {
+    public CommentsAdapter(FragmentActivity activity, List<Comment> commentList, User loggedInUser) {
         this.activity = activity;
         this.commentList = commentList;
         this.loggedInUser = loggedInUser;

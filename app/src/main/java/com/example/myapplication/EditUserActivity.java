@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 public class EditUserActivity extends BaseActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
@@ -18,7 +18,7 @@ public class EditUserActivity extends BaseActivity {
     private EditText lastNameEditText;
     private EditText displayNameEditText;
     private ImageView userPhotoImageView;
-    private user loggedInUser;
+    private User loggedInUser;
     private Uri selectedImageUri;
 
     @Override
@@ -36,7 +36,7 @@ public class EditUserActivity extends BaseActivity {
 
         // Retrieve data from the intent
         Intent intent = getIntent();
-        loggedInUser = (user) intent.getSerializableExtra("user");
+        loggedInUser = (User) intent.getSerializableExtra("user");
 
         // Populate fields if data is available
         if (loggedInUser != null) {

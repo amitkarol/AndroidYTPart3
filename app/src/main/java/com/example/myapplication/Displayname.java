@@ -18,7 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.UserManager;
 import java.io.ByteArrayOutputStream;
 
@@ -61,7 +61,7 @@ public class Displayname extends BaseActivity {
             String firstName = intent.getStringExtra("firstName");
             String lastName = intent.getStringExtra("lastName");
 
-            user user = new user(firstName, lastName, username, password, displayname, selectedImageUri.toString());
+            User user = new User(firstName, lastName, username, password, displayname, selectedImageUri.toString());
             UserManager.getInstance().addUser(user);
 
             Intent homescreenIntent = new Intent(Displayname.this, homescreen.class);

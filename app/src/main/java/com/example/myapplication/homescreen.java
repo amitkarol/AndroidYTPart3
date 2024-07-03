@@ -1,11 +1,8 @@
 package com.example.myapplication;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 import java.util.List;
 
@@ -30,7 +27,7 @@ public class homescreen extends BaseActivity {
     private RecyclerView recyclerView;
     private VideoListAdapter videoAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private user loggedInUser;
+    private User loggedInUser;
     private Switch modeSwitch;
     private RelativeLayout homeScreenLayout;
     private SearchView searchView;
@@ -40,10 +37,10 @@ public class homescreen extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
 
-        loggedInUser = (user) getIntent().getSerializableExtra("user");
+        loggedInUser = (User) getIntent().getSerializableExtra("user");
         if (loggedInUser == null) {
             Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
-            loggedInUser = new user("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
+            loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
         }
 
         // Display user photo
@@ -132,7 +129,7 @@ public class homescreen extends BaseActivity {
     }
 
     private void refreshVideoList() {
-        List<video> videoList = VideoManager.getInstance().getVideoList();
+        List<Video> videoList = VideoManager.getInstance().getVideoList();
         videoAdapter = new VideoListAdapter(videoList, this, loggedInUser);
         recyclerView.setAdapter(videoAdapter);
     }
