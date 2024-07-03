@@ -27,7 +27,6 @@ public class EditUserActivity extends BaseActivity {
         ThemeUtil.applyTheme(this);
         setContentView(R.layout.activity_edit_user);
 
-        // Initialize views
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
         displayNameEditText = findViewById(R.id.displayNameEditText);
