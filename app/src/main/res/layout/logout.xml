@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".logout">
+
+    <!-- Title at the top of the screen -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Thumbnail at the top of the screen -->
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="150dp"
+        android:layout_height="172dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="Thumbnail"/>
+
+    <!-- Display Name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FULL NAME"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your Display Name Here"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Username -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your Username Here"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Full Name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DISPLAY NAME"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your Full Name Here"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Logout button -->
+    <Button
+        android:id="@+id/buttonLogout"
+        style="@style/RedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="@color/custom_red"
+        android:padding="12dp"
+        android:text="Logout"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+</LinearLayout>

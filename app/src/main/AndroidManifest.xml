@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.myapplication">
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Camera feature -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/youtube2"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/youtube2"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication">
+        <activity
+            android:name=".EditUserActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_user"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".UserPage"
+            android:exported="false" /> <!-- Activities -->
+        <activity
+            android:name=".BaseActivity"
+            android:exported="false"
+            android:label="@string/title_activity_base"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".EditVideoActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_video"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".detailsofvideo"
+            android:exported="false"
+            android:label="@string/title_activity_detailsofvideo"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".videowatching"
+            android:exported="false"
+            android:label="@string/title_activity_videowatching"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".uploadvideo"
+            android:exported="false"
+            android:label="@string/title_activity_uploadphoto"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".logout"
+            android:exported="false"
+            android:label="@string/title_activity_logout"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".homescreen"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:label="@string/title_activity_homescreen"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".login"
+            android:exported="true"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".Displayname"
+            android:exported="false"
+            android:label="@string/title_activity_displayname"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".password"
+            android:exported="true"
+            android:label="@string/title_activity_password"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".Username"
+            android:exported="false"
+            android:label="@string/title_activity_username"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.MyApplication" /> <!-- FileProvider Configuration -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <receiver
+            android:name=".homescreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.myapplication.YOUR_ACTION" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

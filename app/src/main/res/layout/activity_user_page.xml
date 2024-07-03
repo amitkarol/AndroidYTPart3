@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- User Photo -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageViewUserPhoto"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/person"
+        app:shapeAppearanceOverlay="@style/CircularImageView" />
+
+    <!-- Display Name -->
+    <TextView
+        android:id="@+id/textViewDisplayName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imageViewUserPhoto"
+        android:layout_toEndOf="@id/imageViewUserPhoto"
+        android:text="Display Name"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Button next to Display Name -->
+
+    <!-- User Name -->
+
+
+    <Button
+        android:id="@+id/buttonEdit"
+        style="@style/TransparentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/textViewDisplayName"
+        android:layout_marginStart="47dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@id/textViewDisplayName"
+        android:text="Edit details" />
+
+    <TextView
+        android:id="@+id/textViewUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageViewUserPhoto"
+        android:layout_below="@id/textViewDisplayName"
+        android:text="username"
+        android:textSize="14sp" />
+
+    <!-- Number of Uploaded Videos -->
+    <TextView
+        android:id="@+id/textViewNumVideos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageViewUserPhoto"
+        android:layout_below="@id/textViewUserName"
+        android:text="0 videos"
+        android:textSize="14sp" />
+
+    <!-- RecyclerView for User's Videos -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewUserVideos"
+        android:layout_width="395dp"
+        android:layout_height="531dp"
+        android:layout_below="@id/imageViewUserPhoto"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="88dp"
+        app:layoutManager="LinearLayoutManager" />
+
+    <!-- Bottom Navigation -->
+    <RelativeLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:background="@null"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/imageViewHome"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:background="@null"
+            android:src="@drawable/home" />
+
+        <ImageView
+            android:id="@+id/imageViewLightning"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/imageViewHome"
+            android:background="@null"
+            android:src="@drawable/trends" />
+
+        <ImageView
+            android:id="@+id/buttonUpload"
+            android:layout_width="62dp"
+            android:layout_height="53dp"
+            android:layout_marginStart="23dp"
+            android:layout_toEndOf="@id/imageViewLightning"
+            android:background="@null"
+            android:src="@drawable/plus" />
+
+        <ImageView
+            android:id="@+id/imageViewPlay"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="28dp"
+            android:layout_toEndOf="@id/buttonUpload"
+            android:background="@null"
+            android:src="@drawable/subscriptions" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageViewPerson"
+            android:layout_width="46dp"
+            android:layout_height="38dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="-3dp"
+            android:background="@null"
+            android:src="@drawable/person"
+            app:shapeAppearanceOverlay="@style/CircularImageView" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,4 @@
+<resources>
+    <color name="constant_white">#FFFFFF</color>
+    <color name="plus_default_color">#FFFFFF</color> <!-- Default color for night mode -->
+</resources>
