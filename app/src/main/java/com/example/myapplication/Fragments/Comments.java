@@ -74,7 +74,7 @@ public class Comments extends DialogFragment {
 
         String commentText = commentEditText.getText().toString().trim();
         if (!commentText.isEmpty()) {
-            Comment newComment = new Comment(loggedInUser, commentText, loggedInUser.getPhotoUri());
+            Comment newComment = new Comment(loggedInUser.getEmail(), loggedInUser.getDisplayName(), commentText, loggedInUser.getPhotoUri());
             currentVideo.addComment(newComment);
             commentsAdapter.notifyItemInserted(commentList.size() - 1);
             commentsRecyclerView.scrollToPosition(commentList.size() - 1);

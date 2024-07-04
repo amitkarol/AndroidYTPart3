@@ -2,37 +2,44 @@ package com.example.myapplication.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.myapplication.converters.CommentConverter;
+import com.example.myapplication.converters.StringListConverter;
+import com.example.myapplication.converters.UserConverter;
+
 @Entity
 public class Video implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private String description;
-    private String thumbnailUrl; // For external images
-    private int thumbnailResId; // For drawable resource IDs
+    private String img;
+    private int thumbnailResId;
     private String videoUrl;
-    private User user; // Add this line
-    private int viewCount;
-    private int likeCount;
-    private Map<String, Boolean> userLikes; // Track likes per user
+    @TypeConverters(UserConverter.class)
+    private String owner;
+    private int views;
+    private int likes;
+    @TypeConverters(StringListConverter.class)
+    private List<String> likedBy;
+    @TypeConverters(CommentConverter.class)
     private List<Comment> comments;
 
-    public Video(String title, String description, String thumbnailUrl, int thumbnailResId, String videoUrl, User user, int viewCount, int likeCount) {
+    public Video(String title, String description, String img, int thumbnailResId, String videoUrl, String owner, int views, int likes) {
         this.title = title;
         this.description = description;
-        this.thumbnailUrl = thumbnailUrl;
+        this.img = img;
         this.thumbnailResId = thumbnailResId;
         this.videoUrl = videoUrl;
-        this.user = user; // Add this line
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.userLikes = new HashMap<>();
+        this.owner = owner;
+        this.views = views;
+        this.likes = likes;
+        this.likedBy = new ArrayList<String>();
         this.comments = new ArrayList<>();
     }
 
@@ -41,12 +48,12 @@ public class Video implements Serializable {
         this.id = original.id;
         this.title = original.title;
         this.description = original.description;
-        this.thumbnailUrl = original.thumbnailUrl;
+        this.img = original.img;
         this.thumbnailResId = original.thumbnailResId;
         this.videoUrl = original.videoUrl;
-        this.user = original.user;
-        this.likeCount = original.likeCount;
-        this.viewCount = original.viewCount;
+        this.owner = original.owner;
+        this.likes = original.likes;
+        this.views = original.views;
         this.comments = new ArrayList<>(original.comments);
     }
 
@@ -76,12 +83,12 @@ public class Video implements Serializable {
         this.description = description;
     }
 
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
+    public String getImg() {
+        return img;
     }
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public int getThumbnailResId() {
@@ -100,40 +107,43 @@ public class Video implements Serializable {
         this.videoUrl = videoUrl;
     }
 
-    public User getUser() { // Add this method
-        return user;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setUser(User user) { // Add this method
-        this.user = user;
+    public void setOwner(String owner) { // Add this method
+        this.owner = owner;
     }
 
-    public int getViewCount() {
-        return viewCount;
+    public int getViews() {
+        return views;
     }
 
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
+    public void setViews(int views) {
+        this.views = views;
     }
 
-    public int getLikeCount() {
-        return likeCount;
+    public int getLikes() {
+        return likes;
     }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
-    public Map<String, Boolean> getUserLikes() {
-        return userLikes;
+    public List<String> getLikedBy() {
+        return likedBy;
     }
 
-    public void setUserLikes(Map<String, Boolean> userLikes) {
-        this.userLikes = userLikes;
+    public void setLikedBy(List<String> userLikes) {
+        this.likedBy = userLikes;
     }
 
     public List<Comment> getComments() {
         return comments;
+    }
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     public void addComment(Comment comment) {
@@ -141,26 +151,27 @@ public class Video implements Serializable {
     }
 
     public void incrementViewCount() {
-        this.viewCount++;
+        this.views++;
     }
 
     public void likeVideo(String username) {
-        if (!userLikes.containsKey(username) || !userLikes.get(username)) {
-            userLikes.put(username, true);
-            this.likeCount++;
+        if (!likedBy.contains(username)) {
+            likedBy.add(username);
+            this.likes++;
         }
     }
 
     public void unlikeVideo(String username) {
-        if (userLikes.containsKey(username) && userLikes.get(username)) {
-            userLikes.put(username, false);
-            this.likeCount--;
+        if (likedBy.contains(username)) {
+            likedBy.add(username);
+            this.likes--;
         }
     }
 
     public boolean hasLiked(String username) {
-        return userLikes.containsKey(username) && userLikes.get(username);
+        return likedBy.contains(username);
     }
+
 
     @Override
     public String toString() {
@@ -168,13 +179,13 @@ public class Video implements Serializable {
                 "id='" + id + '\'' +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", thumbnailUrl='" + img + '\'' +
                 ", thumbnailResId=" + thumbnailResId +
                 ", videoUrl='" + videoUrl + '\'' +
-                ", user=" + user + // Add this line
-                ", viewCount=" + viewCount +
-                ", likeCount=" + likeCount +
-                ", userLikes=" + userLikes +
+                ", user=" + owner + // Add this line
+                ", viewCount=" + views +
+                ", likeCount=" + likes +
+                ", userLikes=" + likedBy +
                 ", comments=" + comments +
                 '}';
     }

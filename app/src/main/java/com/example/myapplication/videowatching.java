@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.UserManager;
 import com.example.myapplication.entities.Video;
 import com.google.android.material.imageview.ShapeableImageView;
 import androidx.core.view.GestureDetectorCompat;
@@ -76,23 +77,25 @@ public class videowatching extends FragmentActivity {
             }
 
             loggedInUser = (User) intent.getSerializableExtra("user");
+            UserManager userManager = UserManager.getInstance();
+            User owner = userManager.getUserByEmail(currentVideo.getOwner());
 
             if (currentVideo != null) {
                 // Set data to views
                 titleTextView.setText(currentVideo.getTitle());
                 descriptionTextView.setText(currentVideo.getDescription());
-                viewCountTextView.setText("Views " + currentVideo.getViewCount());
-                channelTextView.setText(currentVideo.getUser().getEmail());
+                viewCountTextView.setText("Views " + currentVideo.getViews());
+                channelTextView.setText(owner.getEmail());
                 videoView.setVideoPath(currentVideo.getVideoUrl());
                 videoView.start();
 
                 // Set user photo
-                Uri photoUri = Uri.parse(currentVideo.getUser().getPhotoUri());
+                Uri photoUri = Uri.parse(owner.getPhotoUri());
                 userPhotoImageView.setImageURI(photoUri);
 
                 // Update view count
                 currentVideo.incrementViewCount();
-                viewCountTextView.setText("Views " + currentVideo.getViewCount());
+                viewCountTextView.setText("Views " + currentVideo.getViews());
                 updateLikeButton();
             }
         }
@@ -170,7 +173,7 @@ public class videowatching extends FragmentActivity {
     private void updateLikeButton() {
         if (currentVideo != null && loggedInUser != null) {
             boolean hasLiked = currentVideo.hasLiked(loggedInUser.getEmail());
-            int likeCount = currentVideo.getLikeCount();
+            int likeCount = currentVideo.getLikes();
             likeButton.setText(likeCount + " likes");
             likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
         }

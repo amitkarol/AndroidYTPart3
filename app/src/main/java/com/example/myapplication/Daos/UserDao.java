@@ -7,13 +7,12 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.myapplication.entities.User;
-import com.example.myapplication.entities.Video;
 
 import java.util.List;
 @Dao
 public interface UserDao {
     @Query("SELECT * FROM User")
-    List<Video> index();
+    List<User> index();
 
     @Query("SELECT * FROM User WHERE id = :id")
     User get(int id);

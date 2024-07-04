@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface CommentDao {
     @Query("SELECT * FROM Comment")
-    List<Video> index();
+    List<Comment> index();
 
     @Query("SELECT * FROM Comment WHERE id = :id")
     Comment get(int id);

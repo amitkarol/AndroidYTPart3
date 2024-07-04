@@ -18,6 +18,7 @@ import com.example.myapplication.Fragments.EditCommentDialog;
 import com.example.myapplication.R;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.UserManager;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = commentList.get(position);
-        holder.userTextView.setText(comment.getUser().getEmail());
+        holder.userTextView.setText(comment.getDisplayName());
         holder.commentTextView.setText(comment.getText());
         holder.timestampTextView.setText(comment.getTimestamp());
 

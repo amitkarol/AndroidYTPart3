@@ -1,8 +1,11 @@
 package com.example.myapplication.entities;
 
+import android.os.Build;
+
 import com.example.myapplication.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserManager {
 
@@ -45,6 +48,19 @@ public class UserManager {
             }
         }
         return false;
+    }
+
+    public User getUserByEmail(String email) {
+        Optional<User> user = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            user = userList.stream()
+                    .filter(u -> u.getEmail().equalsIgnoreCase(email))
+                    .findFirst();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return user.orElse(null);
+        }
+        return null;
     }
 
     private void initializeSampleUsers() {

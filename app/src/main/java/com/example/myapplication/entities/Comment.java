@@ -10,20 +10,32 @@ import androidx.room.PrimaryKey;
 public class Comment implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private User user;
+
+    private String  email;
+    private String displayName;
     private String text;
     private String timestamp;
     private String photoUri;
 
     // Constructor
-    public Comment(User user, String text, String photoUri) {
-        this.user = user;
+    public Comment(String email, String displayName, String text, String photoUri) {
+        this.email = email;
+        this.displayName = displayName;
         this.text = text;
         this.photoUri = photoUri;
         this.timestamp = getCurrentTimestamp();
     }
 
-    // Getter and setter for photoUri
+
+    // Other getters and setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getPhotoUri() {
         return photoUri;
     }
@@ -32,13 +44,20 @@ public class Comment implements Serializable {
         this.photoUri = photoUri;
     }
 
-    // Other getters and setters
-    public User getUser() {
-        return user;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getText() {

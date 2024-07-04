@@ -55,7 +55,7 @@ public class detailsofvideo extends BaseActivity {
         String videoUrl = intent.getStringExtra("videoUrl");
         user = (User) intent.getSerializableExtra("user");
 
-        selectedVideo = new Video( "", "", "", 0, videoUrl, user, 0, 0);
+        selectedVideo = new Video( "", "", "", 0, videoUrl, user.getEmail(), 0, 0);
 
         buttonPickThumbnail.setOnClickListener(v -> {
             Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -74,7 +74,7 @@ public class detailsofvideo extends BaseActivity {
 
             selectedVideo.setTitle(title);
             selectedVideo.setDescription(description);
-            selectedVideo.setThumbnailUrl(selectedImageUri.toString());
+            selectedVideo.setImg(selectedImageUri.toString());
 
             // Add the video to VideoManager
             VideoManager.getInstance().addVideo(selectedVideo);

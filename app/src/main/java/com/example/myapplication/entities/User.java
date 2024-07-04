@@ -4,7 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.myapplication.converters.VideoConverter;
+
 @Entity
 public class User implements Serializable {
     @PrimaryKey(autoGenerate = true)
@@ -15,7 +20,11 @@ public class User implements Serializable {
     private String password;
     private String displayName;
     private String photoUri;
+
+    @TypeConverters(VideoConverter.class)
     private List<Video> Videos;
+
+
 
     // Constructor
     public User(String firstName, String lastName, String email, String password, String displayName, String photoUri, List<Video> Videos) {
@@ -27,6 +36,8 @@ public class User implements Serializable {
         this.photoUri = photoUri;
         this.Videos = Videos;
     }
+
+    @Ignore
     public User(String firstName, String lastName, String email, String password, String displayName, String photoUri) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,6 +49,14 @@ public class User implements Serializable {
     }
 
     // Getters and setters
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
     public String getFirstName() {
         return firstName;
     }

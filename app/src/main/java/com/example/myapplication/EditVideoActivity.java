@@ -51,8 +51,8 @@ public class EditVideoActivity extends BaseActivity {
         if (currentVideo != null) {
             titleEditText.setText(currentVideo.getTitle());
             descriptionEditText.setText(currentVideo.getDescription());
-            if (currentVideo.getThumbnailUrl() != null) {
-                thumbnailImageView.setImageURI(Uri.parse(currentVideo.getThumbnailUrl()));
+            if (currentVideo.getImg() != null) {
+                thumbnailImageView.setImageURI(Uri.parse(currentVideo.getImg()));
             } else {
                 thumbnailImageView.setImageResource(R.drawable.placeholder_thumbnail);
             }
@@ -73,7 +73,7 @@ public class EditVideoActivity extends BaseActivity {
                         currentVideo.setTitle(newTitle);
                         currentVideo.setDescription(newDescription);
                         if (selectedImageUri != null) {
-                            currentVideo.setThumbnailUrl(selectedImageUri.toString());
+                            currentVideo.setImg(selectedImageUri.toString());
                         }
 
                         // Update the video in VideoManager
