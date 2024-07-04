@@ -86,7 +86,7 @@ public class videowatching extends FragmentActivity {
                 descriptionTextView.setText(currentVideo.getDescription());
                 viewCountTextView.setText("Views " + currentVideo.getViews());
                 channelTextView.setText(owner.getEmail());
-                videoView.setVideoPath(currentVideo.getVideoUrl());
+                videoView.setVideoPath(currentVideo.getVideo());
                 videoView.start();
 
                 // Set user photo

@@ -13,12 +13,12 @@ import java.util.List;
 
 public interface WebServiceAPI {
 
-    @GET("Videos")
-    Call<List<Video>> getVideos();
+    @GET("/api/videos")
+    Call<List<Video>> get();
 
-    @POST("Videos")
+    @POST("videos")
     Call<Void> createVideo(@Body Video video);
 
-    @DELETE("Videos/{id}")
+    @DELETE("videos/{id}")
     Call<Void> deleteVideo(@Path("id") int id);
 }

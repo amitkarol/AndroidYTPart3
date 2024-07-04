@@ -17,7 +17,7 @@ import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 
-@Database(entities = {User.class, Video.class, Comment.class}, version = 5)
+@Database(entities = {User.class, Video.class, Comment.class}, version = 6)
 @TypeConverters(StringListConverter.class)
 public abstract class AppDB extends RoomDatabase {
     private static volatile AppDB INSTANCE;

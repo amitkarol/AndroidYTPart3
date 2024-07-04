@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -20,7 +21,7 @@ public class Video implements Serializable {
     private String description;
     private String img;
     private int thumbnailResId;
-    private String videoUrl;
+    private String video;
     @TypeConverters(UserConverter.class)
     private String owner;
     private int views;
@@ -30,12 +31,13 @@ public class Video implements Serializable {
     @TypeConverters(CommentConverter.class)
     private List<Comment> comments;
 
-    public Video(String title, String description, String img, int thumbnailResId, String videoUrl, String owner, int views, int likes) {
+    @Ignore
+    public Video(String title, String description, String img, int thumbnailResId, String video, String owner, int views, int likes) {
         this.title = title;
         this.description = description;
         this.img = img;
         this.thumbnailResId = thumbnailResId;
-        this.videoUrl = videoUrl;
+        this.video = video;
         this.owner = owner;
         this.views = views;
         this.likes = likes;
@@ -43,14 +45,29 @@ public class Video implements Serializable {
         this.comments = new ArrayList<>();
     }
 
+    public Video(String title, String description, String img, String video, String owner) {
+        this.title = title;
+        this.description = description;
+        this.img = img;
+        this.thumbnailResId = 0;
+        this.video = video;
+        this.owner = owner;
+        this.views = 0;
+        this.likes = 0;
+        this.likedBy = new ArrayList<String>();
+        this.comments = new ArrayList<>();
+    }
+
+
     // Copy constructor
+    @Ignore
     public Video(Video original) {
         this.id = original.id;
         this.title = original.title;
         this.description = original.description;
         this.img = original.img;
         this.thumbnailResId = original.thumbnailResId;
-        this.videoUrl = original.videoUrl;
+        this.video = original.video;
         this.owner = original.owner;
         this.likes = original.likes;
         this.views = original.views;
@@ -99,12 +116,12 @@ public class Video implements Serializable {
         this.thumbnailResId = thumbnailResId;
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
+    public String getVideo() {
+        return video;
     }
 
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public void setVideo(String video) {
+        this.video = video;
     }
 
     public String getOwner() {
@@ -181,7 +198,7 @@ public class Video implements Serializable {
                 ", description='" + description + '\'' +
                 ", thumbnailUrl='" + img + '\'' +
                 ", thumbnailResId=" + thumbnailResId +
-                ", videoUrl='" + videoUrl + '\'' +
+                ", videoUrl='" + video + '\'' +
                 ", user=" + owner + // Add this line
                 ", viewCount=" + views +
                 ", likeCount=" + likes +
