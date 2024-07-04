@@ -1,13 +1,10 @@
 package com.example.myapplication.Fragments;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,13 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.myapplication.R;
-import com.example.myapplication.entities.video;
+import com.example.myapplication.entities.Video;
 
 public class ShareFragment extends DialogFragment {
 
     private String videoLink;
 
-    public ShareFragment(video currentVideo) {
+    public ShareFragment(Video currentVideo) {
         this.videoLink = "myapp://video?id=" + currentVideo.getId();
     }
 

@@ -3,37 +3,60 @@ package com.example.myapplication.entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
-public class user implements Serializable {
+import com.example.myapplication.converters.VideoConverter;
+
+@Entity
+public class User implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private String email;
     private String firstName;
     private String lastName;
-    private String email;
     private String password;
     private String displayName;
     private String photoUri;
-    private List<video> videos;
+
+    @TypeConverters(VideoConverter.class)
+    private List<Video> Videos;
+
+
 
     // Constructor
-    public user(String firstName, String lastName, String email, String password, String displayName, String photoUri, List<video> videos) {
+    public User(String firstName, String lastName, String email, String password, String displayName, String photoUri, List<Video> Videos) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.displayName = displayName;
         this.photoUri = photoUri;
-        this.videos = videos;
+        this.Videos = Videos;
     }
-    public user(String firstName, String lastName, String email, String password, String displayName, String photoUri) {
+
+    @Ignore
+    public User(String firstName, String lastName, String email, String password, String displayName, String photoUri) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.displayName = displayName;
         this.photoUri = photoUri;
-        this.videos = new ArrayList<>();
+        this.Videos = new ArrayList<>();
     }
 
     // Getters and setters
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -82,12 +105,12 @@ public class user implements Serializable {
         this.photoUri = photoUri;
     }
 
-    public List<video> getVideos() {
-        return videos;
+    public List<Video> getVideos() {
+        return Videos;
     }
 
-    public void setVideos(List<video> videos) {
-        this.videos = videos;
+    public void setVideos(List<Video> Videos) {
+        this.Videos = Videos;
     }
 
     // toString method for printing user details
@@ -100,7 +123,7 @@ public class user implements Serializable {
                 ", password='" + password + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", photoUri='" + photoUri + '\'' +
-                ", videos=" + videos +
+                ", videos=" + Videos +
                 '}';
     }
 }

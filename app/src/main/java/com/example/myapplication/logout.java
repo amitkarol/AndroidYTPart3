@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 public class logout extends BaseActivity {
     @Override
@@ -19,12 +19,12 @@ public class logout extends BaseActivity {
 
         Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
         // Retrieve user details from the Intent
-        user loggedInUser = (user) getIntent().getSerializableExtra("user");
+        User loggedInUser = (User) getIntent().getSerializableExtra("user");
 
         // Check if the user is null
         if (loggedInUser == null) {
             // Handle the case where user data is not passed
-            loggedInUser = new user("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
+            loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
         }
 
         // Get references to the TextView fields
@@ -47,7 +47,7 @@ public class logout extends BaseActivity {
         Button logoutButton = findViewById(R.id.buttonLogout);
         logoutButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
 
-        user testUser = new user("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
+        User testUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
 
         // Set an OnClickListener to the Logout button
         logoutButton.setOnClickListener(v -> {

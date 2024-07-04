@@ -11,8 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.entities.user;
-import com.example.myapplication.entities.video;
+import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class UserPage extends BaseActivity {
         buttonEdit = findViewById(R.id.buttonEdit);
 
         // Get the user object from the intent
-        user user = (user) getIntent().getSerializableExtra("user");
+        User user = (User) getIntent().getSerializableExtra("user");
 
         // Set user information
         if (user != null) {
@@ -56,7 +56,7 @@ public class UserPage extends BaseActivity {
             }
 
             // Initialize RecyclerView with user videos
-            List<video> userVideos = user.getVideos();
+            List<Video> userVideos = user.getVideos();
             VideoListAdapter adapter = new VideoListAdapter(userVideos, this, user);
             recyclerViewUserVideos.setLayoutManager(new LinearLayoutManager(this));
             recyclerViewUserVideos.setAdapter(adapter);

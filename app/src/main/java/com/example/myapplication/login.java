@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.myapplication.entities.UserManager;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.User;
 
 public class login extends BaseActivity {
 
@@ -37,7 +37,7 @@ public class login extends BaseActivity {
             String password = editTextPassword.getText().toString().trim();
 
             // Validate the username and password
-            user userFound = UserManager.getInstance().validateUser(username, password);
+            User userFound = UserManager.getInstance().validateUser(username, password);
 
             if (userFound != null) {
                 Intent homescreenIntent = new Intent(login.this, homescreen.class);

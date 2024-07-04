@@ -3,17 +3,14 @@ package com.example.myapplication.entities;
 import android.os.Build;
 import com.example.myapplication.R;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 public class VideoManager {
     private static VideoManager instance;
-    private Set<video> videoSet;
+    private List<Video> videoList;
 
     private VideoManager() {
-        videoSet = new HashSet<>();
+        videoList = new ArrayList<Video>();
         initializeSampleVideos();
     }
 
@@ -27,10 +24,10 @@ public class VideoManager {
     private void initializeSampleVideos() {
         UserManager userManager = UserManager.getInstance();
 
-        user maayan = userManager.validateUser("maayan@gmail.com", "Haha1234!");
-        user idan = userManager.validateUser("idan@gmail.com", "Blabla1234!");
-        user hemi = userManager.validateUser("hemi@gmail.com", "1234Haha!");
-        user amit = userManager.validateUser("amit@gmail.com", "amit1234!");
+        String maayanEmail = "maayan@gmail.com";
+        String idanEmail = "idan@gmail.com";
+        String hemiEmail = "hemi@gmail.com";
+        String amitEmail = "amit@gmail.com";
 
         int[] videoResources = {R.raw.video1, R.raw.video2, R.raw.video3, R.raw.policesnail, R.raw.newrules,
                 R.raw.disney, R.raw.lionking, R.raw.basketballplayer, R.raw.london, R.raw.eras};
@@ -59,38 +56,41 @@ public class VideoManager {
                 "Hakuna Matata!", "Mr. Snail is the BEST basketball Player", "So sad to leave london",
                 "This night was sparkling"};
 
-        user[] owners = {maayan, hemi, maayan, hemi, amit, amit, amit, hemi, maayan, maayan};
+        String[] owners = {maayanEmail, hemiEmail, maayanEmail, hemiEmail, amitEmail, amitEmail, amitEmail, hemiEmail, maayanEmail, maayanEmail};
 
         int[] views = {1000, 1213, 12323, 2324, 2324, 242, 242, 224, 23132, 2434};
         int[] likes = {3, 23, 23, 232, 343, 242, 4423, 244, 12, 2342};
 
         for (int i = 0; i < titles.length; i++) {
-            video newVideo = new video(UUID.randomUUID().toString(), titles[i], descriptions[i], photoUrls[i],
+            Video newVideo = new Video(titles[i], descriptions[i], photoUrls[i],
                     photoResources[i], videoUrls[i], owners[i], views[i], likes[i]);
-            videoSet.add(newVideo);
+            videoList.add(newVideo);
 
-            owners[i].getVideos().add(newVideo);
-            // Adding comments to each video
-            Comment comment = new Comment(owners[i], "Great video!", owners[i].getPhotoUri());
-            newVideo.addComment(comment);
+            User owner = userManager.getUserByEmail(owners[i]);
+            if (owner != null) {
+                owner.getVideos().add(newVideo);
+                // Adding comments to each video
+                Comment comment = new Comment(owner.getEmail(), owner.getDisplayName(), "Great video!", owner.getPhotoUri());
+                newVideo.addComment(comment);
+            }
         }
     }
 
-    public List<video> getVideoList() {
-        return new ArrayList<>(videoSet);
+    public List<Video> getVideoList() {
+        return new ArrayList<>(videoList);
     }
 
-    public video getVideoById(String id) {
-        for (video video : videoSet) {
-            if (video.getId().equals(id)) {
+    public Video getVideoById(int id) {
+        for (Video video : videoList) {
+            if (video.getId() == id) {
                 return video;
             }
         }
         return null;
     }
 
-    public video getVideoByTitle(String title) {
-        for (video video : videoSet) {
+    public Video getVideoByTitle(String title) {
+        for (Video video : videoList) {
             if (video.getTitle().equals(title)) {
                 return video;
             }
@@ -98,23 +98,23 @@ public class VideoManager {
         return null;
     }
 
-    public void addVideo(video newVideo) {
-        videoSet.add(newVideo);
+    public void addVideo(Video newVideo) {
+        videoList.add(newVideo);
     }
 
-    public void updateVideo(video updatedVideo, video originVideo) {
+    public void updateVideo(Video updatedVideo, Video originVideo) {
         removeVideo(originVideo);
-        videoSet.add(updatedVideo);
+        videoList.add(updatedVideo);
     }
 
-    public void removeVideo(video videoToRemove) {
+    public void removeVideo(Video videoToRemove) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            videoSet.removeIf(video -> video.getId().equals(videoToRemove.getId())); // Ensure removal by ID
+            videoList.removeIf(video -> video.getId() == videoToRemove.getId());
         }
     }
 
     public void clearVideos() {
-        videoSet.clear();
+        videoList.clear();
         initializeSampleVideos();
     }
 }

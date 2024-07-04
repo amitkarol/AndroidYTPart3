@@ -1,11 +1,8 @@
 package com.example.myapplication;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -13,37 +10,45 @@ import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.myapplication.entities.VideoManager;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.Api.VideoAPI;
+import com.example.myapplication.Daos.VideoDao;
+import com.example.myapplication.db.AppDB;
+import com.example.myapplication.entities.Video;
+import com.example.myapplication.entities.User;
+import com.example.myapplication.viewmodels.VideosViewModel;
 
 import java.util.List;
 
 import adapter.VideoListAdapter;
 
-public class homescreen extends BaseActivity {
+public class homescreen extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private VideoListAdapter videoAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private user loggedInUser;
+    private User loggedInUser;
     private Switch modeSwitch;
     private RelativeLayout homeScreenLayout;
     private SearchView searchView;
+
+    private VideosViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
 
-        loggedInUser = (user) getIntent().getSerializableExtra("user");
+        loggedInUser = (User) getIntent().getSerializableExtra("user");
         if (loggedInUser == null) {
             Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
-            loggedInUser = new user("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
+            loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
         }
 
         // Display user photo
@@ -52,17 +57,28 @@ public class homescreen extends BaseActivity {
             imageViewPerson.setImageURI(Uri.parse(loggedInUser.getPhotoUri()));
         }
 
+        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+        AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Videos")
+                .build();
+        VideoDao videoDao = db.videoDao();
+
+        VideoAPI videoAPI = new VideoAPI();
+        videoAPI.get();
+
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
+        videoAdapter = new VideoListAdapter(null, this, loggedInUser);
+        recyclerView.setAdapter(videoAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Get the video list from VideoManager
-        refreshVideoList();
+        viewModel.getVideos().observe(this, videos -> {
+            videoAdapter.setVideos(videos);
+        });
+
 
         // Set up SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshVideoList();
             swipeRefreshLayout.setRefreshing(false);
         });
 
@@ -131,11 +147,6 @@ public class homescreen extends BaseActivity {
         });
     }
 
-    private void refreshVideoList() {
-        List<video> videoList = VideoManager.getInstance().getVideoList();
-        videoAdapter = new VideoListAdapter(videoList, this, loggedInUser);
-        recyclerView.setAdapter(videoAdapter);
-    }
 
     private void filterVideos(String query) {
         if (videoAdapter != null) {
@@ -146,6 +157,5 @@ public class homescreen extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshVideoList();
     }
 }

@@ -12,11 +12,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 
+import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
-
-import java.util.UUID;
 
 public class detailsofvideo extends BaseActivity {
 
@@ -26,8 +24,8 @@ public class detailsofvideo extends BaseActivity {
     private Button buttonPickThumbnail;
     private ImageView imageViewThumbnail;
 
-    private video selectedVideo;
-    private user user;
+    private Video selectedVideo;
+    private User user;
     private Uri selectedImageUri;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
@@ -55,9 +53,9 @@ public class detailsofvideo extends BaseActivity {
         // Retrieve the video URL and user details from the Intent
         Intent intent = getIntent();
         String videoUrl = intent.getStringExtra("videoUrl");
-        user = (user) intent.getSerializableExtra("user");
+        user = (User) intent.getSerializableExtra("user");
 
-        selectedVideo = new video(UUID.randomUUID().toString(), "", "", "", 0, videoUrl, user, 0, 0);
+        selectedVideo = new Video( "", "", "", 0, videoUrl, user.getEmail(), 0, 0);
 
         buttonPickThumbnail.setOnClickListener(v -> {
             Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -76,7 +74,7 @@ public class detailsofvideo extends BaseActivity {
 
             selectedVideo.setTitle(title);
             selectedVideo.setDescription(description);
-            selectedVideo.setThumbnailUrl(selectedImageUri.toString());
+            selectedVideo.setImg(selectedImageUri.toString());
 
             // Add the video to VideoManager
             VideoManager.getInstance().addVideo(selectedVideo);

@@ -19,8 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.ThemeUtil;
 import com.example.myapplication.UserPage;
-import com.example.myapplication.entities.video;
-import com.example.myapplication.entities.user;
+import com.example.myapplication.entities.UserManager;
+import com.example.myapplication.entities.Video;
+import com.example.myapplication.entities.User;
 import com.example.myapplication.videowatching;
 
 import java.io.InputStream;
@@ -29,14 +30,14 @@ import java.util.List;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.ViewHolder> {
 
-    private List<video> videoList;
-    private List<video> filteredVideoList;
+    private List<Video> videoList;
+    private List<Video> filteredVideoList;
     private Context context;
-    private user loggedInUser;
+    private User loggedInUser;
 
-    public VideoListAdapter(List<video> videoList, Context context, user loggedInUser) {
-        this.videoList = videoList;
-        this.filteredVideoList = new ArrayList<>(videoList);
+    public VideoListAdapter(List<Video> videoList, Context context, User loggedInUser) {
+        this.videoList = videoList != null ? videoList : new ArrayList<>();
+        this.filteredVideoList = new ArrayList<>(this.videoList);
         this.context = context;
         this.loggedInUser = loggedInUser;
     }
@@ -66,45 +67,23 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     @Override
     @RequiresApi(api = Build.VERSION_CODES.P)
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        video video = filteredVideoList.get(position);
+        Video video = filteredVideoList.get(position);
 
         holder.titleTextView.setText(video.getTitle());
-        holder.channelTextView.setText(video.getUser().getEmail());
+        holder.channelTextView.setText(video.getOwner());
 
         // Load the video thumbnail
-        if (video.getThumbnailUrl() != null && !video.getThumbnailUrl().isEmpty()) {
-            Uri uri = Uri.parse(video.getThumbnailUrl());
-            try {
-                InputStream inputStream = context.getContentResolver().openInputStream(uri);
-                if (inputStream != null) {
-                    ImageDecoder.Source source = ImageDecoder.createSource(context.getContentResolver(), uri);
-                    Bitmap bitmap = ImageDecoder.decodeBitmap(source);
-                    holder.thumbnailImageView.setImageBitmap(bitmap);
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                holder.thumbnailImageView.setImageResource(R.drawable.dog1);
-            }
+        if (video.getImg() != null && !video.getImg().isEmpty()) {
+            loadImageFromUri(holder.thumbnailImageView, Uri.parse(video.getImg()), R.drawable.dog1);
         } else {
             holder.thumbnailImageView.setImageResource(video.getThumbnailResId());
         }
 
         // Load the user photo
-        if (video.getUser() != null && video.getUser().getPhotoUri() != null && !video.getUser().getPhotoUri().isEmpty()) {
-            Uri uri = Uri.parse(video.getUser().getPhotoUri());
-            try {
-                InputStream inputStream = context.getContentResolver().openInputStream(uri);
-                if (inputStream != null) {
-                    ImageDecoder.Source source = ImageDecoder.createSource(context.getContentResolver(), uri);
-                    Bitmap bitmap = ImageDecoder.decodeBitmap(source);
-                    holder.userPhotoImageView.setImageBitmap(bitmap);
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                holder.userPhotoImageView.setImageResource(R.drawable.person);
-            }
+        UserManager userManager = UserManager.getInstance();
+        User owner = userManager.getUserByEmail(video.getOwner());
+        if (owner != null && owner.getPhotoUri() != null && !owner.getPhotoUri().isEmpty()) {
+            loadImageFromUri(holder.userPhotoImageView, Uri.parse(owner.getPhotoUri()), R.drawable.person);
         } else {
             holder.userPhotoImageView.setImageResource(R.drawable.person);
         }
@@ -120,7 +99,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         // Navigate to user page on user photo click
         holder.userPhotoImageView.setOnClickListener(v -> {
             Intent intent = new Intent(context, UserPage.class);
-            intent.putExtra("user", video.getUser());
+            intent.putExtra("user", video.getOwner());
             context.startActivity(intent);
         });
 
@@ -139,7 +118,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         if (query.isEmpty()) {
             filteredVideoList.addAll(videoList);
         } else {
-            for (video video : videoList) {
+            for (Video video : videoList) {
                 if (video.getTitle().toLowerCase().contains(query.toLowerCase())) {
                     filteredVideoList.add(video);
                 }
@@ -150,5 +129,34 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
 
     public void refreshTheme() {
         notifyDataSetChanged();
+    }
+
+    public void setVideos(List<Video> newVideoList) {
+        this.videoList.clear();
+        if (newVideoList != null) {
+            this.videoList.addAll(newVideoList);
+        }
+        filter("");
+    }
+
+    private void loadImageFromUri(ImageView imageView, Uri uri, int placeholderResId) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            if (inputStream != null) {
+                ImageDecoder.Source source = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    source = ImageDecoder.createSource(context.getContentResolver(), uri);
+                }
+                Bitmap bitmap = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                    bitmap = ImageDecoder.decodeBitmap(source);
+                }
+                imageView.setImageBitmap(bitmap);
+                inputStream.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            imageView.setImageResource(placeholderResId);
+        }
     }
 }

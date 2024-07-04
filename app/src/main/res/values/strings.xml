@@ -77,5 +77,6 @@
     <string name="share_whatsapp">share via watsapp\n</string>
     <string name="share_email">share via email</string>
     <string name="title_activity_edit_user">EditUserActivity</string>
+    <string name="BaseUrl">http://10.0.2.2:8200</string>
 
 </resources>
