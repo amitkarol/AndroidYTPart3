@@ -9,6 +9,7 @@ import com.example.myapplication.MyApplication;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Video;
+import com.example.myapplication.retrofit.RetrofitClient;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -29,16 +30,7 @@ public class VideoAPI {
     private MutableLiveData<List<Video>> videosLiveData;
 
     public VideoAPI() {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(40, TimeUnit.SECONDS)
-                .build();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(MyApplication.context.getString(R.string.BaseUrl))
-                .client(client)
-                .callbackExecutor(Executors.newSingleThreadExecutor())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        retrofit = RetrofitClient.getRetrofit();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
 
         // Initialize videoDao
@@ -50,7 +42,7 @@ public class VideoAPI {
     }
 
     public void get() {
-        Call<List<Video>> call = webServiceAPI.get();
+        Call<List<Video>> call = webServiceAPI.getVideos();
         call.enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {

@@ -20,11 +20,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.db.AppDB;
-import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.User;
-import com.example.myapplication.viewmodels.VideosViewModel;
-
-import java.util.List;
+import com.example.myapplication.ViewModels.VideosViewModel;
 
 import adapter.VideoListAdapter;
 
@@ -61,20 +58,18 @@ public class homescreen extends AppCompatActivity {
         AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Videos")
                 .build();
         VideoDao videoDao = db.videoDao();
-
         VideoAPI videoAPI = new VideoAPI();
         videoAPI.get();
+
+        viewModel.getVideos().observe(this, videos -> {
+            videoAdapter.setVideos(videos);
+        });
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
         videoAdapter = new VideoListAdapter(null, this, loggedInUser);
         recyclerView.setAdapter(videoAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        viewModel.getVideos().observe(this, videos -> {
-            videoAdapter.setVideos(videos);
-        });
-
 
         // Set up SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);

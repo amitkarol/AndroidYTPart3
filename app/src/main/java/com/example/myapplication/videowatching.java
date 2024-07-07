@@ -66,15 +66,16 @@ public class videowatching extends FragmentActivity {
         Intent intent = getIntent();
         if (intent != null) {
             Uri data = intent.getData();
-            if (data != null) {
-                // Handle deep link
-                int videoId = Integer.parseInt(data.getQueryParameter("id"));
-                currentVideo = getVideoById(videoId);
-            } else {
-                // Handle normal intent
-                String title = intent.getStringExtra("title");
-                currentVideo = getVideoByTitle(title);
-            }
+            currentVideo = (Video) intent.getSerializableExtra("video");
+//            if (data != null) {
+//                // Handle deep link
+//                int videoId = Integer.parseInt(data.getQueryParameter("id"));
+//                currentVideo = getVideoById(videoId);
+//            } else {
+//                // Handle normal intent
+//                String title = intent.getStringExtra("title");
+//                currentVideo = getVideoByTitle(title);
+//            }
 
             loggedInUser = (User) intent.getSerializableExtra("user");
             UserManager userManager = UserManager.getInstance();
@@ -86,7 +87,7 @@ public class videowatching extends FragmentActivity {
                 descriptionTextView.setText(currentVideo.getDescription());
                 viewCountTextView.setText("Views " + currentVideo.getViews());
                 channelTextView.setText(owner.getEmail());
-                videoView.setVideoPath(currentVideo.getVideo());
+                videoView.setVideoPath(R.string.BaseUrl + "/public" + currentVideo.getVideo());
                 videoView.start();
 
                 // Set user photo
