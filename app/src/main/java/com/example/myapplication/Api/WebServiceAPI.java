@@ -3,6 +3,7 @@ package com.example.myapplication.Api;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -26,6 +27,11 @@ public interface WebServiceAPI {
 
     @GET("/api/users")
     Call<List<User>> getUsers();
+
+    @POST("/api/users")
+    Call<User> createUser(@Field("firstName") String firstName, @Field("lastName") String lastName,
+                                     @Field("email") String email, @Field("password") String password,
+                                     @Field("displayName") String displayName, @Field("photo") String photo);
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments();

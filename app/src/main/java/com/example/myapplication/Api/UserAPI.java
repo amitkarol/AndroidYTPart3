@@ -7,6 +7,7 @@ import com.example.myapplication.MyApplication;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.retrofit.RetrofitClient;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -26,16 +27,7 @@ public class UserAPI {
     private MutableLiveData<List<User>> usersLiveData;
 
     public UserAPI() {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(40, TimeUnit.SECONDS)
-                .build();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(MyApplication.context.getString(R.string.BaseUrl))
-                .client(client)
-                .callbackExecutor(Executors.newSingleThreadExecutor())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        retrofit = RetrofitClient.getRetrofit();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
 
         // Initialize userDao
@@ -71,6 +63,30 @@ public class UserAPI {
                 // Handle the failure case
                 // For example, you could log the error or notify the user
                 // Log.e("UserAPI", "Failed to fetch Users", t);
+            }
+        });
+    }
+
+    public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
+        Call<User> createUser = webServiceAPI.createUser(firstName, lastName, email, password, displayName, photo);
+        createUser.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        User user = response.body();
+                        userDao.insert(new User(user.getFirstName(), user.getLastName(),
+                                    user.getEmail(), user.getPassword(), user.getDisplayName(), user.getPhotoUri(), user.getVideos()));
+                        // Update LiveData with the new list of users
+                       // currentUserLiveData.postValue(user);
+                    }).start();
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
             }
         });
     }

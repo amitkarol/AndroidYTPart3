@@ -34,7 +34,6 @@ public class homescreen extends AppCompatActivity {
     private Switch modeSwitch;
     private RelativeLayout homeScreenLayout;
     private SearchView searchView;
-
     private VideosViewModel viewModel;
 
     @Override

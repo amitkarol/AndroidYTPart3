@@ -7,6 +7,7 @@ import com.example.myapplication.MyApplication;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Comment;
+import com.example.myapplication.retrofit.RetrofitClient;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -26,16 +27,7 @@ public class CommentAPI {
     private MutableLiveData<List<Comment>> commentsLiveData;
 
     public CommentAPI() {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(40, TimeUnit.SECONDS)
-                .build();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(MyApplication.context.getString(R.string.BaseUrl))
-                .client(client)
-                .callbackExecutor(Executors.newSingleThreadExecutor())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        retrofit = RetrofitClient.getRetrofit();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
 
         // Initialize commentDao
