@@ -1,5 +1,7 @@
 package com.example.myapplication.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,6 +18,7 @@ public class UsersRepository {
     private UserAPI userAPI;
 
     public UsersRepository() {
+        Log.d("test1", "repository builder");
         AppDB db = AppDB.getInstance();
         dao = db.userDao();
         userListData = new UserListData(dao);

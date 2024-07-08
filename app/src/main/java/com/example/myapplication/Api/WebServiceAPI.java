@@ -4,11 +4,13 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 import com.example.myapplication.entities.Comment;
+import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 
@@ -28,6 +30,7 @@ public interface WebServiceAPI {
     @GET("/api/users")
     Call<List<User>> getUsers();
 
+    @FormUrlEncoded
     @POST("/api/users")
     Call<User> createUser(@Field("firstName") String firstName, @Field("lastName") String lastName,
                                      @Field("email") String email, @Field("password") String password,
@@ -35,4 +38,9 @@ public interface WebServiceAPI {
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments();
+
+    // Token API
+    @FormUrlEncoded
+    @POST("/api/tokens")
+    Call<Token> processLogin(@Field("email") String email, @Field("password") String password);
 }

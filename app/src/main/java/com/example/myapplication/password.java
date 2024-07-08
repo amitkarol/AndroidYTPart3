@@ -61,7 +61,7 @@ public class password extends BaseActivity {
                 Intent intent = new Intent(this, Displayname.class);
                 intent.putExtra("firstName", getIntent().getStringExtra("firstName"));
                 intent.putExtra("lastName", getIntent().getStringExtra("lastName"));
-                intent.putExtra("username", getIntent().getStringExtra("username"));
+                intent.putExtra("email", getIntent().getStringExtra("email"));
                 intent.putExtra("password", password);
                 startActivity(intent);
             }

@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.example.myapplication.entities.UserManager;
 
 public class Username extends BaseActivity {
-    private EditText usernameEditText;
+    private EditText emailEditText;
     private UserManager usermanager;
 
     @Override
@@ -20,20 +20,20 @@ public class Username extends BaseActivity {
         ThemeUtil.applyTheme(this);
         setContentView(R.layout.username);
 
-        usernameEditText = findViewById(R.id.editTextText2);
+        emailEditText = findViewById(R.id.editTextText2);
 
         Button secbtnName = findViewById(R.id.second_button);
         secbtnName.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
 
         secbtnName.setOnClickListener(v -> {
-            String username = usernameEditText.getText().toString().trim();
+            String email = emailEditText.getText().toString().trim();
             usermanager = UserManager.getInstance();
-            if (usermanager.isAlreadyExists(username)) {
-                Toast.makeText(Username.this, "username already taken. try another one", Toast.LENGTH_SHORT).show();
+            if (usermanager.isAlreadyExists(email)) {
+                Toast.makeText(Username.this, "email already taken. try another one", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (!isValidEmail(username)) {
+            if (!isValidEmail(email)) {
                 // Display error message for invalid email format
                 Toast.makeText(this, "Invalid email format. Please enter a valid email address.", Toast.LENGTH_SHORT).show();
             } else {
@@ -41,7 +41,7 @@ public class Username extends BaseActivity {
                 Intent intent = new Intent(this, password.class);
                 intent.putExtra("firstName", getIntent().getStringExtra("firstName"));
                 intent.putExtra("lastName", getIntent().getStringExtra("lastName"));
-                intent.putExtra("username", username);
+                intent.putExtra("email", email);
                 startActivity(intent);
             }
         });
