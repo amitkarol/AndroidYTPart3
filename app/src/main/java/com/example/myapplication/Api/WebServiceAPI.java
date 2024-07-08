@@ -10,6 +10,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 import com.example.myapplication.entities.Comment;
+import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 
@@ -37,4 +38,9 @@ public interface WebServiceAPI {
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments();
+
+    // Token API
+    @FormUrlEncoded
+    @POST("/api/tokens")
+    Call<Token> processLogin(@Field("email") String email, @Field("password") String password);
 }

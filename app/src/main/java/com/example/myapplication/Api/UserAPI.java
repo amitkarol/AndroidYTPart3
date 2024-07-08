@@ -8,7 +8,9 @@ import com.example.myapplication.Daos.UserDao;
 import com.example.myapplication.MyApplication;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
+import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
 
 import java.util.List;
@@ -27,23 +29,21 @@ public class UserAPI {
     private Retrofit retrofit;
     private WebServiceAPI webServiceAPI;
     private MutableLiveData<List<User>> usersLiveData;
+    private MutableLiveData<User> currentUser;
+    private MutableLiveData<String> token;;
 
     public UserAPI() {
-        Log.d("test1", "api builder");
         retrofit = RetrofitClient.getRetrofit();
-        Log.d("test1", "api builder passed retrofit");
         webServiceAPI = retrofit.create(WebServiceAPI.class);
-        Log.d("test1", "api builder passed webservice");
 
         // Initialize userDao
         AppDB db = AppDB.getInstance();
-        Log.d("test1", "api builder passed db");
         userDao = db.userDao();
-        Log.d("test1", "api builder passed userdao");
 
         // Initialize LiveData
         usersLiveData = new MutableLiveData<>();
-        Log.d("test1", "api builder end");
+        currentUser = new MutableLiveData<>();
+        token = new MutableLiveData<>();
     }
 
     public void get() {
@@ -76,19 +76,18 @@ public class UserAPI {
     }
 
     public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
-        Log.d("test1", "user is " + email);
         Call<User> createUser = webServiceAPI.createUser(firstName, lastName, email, password, displayName, photo);
-        Log.d("test1", "api");
         createUser.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Log.d("test1", "is successfull " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
                         Log.d("test1", "entered thread");
                         User user = response.body();
+                        Log.d("test1", "createUser user: " + user);
                         userDao.insert(new User(user.getFirstName(), user.getLastName(),
                                     user.getEmail(), user.getPassword(), user.getDisplayName(), user.getPhotoUri(), user.getVideos()));
+                        assignToken(user, currentUser, token);
                     }).start();
                 } else {
                     // Handle unsuccessful response
@@ -98,6 +97,33 @@ public class UserAPI {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d("test1", "failed api");
+            }
+        });
+    }
+
+    public void assignToken (User user, MutableLiveData<User> currentUser, MutableLiveData<String> token) {
+        Log.d("test1", "token user: " + user.getEmail());
+        String email = user.getEmail();
+        String password = user.getPassword();
+        Call<Token> login = webServiceAPI.processLogin(email, password);
+
+        login.enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                Log.d("test1", "response token : " + response.isSuccessful());
+                if (response.isSuccessful()) {
+                    new Thread(() -> {
+                        currentUser.postValue(user);
+                        token.postValue(response.body().getToken());
+                        Log.d("test1", "token: " + token);
+                        Log.d("test1", "token: " + response.body().getToken());
+                    }).start();
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Token> call, Throwable t) {
             }
         });
     }

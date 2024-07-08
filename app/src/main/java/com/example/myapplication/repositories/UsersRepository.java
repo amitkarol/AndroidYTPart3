@@ -23,7 +23,6 @@ public class UsersRepository {
         dao = db.userDao();
         userListData = new UserListData(dao);
         userAPI = new UserAPI();
-        Log.d("test1", "repository end");
     }
 
     static class UserListData extends MutableLiveData<List<User>> {
@@ -50,8 +49,6 @@ public class UsersRepository {
     }
 
     public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
-        Log.d("test1", "repository email" + email);
         userAPI.createUser(firstName, lastName, email, password, displayName, photo);
-        Log.d("test1", "repository");
     }
 }
