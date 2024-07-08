@@ -12,6 +12,7 @@ import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
+import com.example.myapplication.utils.TokenManager;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -29,8 +30,8 @@ public class UserAPI {
     private Retrofit retrofit;
     private WebServiceAPI webServiceAPI;
     private MutableLiveData<List<User>> usersLiveData;
-    private MutableLiveData<User> currentUser;
-    private MutableLiveData<String> token;;
+//    private MutableLiveData<User> currentUser;
+//    private MutableLiveData<String> token;;
 
     public UserAPI() {
         retrofit = RetrofitClient.getRetrofit();
@@ -42,8 +43,8 @@ public class UserAPI {
 
         // Initialize LiveData
         usersLiveData = new MutableLiveData<>();
-        currentUser = new MutableLiveData<>();
-        token = new MutableLiveData<>();
+//        currentUser = new MutableLiveData<>();
+//        token = new MutableLiveData<>();
     }
 
     public void get() {
@@ -87,7 +88,7 @@ public class UserAPI {
                         Log.d("test1", "createUser user: " + user);
                         userDao.insert(new User(user.getFirstName(), user.getLastName(),
                                     user.getEmail(), user.getPassword(), user.getDisplayName(), user.getPhotoUri(), user.getVideos()));
-                        assignToken(user, currentUser, token);
+                        assignToken(user);
                     }).start();
                 } else {
                     // Handle unsuccessful response
@@ -101,7 +102,7 @@ public class UserAPI {
         });
     }
 
-    public void assignToken (User user, MutableLiveData<User> currentUser, MutableLiveData<String> token) {
+    public void assignToken (User user) {
         Log.d("test1", "token user: " + user.getEmail());
         String email = user.getEmail();
         String password = user.getPassword();
@@ -112,12 +113,14 @@ public class UserAPI {
             public void onResponse(Call<Token> call, Response<Token> response) {
                 Log.d("test1", "response token : " + response.isSuccessful());
                 if (response.isSuccessful()) {
-                    new Thread(() -> {
-                        currentUser.postValue(user);
-                        token.postValue(response.body().getToken());
-                        Log.d("test1", "token: " + token);
-                        Log.d("test1", "token: " + response.body().getToken());
-                    }).start();
+                    TokenManager.getInstance().setToken(response.body().getToken());
+                    TokenManager.getInstance().setUser(user);
+                    Log.d("test1", "TokenManager token: " + TokenManager.getInstance().getToken());
+                    Log.d("test1", "TokenManager user: " + TokenManager.getInstance().getUser());
+//                    new Thread(() -> {
+//                        currentUser.postValue(user);
+//                        token.postValue(response.body().getToken());
+//                    }).start();
                 } else {
                 }
             }

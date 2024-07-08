@@ -50,7 +50,8 @@ public class homescreen extends AppCompatActivity {
         // Display user photo
         ImageView imageViewPerson = findViewById(R.id.imageViewPerson);
         if (loggedInUser.getPhotoUri() != null) {
-            imageViewPerson.setImageURI(Uri.parse(loggedInUser.getPhotoUri()));
+            imageViewPerson.setImageURI(Uri.parse(getResources().getString(R.string.BaseUrl) + loggedInUser.getPhotoUri()));
+
         }
 
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
@@ -140,7 +141,6 @@ public class homescreen extends AppCompatActivity {
             recreate();
         });
     }
-
 
     private void filterVideos(String query) {
         if (videoAdapter != null) {

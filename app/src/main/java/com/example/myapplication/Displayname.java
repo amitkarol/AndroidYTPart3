@@ -28,8 +28,11 @@ import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.db.AppDB;
+import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.UserManager;
+import com.example.myapplication.utils.TokenManager;
+
 import java.io.ByteArrayOutputStream;
 
 public class Displayname extends BaseActivity {
@@ -81,12 +84,14 @@ public class Displayname extends BaseActivity {
 //            VideoDao videoDao = db.videoDao();
             UserAPI userAPI = new UserAPI();
             userAPI.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
+            User user = TokenManager.getInstance().getUser();
+            Log.d("test1", "displayname user: " + user);
 
 //            User user = new User(firstName, lastName, email, password, displayName, selectedImageUri.toString());
 //            UserManager.getInstance().addUser(user);
 
             Intent homescreenIntent = new Intent(Displayname.this, homescreen.class);
-      //      homescreenIntent.putExtra("user", user);
+            homescreenIntent.putExtra("user", user);
 
             startActivity(homescreenIntent);
         });

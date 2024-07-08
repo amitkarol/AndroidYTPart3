@@ -36,6 +36,8 @@ public class login extends BaseActivity {
             String username = editTextUsername.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
 
+
+
             // Validate the username and password
             User userFound = UserManager.getInstance().validateUser(username, password);
 
