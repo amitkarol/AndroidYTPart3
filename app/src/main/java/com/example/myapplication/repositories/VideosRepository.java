@@ -29,26 +29,26 @@ public class VideosRepository {
         public VideoListData(VideoDao videoDao) {
             super();
             this.videoDao = videoDao;
-            List<Video> videos = new LinkedList<>();
-            UserManager userManager = UserManager.getInstance();
-
-            User maayan = userManager.validateUser("maayan@gmail.com", "Haha1234!");
-
-            int videoResource = R.raw.video1;
-            String videoUrl = "android.resource://" + "com.example.myapplication" + "/" + videoResource;
-
-            int photoResource = R.drawable.dior;
-            String photoUrl = "android.resource://" + "com.example.myapplication" + "/" + photoResource;
-
-            String title = "Dior gallery - Paris";
-            String description = "So beautiful";
-            User owner = maayan;
-            int views = 1000;
-            int likes = 3;
-
-            Video newVideo = new Video(title, description, photoUrl, photoResource, videoUrl, owner.getEmail(), views, likes);
-            videos.add(newVideo);
-            setValue(videos);
+//            List<Video> videos = new LinkedList<>();
+//            UserManager userManager = UserManager.getInstance();
+//
+//            User maayan = userManager.validateUser("maayan@gmail.com", "Haha1234!");
+//
+//            int videoResource = R.raw.video1;
+//            String videoUrl = "android.resource://" + "com.example.myapplication" + "/" + videoResource;
+//
+//            int photoResource = R.drawable.dior;
+//            String photoUrl = "android.resource://" + "com.example.myapplication" + "/" + photoResource;
+//
+//            String title = "Dior gallery - Paris";
+//            String description = "So beautiful";
+//            User owner = maayan;
+//            int views = 1000;
+//            int likes = 3;
+//
+//            Video newVideo = new Video(title, description, photoUrl, photoResource, videoUrl, owner.getEmail(), views, likes);
+//            videos.add(newVideo);
+//            setValue(videos);
         }
 
         @Override

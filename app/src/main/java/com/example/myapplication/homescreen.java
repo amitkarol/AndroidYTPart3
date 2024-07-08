@@ -61,19 +61,18 @@ public class homescreen extends AppCompatActivity {
         AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Videos")
                 .build();
         VideoDao videoDao = db.videoDao();
-
         VideoAPI videoAPI = new VideoAPI();
         videoAPI.get();
+
+        viewModel.getVideos().observe(this, videos -> {
+            videoAdapter.setVideos(videos);
+        });
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
         videoAdapter = new VideoListAdapter(null, this, loggedInUser);
         recyclerView.setAdapter(videoAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        viewModel.getVideos().observe(this, videos -> {
-            videoAdapter.setVideos(videos);
-        });
 
 
         // Set up SwipeRefreshLayout

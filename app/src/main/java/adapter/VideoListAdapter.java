@@ -91,7 +91,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         // Navigate to video watching activity on item click
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, videowatching.class);
-            intent.putExtra("title", video.getTitle());
+            intent.putExtra("video", video);
             intent.putExtra("user", loggedInUser);
             context.startActivity(intent);
         });
