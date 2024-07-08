@@ -67,7 +67,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     @Override
     @RequiresApi(api = Build.VERSION_CODES.P)
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Video video = filteredVideoList.get(position);
+        Video video = videoList.get(position);
 
         holder.titleTextView.setText(video.getTitle());
         holder.channelTextView.setText(video.getOwner());

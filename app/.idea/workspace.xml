@@ -5,16 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a31eaa13-1d1f-4f16-805c-e068e6a1ee1b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/deploymentTargetSelector.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/CommentAPI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/UserAPI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/ViewModels/CommentsViewModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/ViewModels/UsersViewModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/Token.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/CommentsRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/UsersRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/retrofit/RetrofitClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/adapter/VideoListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/adapter/VideoListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/VideoAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/VideoAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/WebServiceAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/WebServiceAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Displayname.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Displayname.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Username.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Username.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/db/AppDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/db/AppDB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/homescreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/homescreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/password.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/password.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/VideosRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/VideosRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/videowatching.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/videowatching.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/viewmodels/VideosViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/viewmodels/VideosViewModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/viewmodels/VideosViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/ViewModels/VideosViewModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +70,7 @@
     "android.gradle.sync.needed": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Rebasing amit",
+    "git-widget-placeholder": "Merging amit",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Amit/Desktop/Mitkadem/AndroidYTPart3"

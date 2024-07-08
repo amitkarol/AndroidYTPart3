@@ -1,14 +1,12 @@
 package com.example.myapplication.Api;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.Daos.VideoDao;
+import com.example.myapplication.Daos.CommentDao;
 import com.example.myapplication.MyApplication;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
-import com.example.myapplication.entities.Video;
+import com.example.myapplication.entities.Comment;
 import com.example.myapplication.retrofit.RetrofitClient;
 
 import java.util.List;
@@ -22,39 +20,38 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class VideoAPI {
-
-    private VideoDao videoDao;
+public class CommentAPI {
+    private CommentDao commentDao;
     private Retrofit retrofit;
     private WebServiceAPI webServiceAPI;
-    private MutableLiveData<List<Video>> videosLiveData;
+    private MutableLiveData<List<Comment>> commentsLiveData;
 
-    public VideoAPI() {
+    public CommentAPI() {
         retrofit = RetrofitClient.getRetrofit();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
 
-        // Initialize videoDao
+        // Initialize commentDao
         AppDB db = AppDB.getInstance();
-        videoDao = db.videoDao();
+        commentDao = db.CommentDao();
 
         // Initialize LiveData
-        videosLiveData = new MutableLiveData<>();
+        commentsLiveData = new MutableLiveData<>();
     }
 
     public void get() {
-        Call<List<Video>> call = webServiceAPI.getVideos();
-        call.enqueue(new Callback<List<Video>>() {
+        Call<List<Comment>> call = webServiceAPI.getComments();
+        call.enqueue(new Callback<List<Comment>>() {
             @Override
-            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
-                        List<Video> videos = response.body();
-                        for (Video res : videos) {
-                            videoDao.insert(new Video(res.getTitle(), res.getDescription(),
-                                    res.getImg(), res.getVideo(), res.getOwner()));
+                        List<Comment> comments = response.body();
+                        for (Comment res : comments) {
+                            commentDao.insert(new Comment(res.getEmail(), res.getDisplayName(),
+                                    res.getText(), res.getPhotoUri()));
                         }
-                        // Update LiveData with the new list of videos
-                        videosLiveData.postValue(videos);
+                        // Update LiveData with the new list of comments
+                        commentsLiveData.postValue(comments);
                     }).start();
                 } else {
                     // Handle unsuccessful response
@@ -62,10 +59,10 @@ public class VideoAPI {
             }
 
             @Override
-            public void onFailure(Call<List<Video>> call, Throwable t) {
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
                 // Handle the failure case
-                // For example, you could log the error or notify the user
-                // Log.e("VideoAPI", "Failed to fetch Videos", t);
+                // For example, you could log the error or notify the comment
+                // Log.e("CommentAPI", "Failed to fetch Comments", t);
             }
         });
     }

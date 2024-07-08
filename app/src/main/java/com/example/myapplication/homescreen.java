@@ -20,11 +20,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.db.AppDB;
-import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.User;
-import com.example.myapplication.viewmodels.VideosViewModel;
-
-import java.util.List;
+import com.example.myapplication.ViewModels.VideosViewModel;
 
 import adapter.VideoListAdapter;
 
@@ -37,7 +34,6 @@ public class homescreen extends AppCompatActivity {
     private Switch modeSwitch;
     private RelativeLayout homeScreenLayout;
     private SearchView searchView;
-
     private VideosViewModel viewModel;
 
     @Override
@@ -73,7 +69,6 @@ public class homescreen extends AppCompatActivity {
         videoAdapter = new VideoListAdapter(null, this, loggedInUser);
         recyclerView.setAdapter(videoAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
         // Set up SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);

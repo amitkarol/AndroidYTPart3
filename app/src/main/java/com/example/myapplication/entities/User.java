@@ -20,6 +20,7 @@ public class User implements Serializable {
     private String password;
     private String displayName;
     private String photoUri;
+    private String token = null;
 
     @TypeConverters(VideoConverter.class)
     private List<Video> Videos;
@@ -111,6 +112,14 @@ public class User implements Serializable {
 
     public void setVideos(List<Video> Videos) {
         this.Videos = Videos;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     // toString method for printing user details
