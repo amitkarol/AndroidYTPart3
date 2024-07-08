@@ -18,6 +18,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.room.Room;
+
+import com.example.myapplication.Api.UserAPI;
+import com.example.myapplication.Api.VideoAPI;
+import com.example.myapplication.Daos.VideoDao;
+import com.example.myapplication.ViewModels.UsersViewModel;
+import com.example.myapplication.ViewModels.VideosViewModel;
+import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.UserManager;
 import java.io.ByteArrayOutputStream;
@@ -28,8 +37,10 @@ public class Displayname extends BaseActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 123;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
-    private EditText displaynameEdittext;
+    private EditText displayNameEdittext;
     private Uri selectedImageUri;
+
+    private UsersViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +48,15 @@ public class Displayname extends BaseActivity {
         ThemeUtil.applyTheme(this);
         setContentView(R.layout.displayname);
 
-        displaynameEdittext = findViewById(R.id.editTextText2);
+        displayNameEdittext = findViewById(R.id.editTextText2);
 
         Button continueButton = findViewById(R.id.button3);
         continueButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
 
         continueButton.setOnClickListener(v -> {
-            String displayname = displaynameEdittext.getText().toString().trim();
+            String displayName = displayNameEdittext.getText().toString().trim();
 
-            if (displayname.isEmpty()) {
+            if (displayName.isEmpty()) {
                 Toast.makeText(Displayname.this, "Please enter a display name", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -56,16 +67,24 @@ public class Displayname extends BaseActivity {
             }
 
             Intent intent = getIntent();
-            String username = intent.getStringExtra("username");
+            String email = intent.getStringExtra("email");
             String password = intent.getStringExtra("password");
             String firstName = intent.getStringExtra("firstName");
             String lastName = intent.getStringExtra("lastName");
 
-            User user = new User(firstName, lastName, username, password, displayname, selectedImageUri.toString());
-            UserManager.getInstance().addUser(user);
+            viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+            viewModel.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
+//            AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Users")
+//                    .build();
+//            VideoDao videoDao = db.videoDao();
+            UserAPI userAPI = new UserAPI();
+            userAPI.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
+
+//            User user = new User(firstName, lastName, email, password, displayName, selectedImageUri.toString());
+//            UserManager.getInstance().addUser(user);
 
             Intent homescreenIntent = new Intent(Displayname.this, homescreen.class);
-            homescreenIntent.putExtra("user", user);
+            //homescreenIntent.putExtra("user", user);
 
             startActivity(homescreenIntent);
         });

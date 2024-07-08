@@ -67,7 +67,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     @Override
     @RequiresApi(api = Build.VERSION_CODES.P)
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Video video = filteredVideoList.get(position);
+        Video video = videoList.get(position);
 
         holder.titleTextView.setText(video.getTitle());
         holder.channelTextView.setText(video.getOwner());
@@ -91,7 +91,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         // Navigate to video watching activity on item click
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, videowatching.class);
-            intent.putExtra("title", video.getTitle());
+            intent.putExtra("video", video);
             intent.putExtra("user", loggedInUser);
             context.startActivity(intent);
         });
