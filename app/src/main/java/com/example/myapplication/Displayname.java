@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -72,6 +73,7 @@ public class Displayname extends BaseActivity {
             String firstName = intent.getStringExtra("firstName");
             String lastName = intent.getStringExtra("lastName");
 
+            Log.d("test1", "email" + email);
             viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
             viewModel.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
 //            AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Users")
@@ -84,7 +86,7 @@ public class Displayname extends BaseActivity {
 //            UserManager.getInstance().addUser(user);
 
             Intent homescreenIntent = new Intent(Displayname.this, homescreen.class);
-            //homescreenIntent.putExtra("user", user);
+      //      homescreenIntent.putExtra("user", user);
 
             startActivity(homescreenIntent);
         });

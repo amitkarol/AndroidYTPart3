@@ -1,5 +1,7 @@
 package com.example.myapplication.Api;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Daos.UserDao;
@@ -27,15 +29,21 @@ public class UserAPI {
     private MutableLiveData<List<User>> usersLiveData;
 
     public UserAPI() {
+        Log.d("test1", "api builder");
         retrofit = RetrofitClient.getRetrofit();
+        Log.d("test1", "api builder passed retrofit");
         webServiceAPI = retrofit.create(WebServiceAPI.class);
+        Log.d("test1", "api builder passed webservice");
 
         // Initialize userDao
         AppDB db = AppDB.getInstance();
+        Log.d("test1", "api builder passed db");
         userDao = db.userDao();
+        Log.d("test1", "api builder passed userdao");
 
         // Initialize LiveData
         usersLiveData = new MutableLiveData<>();
+        Log.d("test1", "api builder end");
     }
 
     public void get() {
@@ -68,17 +76,19 @@ public class UserAPI {
     }
 
     public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
+        Log.d("test1", "user is " + email);
         Call<User> createUser = webServiceAPI.createUser(firstName, lastName, email, password, displayName, photo);
+        Log.d("test1", "api");
         createUser.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+                Log.d("test1", "is successfull " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
+                        Log.d("test1", "entered thread");
                         User user = response.body();
                         userDao.insert(new User(user.getFirstName(), user.getLastName(),
                                     user.getEmail(), user.getPassword(), user.getDisplayName(), user.getPhotoUri(), user.getVideos()));
-                        // Update LiveData with the new list of users
-                       // currentUserLiveData.postValue(user);
                     }).start();
                 } else {
                     // Handle unsuccessful response
@@ -87,6 +97,7 @@ public class UserAPI {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                Log.d("test1", "failed api");
             }
         });
     }

@@ -24,8 +24,7 @@ public class RetrofitClient {
                     .callbackExecutor(Executors.newSingleThreadExecutor())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-            return retrofit;
         }
-        return null;
+        return retrofit;
     }
 }
