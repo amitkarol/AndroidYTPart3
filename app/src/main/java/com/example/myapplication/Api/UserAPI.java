@@ -12,6 +12,7 @@ import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
+import com.example.myapplication.utils.CurrentUser;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -29,8 +30,6 @@ public class UserAPI {
     private Retrofit retrofit;
     private WebServiceAPI webServiceAPI;
     private MutableLiveData<List<User>> usersLiveData;
-    private MutableLiveData<User> currentUser;
-    private MutableLiveData<String> token;;
 
     public UserAPI() {
         retrofit = RetrofitClient.getRetrofit();
@@ -42,8 +41,6 @@ public class UserAPI {
 
         // Initialize LiveData
         usersLiveData = new MutableLiveData<>();
-        currentUser = new MutableLiveData<>();
-        token = new MutableLiveData<>();
     }
 
     public void get() {
@@ -87,7 +84,7 @@ public class UserAPI {
                         Log.d("test1", "createUser user: " + user);
                         userDao.insert(new User(user.getFirstName(), user.getLastName(),
                                     user.getEmail(), user.getPassword(), user.getDisplayName(), user.getPhotoUri(), user.getVideos()));
-                        assignToken(user, currentUser, token);
+                        assignToken(user);
                     }).start();
                 } else {
                     // Handle unsuccessful response
@@ -101,7 +98,7 @@ public class UserAPI {
         });
     }
 
-    public void assignToken (User user, MutableLiveData<User> currentUser, MutableLiveData<String> token) {
+    public void assignToken (User user) {
         Log.d("test1", "token user: " + user.getEmail());
         String email = user.getEmail();
         String password = user.getPassword();
@@ -111,12 +108,12 @@ public class UserAPI {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
                 Log.d("test1", "response token : " + response.isSuccessful());
+                CurrentUser currentUser = CurrentUser.getInstance();
                 if (response.isSuccessful()) {
                     new Thread(() -> {
-                        currentUser.postValue(user);
-                        token.postValue(response.body().getToken());
-                        Log.d("test1", "token: " + token);
-                        Log.d("test1", "token: " + response.body().getToken());
+                        currentUser.setUser(user);
+                        currentUser.setToken(response.body().getToken());
+                        Log.d("test1", "user in assignToken: " + currentUser.getUser().getValue());
                     }).start();
                 } else {
                 }
