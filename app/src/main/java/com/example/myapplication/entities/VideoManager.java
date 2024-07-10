@@ -80,14 +80,14 @@ public class VideoManager {
         return new ArrayList<>(videoList);
     }
 
-    public Video getVideoById(int id) {
-        for (Video video : videoList) {
-            if (video.getId() == id) {
-                return video;
-            }
-        }
-        return null;
-    }
+//    public Video getVideoById(int id) {
+//        for (Video video : videoList) {
+//            if (video.getId() == id) {
+//                return video;
+//            }
+//        }
+//        return null;
+//    }
 
     public Video getVideoByTitle(String title) {
         for (Video video : videoList) {
@@ -109,7 +109,7 @@ public class VideoManager {
 
     public void removeVideo(Video videoToRemove) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            videoList.removeIf(video -> video.getId() == videoToRemove.getId());
+            videoList.removeIf(video -> video.get_id() == videoToRemove.get_id());
         }
     }
 

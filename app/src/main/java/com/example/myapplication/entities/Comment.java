@@ -10,21 +10,45 @@ import androidx.room.PrimaryKey;
 public class Comment implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
-
     private String  email;
-    private String displayName;
+    private String userName;
     private String text;
-    private String timestamp;
-    private String photoUri;
+    private String date;
+    private String profilePic;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
+    }
 
     // Constructor
-    public Comment(String email, String displayName, String text, String photoUri) {
+    public Comment(String email, String userName, String text, String profilePic) {
         this.email = email;
-        this.displayName = displayName;
+        this.userName = userName;
         this.text = text;
-        this.photoUri = photoUri;
-        this.timestamp = getCurrentTimestamp();
+        this.profilePic = profilePic;
+        this.date = getCurrentdate();
     }
+
 
 
     // Other getters and setters
@@ -36,12 +60,12 @@ public class Comment implements Serializable {
         this.id = id;
     }
 
-    public String getPhotoUri() {
-        return photoUri;
+    public String getprofilePic() {
+        return profilePic;
     }
 
-    public void setPhotoUri(String photoUri) {
-        this.photoUri = photoUri;
+    public void setprofilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 
     public String getEmail() {
@@ -52,12 +76,12 @@ public class Comment implements Serializable {
         this.email = email;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setuserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getuserName() {
+        return userName;
     }
 
     public String getText() {
@@ -68,16 +92,16 @@ public class Comment implements Serializable {
         this.text = text;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String getdate() {
+        return date;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setdate(String date) {
+        this.date = date;
     }
 
-    private String getCurrentTimestamp() {
-        // Implementation for getting the current timestamp
+    private String getCurrentdate() {
+        // Implementation for getting the current date
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 }

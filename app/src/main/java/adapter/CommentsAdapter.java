@@ -18,8 +18,8 @@ import com.example.myapplication.Fragments.EditCommentDialog;
 import com.example.myapplication.R;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
-import com.example.myapplication.entities.UserManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.CommentViewHolder> {
@@ -30,7 +30,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     public CommentsAdapter(FragmentActivity activity, List<Comment> commentList, User loggedInUser) {
         this.activity = activity;
-        this.commentList = commentList;
+        this.commentList = commentList != null ? commentList : new ArrayList<>(); // ודא שהרשימה מאותחלת
         this.loggedInUser = loggedInUser;
     }
 
@@ -45,13 +45,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = commentList.get(position);
-        holder.userTextView.setText(comment.getDisplayName());
+        holder.userTextView.setText(comment.getuserName());
         holder.commentTextView.setText(comment.getText());
-        holder.timestampTextView.setText(comment.getTimestamp());
+        holder.timestampTextView.setText(comment.getdate());
 
         // Set user image
-        if (comment.getPhotoUri() != null) {
-            holder.userImageView.setImageURI(Uri.parse(comment.getPhotoUri()));
+        if (comment.getprofilePic() != null) {
+            holder.userImageView.setImageURI(Uri.parse(comment.getprofilePic()));
         } else {
             holder.userImageView.setImageResource(R.drawable.person);
         }
@@ -90,6 +90,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private void deleteComment(int position) {
         commentList.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public void setComments(List<Comment> newCommentList) {
+        this.commentList = newCommentList != null ? newCommentList : new ArrayList<>(); // ודא שהרשימה מאותחלת
+        notifyDataSetChanged();
     }
 
     private void showEditCommentDialog(int position) {

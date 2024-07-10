@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Button;
@@ -67,6 +69,7 @@ public class videowatching extends FragmentActivity {
         if (intent != null) {
             Uri data = intent.getData();
             currentVideo = (Video) intent.getSerializableExtra("video");
+
 //            if (data != null) {
 //                // Handle deep link
 //                int videoId = Integer.parseInt(data.getQueryParameter("id"));
@@ -81,14 +84,17 @@ public class videowatching extends FragmentActivity {
             UserManager userManager = UserManager.getInstance();
             User owner = userManager.getUserByEmail(currentVideo.getOwner());
 
+
             if (currentVideo != null) {
                 // Set data to views
                 titleTextView.setText(currentVideo.getTitle());
                 descriptionTextView.setText(currentVideo.getDescription());
                 viewCountTextView.setText("Views " + currentVideo.getViews());
                 channelTextView.setText(owner.getEmail());
-                videoView.setVideoPath(R.string.BaseUrl + "/public" + currentVideo.getVideo());
-                videoView.start();
+
+                String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
+                videoView.setVideoPath(videoUrl);
+               videoView.start();
 
                 // Set user photo
                 Uri photoUri = Uri.parse(owner.getPhotoUri());
@@ -180,14 +186,14 @@ public class videowatching extends FragmentActivity {
         }
     }
 
-    private Video getVideoById(int id) {
-        for (Video video : VideoManager.getInstance().getVideoList()) {
-            if (video.getId() == id) {
-                return video;
-            }
-        }
-        return null;
-    }
+//    private Video getVideoById(int id) {
+//        for (Video video : VideoManager.getInstance().getVideoList()) {
+//            if (video.getId() == id) {
+//                return video;
+//            }
+//        }
+//        return null;
+//    }
 
     private Video getVideoByTitle(String title) {
         for (Video video : VideoManager.getInstance().getVideoList()) {

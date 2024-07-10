@@ -2,6 +2,7 @@ package com.example.myapplication.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,28 +13,35 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
+import com.example.myapplication.Api.CommentAPI;
 import com.example.myapplication.R;
+import com.example.myapplication.ViewModels.CommentsViewModel;
+import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Comment;
-import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.login;
 
-import adapter.CommentsAdapter;
-
+import java.util.ArrayList;
 import java.util.List;
+
+import adapter.CommentsAdapter;
 
 public class Comments extends DialogFragment {
 
     private RecyclerView commentsRecyclerView;
     private CommentsAdapter commentsAdapter;
-    private List<Comment> commentList;
+    private List<Comment> commentList = new ArrayList<>();
     private Video currentVideo;
     private User loggedInUser;
     private EditText commentEditText;
     private Button addCommentButton;
+    private CommentsViewModel commentsViewModel;
 
     public Comments(Video currentVideo, User loggedInUser) {
         this.currentVideo = currentVideo;
@@ -45,15 +53,28 @@ public class Comments extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.comments, container, false);
 
+        //new
+        commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
+        AppDB db = Room.databaseBuilder(getContext().getApplicationContext(), AppDB.class, "Comments").build();
+        CommentAPI commentAPI = new CommentAPI();
+        commentAPI.get(currentVideo.getOwner() , currentVideo.get_id());
+
+        commentsViewModel.getComments().observe(this, comments -> {
+            if (comments != null) {
+                Log.d("Comments", "Received comments from ViewModel: " + comments.size());
+                commentsAdapter.setComments(comments);
+            } else {
+                Log.d("Comments", "Received null comments from ViewModel");
+            }
+        });
+
         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Button closeButton = view.findViewById(R.id.closeButton);
         closeButton.setOnClickListener(v -> dismiss());
 
-        // Initialize with comments from the video
-        commentList = currentVideo.getComments();
-
+        // Initialize the adapter with an empty list
         commentsAdapter = new CommentsAdapter(getActivity(), commentList, loggedInUser);
         commentsRecyclerView.setAdapter(commentsAdapter);
 

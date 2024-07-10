@@ -20,16 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Room;
-
 import com.example.myapplication.Api.UserAPI;
-import com.example.myapplication.Api.VideoAPI;
-import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.ViewModels.UsersViewModel;
-import com.example.myapplication.ViewModels.VideosViewModel;
-import com.example.myapplication.db.AppDB;
-import com.example.myapplication.entities.User;
-import com.example.myapplication.entities.UserManager;
 import java.io.ByteArrayOutputStream;
 
 public class Displayname extends BaseActivity {
