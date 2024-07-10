@@ -3,9 +3,12 @@ package adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import com.example.myapplication.entities.User;
 import com.example.myapplication.videowatching;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,9 +76,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         holder.titleTextView.setText(video.getTitle());
         holder.channelTextView.setText(video.getOwner());
 
+        Log.d("VideoAdapter", "Empty or null image URI for video: " + video.getImg());
         // Load the video thumbnail
         if (video.getImg() != null && !video.getImg().isEmpty()) {
-            loadImageFromUri(holder.thumbnailImageView, Uri.parse(video.getImg()), R.drawable.dog1);
+            String imageUrl = context.getResources().getString(R.string.BaseUrl) + video.getImg();
+            Log.d("forcheck", "Image URL: " + imageUrl);
+            new LoadImageTask(holder.thumbnailImageView, R.drawable.dog1).execute(imageUrl);
         } else {
             holder.thumbnailImageView.setImageResource(video.getThumbnailResId());
         }
@@ -83,7 +90,24 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         UserManager userManager = UserManager.getInstance();
         User owner = userManager.getUserByEmail(video.getOwner());
         if (owner != null && owner.getPhotoUri() != null && !owner.getPhotoUri().isEmpty()) {
-            loadImageFromUri(holder.userPhotoImageView, Uri.parse(owner.getPhotoUri()), R.drawable.person);
+            try {
+                InputStream inputStream = context.getContentResolver().openInputStream(Uri.parse(owner.getPhotoUri()));
+                if (inputStream != null) {
+                    ImageDecoder.Source source = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        source = ImageDecoder.createSource(context.getContentResolver(), Uri.parse(owner.getPhotoUri()));
+                    }
+                    Bitmap bitmap = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        bitmap = ImageDecoder.decodeBitmap(source);
+                    }
+                    holder.userPhotoImageView.setImageBitmap(bitmap);
+                    inputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                holder.userPhotoImageView.setImageResource(R.drawable.person);
+            }
         } else {
             holder.userPhotoImageView.setImageResource(R.drawable.person);
         }
@@ -139,24 +163,42 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         filter("");
     }
 
-    private void loadImageFromUri(ImageView imageView, Uri uri, int placeholderResId) {
-        try {
-            InputStream inputStream = context.getContentResolver().openInputStream(uri);
-            if (inputStream != null) {
-                ImageDecoder.Source source = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                    source = ImageDecoder.createSource(context.getContentResolver(), uri);
-                }
-                Bitmap bitmap = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                    bitmap = ImageDecoder.decodeBitmap(source);
-                }
-                imageView.setImageBitmap(bitmap);
-                inputStream.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private ImageView imageView;
+        private int placeholderResId;
+
+        public LoadImageTask(ImageView imageView, int placeholderResId) {
+            this.imageView = imageView;
+            this.placeholderResId = placeholderResId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
             imageView.setImageResource(placeholderResId);
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream inputStream = new URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                imageView.setImageBitmap(result);
+            } else {
+                imageView.setImageResource(placeholderResId);
+            }
         }
     }
 }

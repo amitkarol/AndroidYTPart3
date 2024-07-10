@@ -3,6 +3,7 @@ package com.example.myapplication.Daos;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -14,10 +15,10 @@ public interface VideoDao {
     @Query("SELECT * FROM Video")
     List<Video> index();
 
-    @Query("SELECT * FROM Video WHERE id = :id")
-    Video get(int id);
+    @Query("SELECT * FROM Video WHERE _id = :id")
+    Video get(String id);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Video... Videos);
 
     @Update

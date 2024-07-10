@@ -20,7 +20,7 @@ public class ShareFragment extends DialogFragment {
     private String videoLink;
 
     public ShareFragment(Video currentVideo) {
-        this.videoLink = "myapp://video?id=" + currentVideo.getId();
+        this.videoLink = "myapp://video?id=" + currentVideo.get_id();
     }
 
     @Nullable

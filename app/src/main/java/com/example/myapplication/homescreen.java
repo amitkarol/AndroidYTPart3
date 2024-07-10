@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +25,7 @@ import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.ViewModels.VideosViewModel;
+import com.example.myapplication.utils.CurrentUser;
 
 import adapter.VideoListAdapter;
 
@@ -41,7 +45,20 @@ public class homescreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homescreen);
 
-        loggedInUser = (User) getIntent().getSerializableExtra("user");
+        CurrentUser currentUser = CurrentUser.getInstance();
+        //loggedInUser = (User) getIntent().getSerializableExtra("user");
+        // Observe the user LiveData
+        currentUser.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                loggedInUser = user;
+
+                Log.d("test1", "loggedInUser: " + loggedInUser);
+                // Update UI or perform other actions based on the new loggedInUser
+            }
+        });
+
+
         if (loggedInUser == null) {
             Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
             loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
@@ -50,7 +67,7 @@ public class homescreen extends AppCompatActivity {
         // Display user photo
         ImageView imageViewPerson = findViewById(R.id.imageViewPerson);
         if (loggedInUser.getPhotoUri() != null) {
-            imageViewPerson.setImageURI(Uri.parse(loggedInUser.getPhotoUri()));
+            imageViewPerson.setImageURI(Uri.parse(getResources().getString(R.string.BaseUrl) + loggedInUser.getPhotoUri()));
         }
 
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);

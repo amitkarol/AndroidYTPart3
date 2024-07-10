@@ -19,9 +19,8 @@ public class VideosViewModel extends ViewModel {
         videos = repository.getAll();
     }
 
-    public LiveData<List<Video>> getVideos() {
-        return videos;
-    }
+  public LiveData<List<Video>> getVideos() {return videos;
+      }
 
     public LiveData<List<Video>> get() {
         return videos;

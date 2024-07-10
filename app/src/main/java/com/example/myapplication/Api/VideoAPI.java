@@ -50,7 +50,9 @@ public class VideoAPI {
                     new Thread(() -> {
                         List<Video> videos = response.body();
                         for (Video res : videos) {
-                            videoDao.insert(new Video(res.getTitle(), res.getDescription(),
+                            Log.d("test2: ", "videos: " + res);
+                            Log.d("testt", res.get_id());
+                            videoDao.insert(new Video(res.get_id(), res.getTitle(), res.getDescription(),
                                     res.getImg(), res.getVideo(), res.getOwner()));
                         }
                         // Update LiveData with the new list of videos
@@ -64,9 +66,8 @@ public class VideoAPI {
             @Override
             public void onFailure(Call<List<Video>> call, Throwable t) {
                 // Handle the failure case
-                // For example, you could log the error or notify the user
-                // Log.e("VideoAPI", "Failed to fetch Videos", t);
+                Log.e("VideoAPI", "Failed to fetch Videos", t);
             }
         });
-    }
-}
+
+    }}
