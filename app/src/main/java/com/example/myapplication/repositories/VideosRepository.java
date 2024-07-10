@@ -4,6 +4,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
@@ -17,11 +18,13 @@ import java.util.List;
 public class VideosRepository {
     private VideoDao dao;
     private static VideoListData videoListData;
+    VideoAPI videoAPI;
 
     public VideosRepository() {
         AppDB db = AppDB.getInstance();
         dao = db.videoDao();
         videoListData = new VideoListData(dao);
+        videoAPI = new VideoAPI();
     }
 
     static class VideoListData extends MutableLiveData<List<Video>> {
@@ -45,5 +48,9 @@ public class VideosRepository {
 
     public LiveData<List<Video>> getAll() {
         return videoListData;
+    }
+
+    public void createVideo(String title, String description, String img, String video, String owner) {
+        videoAPI.createVideo(title, description, img, video, owner);
     }
 }

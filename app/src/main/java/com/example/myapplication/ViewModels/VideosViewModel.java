@@ -10,13 +10,13 @@ import com.example.myapplication.repositories.VideosRepository;
 import java.util.List;
 
 public class VideosViewModel extends ViewModel {
-    private VideosRepository repository;
+    private VideosRepository videoRepository;
     private LiveData<List<Video>> videos;
 
 
     public VideosViewModel() {
-        repository = new VideosRepository();
-        videos = repository.getAll();
+        videoRepository = new VideosRepository();
+        videos = videoRepository.getAll();
     }
 
   public LiveData<List<Video>> getVideos() {return videos;
@@ -24,5 +24,9 @@ public class VideosViewModel extends ViewModel {
 
     public LiveData<List<Video>> get() {
         return videos;
+    }
+
+    public void createVideo(String title, String description, String img, String video, String owner) {
+        videoRepository.createVideo(title, description, img, video, owner);
     }
 }

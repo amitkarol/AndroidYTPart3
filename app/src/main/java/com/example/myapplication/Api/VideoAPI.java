@@ -8,6 +8,7 @@ import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.MyApplication;
 import com.example.myapplication.R;
 import com.example.myapplication.db.AppDB;
+import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
 
@@ -70,4 +71,29 @@ public class VideoAPI {
             }
         });
 
-    }}
+    }
+
+    public void createVideo(String title, String description, String img, String video, String owner) {
+        Call<Video> createVideo = webServiceAPI.createVideo(title, description, img, video, owner);
+        createVideo.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(Call<Video> call, Response<Video> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        Log.d("test1", "entered thread");
+                        Video newVideo = response.body();
+                        videoDao.insert(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
+                                newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
+                    }).start();
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Video> call, Throwable t) {
+                Log.d("test1", "failed api");
+            }
+        });
+    }
+}

@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -10,11 +11,16 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 
+import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
+import com.example.myapplication.utils.CurrentUser;
 
 public class detailsofvideo extends BaseActivity {
 
@@ -25,8 +31,10 @@ public class detailsofvideo extends BaseActivity {
     private ImageView imageViewThumbnail;
 
     private Video selectedVideo;
-    private User user;
+    private User loggedInUser;
     private Uri selectedImageUri;
+    
+    private VideosViewModel viewModel;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -53,9 +61,22 @@ public class detailsofvideo extends BaseActivity {
         // Retrieve the video URL and user details from the Intent
         Intent intent = getIntent();
         String videoUrl = intent.getStringExtra("videoUrl");
-        user = (User) intent.getSerializableExtra("user");
+        //user = (User) intent.getSerializableExtra("user");
 
-        selectedVideo = new Video( "", "", "", 0, videoUrl, user.getEmail(), 0, 0);
+        CurrentUser currentUser = CurrentUser.getInstance();
+        //user = (User) getIntent().getSerializableExtra("user");
+        // Observe the user LiveData
+        currentUser.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                loggedInUser = user;
+
+                Log.d("test1", "user: " + user);
+                // Update UI or perform other actions based on the new user
+            }
+        });
+
+        selectedVideo = new Video( "", "", "", 0, videoUrl, loggedInUser.getEmail(), 0, 0);
 
         buttonPickThumbnail.setOnClickListener(v -> {
             Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -76,12 +97,16 @@ public class detailsofvideo extends BaseActivity {
             selectedVideo.setDescription(description);
             selectedVideo.setImg(selectedImageUri.toString());
 
+            // 
+            viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+            viewModel.createVideo(title, description, selectedImageUri.toString(), selectedVideo.toString(), loggedInUser.getEmail());
+            
             // Add the video to VideoManager
             VideoManager.getInstance().addVideo(selectedVideo);
 
             // Save the video details and go back to the home screen
             Intent homeIntent = new Intent(detailsofvideo.this, homescreen.class);
-            homeIntent.putExtra("user", user);
+            homeIntent.putExtra("user", loggedInUser);
             startActivity(homeIntent);
             finish();
         });
