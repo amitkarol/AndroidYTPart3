@@ -39,8 +39,7 @@ public interface WebServiceAPI {
     @FormUrlEncoded
     @POST("/api/users/{id}/videos")
     Call<Video> createVideo(@Field("title") String title, @Field("description") String description,
-                          @Field("img") String img, @Field("video") String video,
-                          @Field("owner") String owner);
+                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner);
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments(

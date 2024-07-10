@@ -11,7 +11,11 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+
 import com.example.myapplication.entities.User;
+import com.example.myapplication.utils.CurrentUser;
 
 public class uploadvideo extends BaseActivity {
 
@@ -26,8 +30,18 @@ public class uploadvideo extends BaseActivity {
         ThemeUtil.applyTheme(this);
         setContentView(R.layout.uploadvideo);
 
-        // Get the logged-in user from the intent
-        loggedInUser = (User) getIntent().getSerializableExtra("user");
+        //
+        CurrentUser currentUser = CurrentUser.getInstance();
+        //user = (User) getIntent().getSerializableExtra("user");
+        // Observe the user LiveData
+        currentUser.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                loggedInUser = user;
+                Log.d("test3", "uploadVideo user: " + loggedInUser);
+                // Update UI or perform other actions based on the new user
+            }
+        });
 
         Button closeButton = findViewById(R.id.closeButton);
         closeButton.setOnClickListener(v -> {

@@ -51,6 +51,8 @@ public class VideosRepository {
     }
 
     public void createVideo(String title, String description, String img, String video, String owner) {
+        Log.d("test3", "repository start video: " + title);
         videoAPI.createVideo(title, description, img, video, owner);
+        Log.d("test3", "repository end video: " + title);
     }
 }

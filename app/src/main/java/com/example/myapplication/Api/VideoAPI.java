@@ -78,21 +78,25 @@ public class VideoAPI {
         createVideo.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
+                Log.d("test3", "reached api");
+                Log.d("test3", "api response: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
                         Log.d("test1", "entered thread");
                         Video newVideo = response.body();
+                        Log.d("test3", "api video: " + newVideo);
                         videoDao.insert(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
                                 newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
+                        Log.d("test3", "api insert: " + newVideo);
                     }).start();
                 } else {
-                    // Handle unsuccessful response
+                    Log.d("test3", "response failed api");
                 }
             }
 
             @Override
             public void onFailure(Call<Video> call, Throwable t) {
-                Log.d("test1", "failed api");
+                Log.d("test3", "failed api");
             }
         });
     }
