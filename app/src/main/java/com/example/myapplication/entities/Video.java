@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -12,11 +13,18 @@ import androidx.room.TypeConverters;
 import com.example.myapplication.converters.CommentConverter;
 import com.example.myapplication.converters.StringListConverter;
 import com.example.myapplication.converters.UserConverter;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class Video implements Serializable {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+
+ //   private String id;
+    @PrimaryKey()
+    @SerializedName("_id")
+    @NonNull
+    @Expose
+    private String _id;
     private String title;
     private String description;
     private String img;
@@ -45,7 +53,8 @@ public class Video implements Serializable {
         this.comments = new ArrayList<>();
     }
 
-    public Video(String title, String description, String img, String video, String owner) {
+    public Video(String _id, String title, String description, String img, String video, String owner) {
+        this._id = _id;
         this.title = title;
         this.description = description;
         this.img = img;
@@ -62,7 +71,7 @@ public class Video implements Serializable {
     // Copy constructor
     @Ignore
     public Video(Video original) {
-        this.id = original.id;
+      //  this.id = original.id;
         this.title = original.title;
         this.description = original.description;
         this.img = original.img;
@@ -75,14 +84,14 @@ public class Video implements Serializable {
     }
 
     // Getters and setters
+//    @NonNull
+//    public String getId() {
+//        return id;
+//    }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+//    public void setId(@NonNull String id) {
+//        this.id = id;
+//    }
 
     public String getTitle() {
         return title;
@@ -110,6 +119,14 @@ public class Video implements Serializable {
 
     public int getThumbnailResId() {
         return thumbnailResId;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public void setThumbnailResId(int thumbnailResId) {
@@ -193,7 +210,7 @@ public class Video implements Serializable {
     @Override
     public String toString() {
         return "video{" +
-                "id='" + id + '\'' +
+                "id='" + _id + '\'' +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", thumbnailUrl='" + img + '\'' +

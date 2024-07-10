@@ -5,30 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a31eaa13-1d1f-4f16-805c-e068e6a1ee1b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/CommentAPI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/UserAPI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/ViewModels/CommentsViewModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/ViewModels/UsersViewModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/Token.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/CommentsRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/UsersRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/retrofit/RetrofitClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/adapter/CommentsAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/adapter/CommentsAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/adapter/VideoListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/adapter/VideoListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/CommentAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/CommentAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/VideoAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/VideoAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/WebServiceAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Api/WebServiceAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Daos/VideoDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Daos/VideoDao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Displayname.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Displayname.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Username.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Username.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Fragments/Comments.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Fragments/Comments.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Fragments/ShareFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/Fragments/ShareFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/db/AppDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/db/AppDB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/Comment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/Comment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/Video.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/Video.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/VideoManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/entities/VideoManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/homescreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/homescreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/password.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/password.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/VideosRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/repositories/VideosRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/videowatching.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/videowatching.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/myapplication/viewmodels/VideosViewModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/myapplication/ViewModels/VideosViewModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/displayname.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/displayname.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/loginscreen.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/loginscreen.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/password.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/password.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/registrationscreen.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/registrationscreen.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/username.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/username.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,21 +61,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "android.gradle.sync.needed": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Merging amit",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Amit/Desktop/Mitkadem/AndroidYTPart3"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Rebasing amit&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Amit/Desktop/Mitkadem/AndroidYTPart3&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

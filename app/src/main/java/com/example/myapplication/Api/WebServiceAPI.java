@@ -37,7 +37,10 @@ public interface WebServiceAPI {
                                      @Field("displayName") String displayName, @Field("photo") String photo);
 
     @GET("/api/users/{id}/videos/{pid}/comments")
-    Call<List<Comment>> getComments();
+    Call<List<Comment>> getComments(
+            @Path("id") String userId,
+            @Path("pid") String videoId
+    );
 
     // Token API
     @FormUrlEncoded
