@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -10,8 +11,11 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.lifecycle.ViewModelProvider;
 
 
+import com.example.myapplication.ViewModels.UsersViewModel;
+import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
@@ -27,6 +31,8 @@ public class detailsofvideo extends BaseActivity {
     private Video selectedVideo;
     private User user;
     private Uri selectedImageUri;
+    
+    private VideosViewModel viewModel;
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -72,10 +78,15 @@ public class detailsofvideo extends BaseActivity {
                 return;
             }
 
+            Log.d("test3", "detailsInfo user: " + user);
             selectedVideo.setTitle(title);
             selectedVideo.setDescription(description);
             selectedVideo.setImg(selectedImageUri.toString());
 
+            // 
+            viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+            viewModel.createVideo(title, description, selectedImageUri.toString(), selectedVideo.toString(), user.getEmail());
+            
             // Add the video to VideoManager
             VideoManager.getInstance().addVideo(selectedVideo);
 
