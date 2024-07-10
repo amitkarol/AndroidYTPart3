@@ -1,44 +1,53 @@
 package com.example.myapplication.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.example.myapplication.Daos.CommentDao;
+import com.example.myapplication.Api.CommentAPI;
+import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Comment;
-
+import com.example.myapplication.entities.Video;
 import java.util.List;
 
 public class CommentsRepository {
-    private CommentDao dao;
-    private static CommentListData commentListData;
+    private VideoDao videoDao;
+    private MutableLiveData<List<Comment>> commentsLiveData;
 
     public CommentsRepository() {
         AppDB db = AppDB.getInstance();
-        dao = db.CommentDao();
-        commentListData = new CommentListData(dao);
+        videoDao = db.videoDao();
+        commentsLiveData = new MutableLiveData<>();
     }
 
-    static class CommentListData extends MutableLiveData<List<Comment>> {
+    public LiveData<List<Comment>> getCommentsByVideoId(String videoId) {
+        new Thread(() -> {
+            Video video = videoDao.get(videoId);
+            if (video != null) {
+                commentsLiveData.postValue(video.getComments());
+            } else {
+                Log.d("CommentsRepository", "Video not found");
+            }
+        }).start();
+        return commentsLiveData;
+    }
 
-        private final CommentDao commentDao;
+    public void fetchComments(String userId, String videoId) {
+        CommentAPI commentAPI = new CommentAPI();
+        commentAPI.get(userId, videoId);
 
-        public CommentListData(CommentDao commentDao) {
-            super();
-            this.commentDao = commentDao;
-        }
-
-        @Override
-        protected void onActive() {
-            super.onActive();
+        // Update the local LiveData after fetching comments
+        commentAPI.getCommentsLiveData().observeForever(comments -> {
             new Thread(() -> {
-                List<Comment> comments = commentDao.index();
-                postValue(comments);
+                Video video = videoDao.get(videoId);
+                if (video != null) {
+                    video.setComments(comments);
+                    videoDao.update(video);
+                    commentsLiveData.postValue(video.getComments());
+                    Log.d("CommentsRepository", "Updated LiveData with comments: " + video.getComments().size());
+                }
             }).start();
-        }
-    }
-
-    public LiveData<List<Comment>> getAll() {
-        return commentListData;
+        });
     }
 }
