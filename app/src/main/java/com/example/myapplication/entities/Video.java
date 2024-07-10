@@ -67,11 +67,25 @@ public class Video implements Serializable {
         this.comments = new ArrayList<>();
     }
 
+    @Ignore
+    public Video(String title, String description, String img, String video, String owner) {
+        this.title = title;
+        this.description = description;
+        this.img = img;
+        this.thumbnailResId = 0;
+        this.video = video;
+        this.owner = owner;
+        this.views = 0;
+        this.likes = 0;
+        this.likedBy = new ArrayList<String>();
+        this.comments = new ArrayList<>();
+    }
+
 
     // Copy constructor
     @Ignore
     public Video(Video original) {
-      //  this.id = original.id;
+        this._id = original._id;
         this.title = original.title;
         this.description = original.description;
         this.img = original.img;

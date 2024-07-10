@@ -50,6 +50,7 @@ public class VideoAPI {
                     new Thread(() -> {
                         List<Video> videos = response.body();
                         for (Video res : videos) {
+                            Log.d("test2: ", "videos: " + res);
                             Log.d("testt", res.get_id());
                             videoDao.insert(new Video(res.get_id(), res.getTitle(), res.getDescription(),
                                     res.getImg(), res.getVideo(), res.getOwner()));
