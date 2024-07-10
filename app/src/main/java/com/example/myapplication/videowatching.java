@@ -93,6 +93,7 @@ public class videowatching extends FragmentActivity {
                 channelTextView.setText(owner.getEmail());
 
                 String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
+                Log.d("test5", videoUrl);
                 videoView.setVideoPath(videoUrl);
                videoView.start();
 

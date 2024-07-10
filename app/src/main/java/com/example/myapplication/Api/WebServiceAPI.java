@@ -6,6 +6,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -38,8 +39,9 @@ public interface WebServiceAPI {
 
     @FormUrlEncoded
     @POST("/api/users/{id}/videos")
-    Call<Video> createVideo(@Field("title") String title, @Field("description") String description,
-                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner);
+    Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,
+                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
+                            @Header("authorization") String token);
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments(

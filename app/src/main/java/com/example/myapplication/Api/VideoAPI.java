@@ -11,6 +11,7 @@ import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
+import com.example.myapplication.utils.CurrentUser;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -74,7 +75,10 @@ public class VideoAPI {
     }
 
     public void createVideo(String title, String description, String img, String video, String owner) {
-        Call<Video> createVideo = webServiceAPI.createVideo(title, description, img, video, owner);
+        CurrentUser currentUser = CurrentUser.getInstance();
+        String token = "bearer " +  currentUser.getToken().getValue();
+        Log.d("test3", "token is " + token);
+        Call<Video> createVideo = webServiceAPI.createVideo(owner, title, description, img, video, owner, token);
         createVideo.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
