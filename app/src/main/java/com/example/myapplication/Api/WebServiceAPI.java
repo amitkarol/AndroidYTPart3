@@ -64,7 +64,7 @@ public interface WebServiceAPI {
             @Header("authorization") String token
     );
 
-    ]    @FormUrlEncoded
+    @FormUrlEncoded
     @PATCH("/api/users/{id}/videos/{pid}/views")
     Call<Video> updateViews(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
 
