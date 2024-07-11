@@ -68,7 +68,8 @@ public class videowatching extends FragmentActivity {
         Intent intent = getIntent();
         if (intent != null) {
             Uri data = intent.getData();
-            currentVideo = (Video) intent.getSerializableExtra("video");
+           currentVideo = (Video) intent.getSerializableExtra("video");
+
 
 //            if (data != null) {
 //                // Handle deep link
@@ -92,7 +93,9 @@ public class videowatching extends FragmentActivity {
                 viewCountTextView.setText("Views " + currentVideo.getViews());
                 channelTextView.setText(owner.getEmail());
 
+
                 String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
+                Log.d("videowatching" ,videoUrl);
                 videoView.setVideoPath(videoUrl);
                videoView.start();
 
@@ -150,7 +153,7 @@ public class videowatching extends FragmentActivity {
 
         // Comments button listener
         commentsButton.setOnClickListener(v -> {
-            Comments commentsFragment = new Comments(currentVideo, loggedInUser);
+            Comments commentsFragment = new Comments(currentVideo);
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
         });
 

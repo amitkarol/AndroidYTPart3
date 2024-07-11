@@ -16,12 +16,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import com.example.myapplication.Api.CommentAPI;
 import com.example.myapplication.R;
 import com.example.myapplication.ViewModels.CommentsViewModel;
-import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
@@ -33,7 +30,6 @@ import java.util.List;
 import adapter.CommentsAdapter;
 
 public class Comments extends DialogFragment {
-
     private RecyclerView commentsRecyclerView;
     private CommentsAdapter commentsAdapter;
     private List<Comment> commentList = new ArrayList<>();
@@ -43,29 +39,18 @@ public class Comments extends DialogFragment {
     private Button addCommentButton;
     private CommentsViewModel commentsViewModel;
 
-    public Comments(Video currentVideo, User loggedInUser) {
+    public Comments(Video currentVideo) {
         this.currentVideo = currentVideo;
         this.loggedInUser = loggedInUser;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.comments, container, false);
 
-        //new
         commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
-        AppDB db = Room.databaseBuilder(getContext().getApplicationContext(), AppDB.class, "Comments").build();
-        CommentAPI commentAPI = new CommentAPI();
-        commentAPI.get(currentVideo.getOwner() , currentVideo.get_id());
-
-        commentsViewModel.getComments().observe(this, comments -> {
-            if (comments != null) {
-                Log.d("Comments", "Received comments from ViewModel: " + comments.size());
-                commentsAdapter.setComments(comments);
-            } else {
-                Log.d("Comments", "Received null comments from ViewModel");
-            }
+        commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).observe(getViewLifecycleOwner(), comments -> {
+            commentsAdapter.setComments(comments);
         });
 
         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
@@ -74,20 +59,21 @@ public class Comments extends DialogFragment {
         Button closeButton = view.findViewById(R.id.closeButton);
         closeButton.setOnClickListener(v -> dismiss());
 
-        // Initialize the adapter with an empty list
         commentsAdapter = new CommentsAdapter(getActivity(), commentList, loggedInUser);
         commentsRecyclerView.setAdapter(commentsAdapter);
 
-        // Initialize comment input fields
         commentEditText = view.findViewById(R.id.commentEditText);
         addCommentButton = view.findViewById(R.id.addCommentButton);
-
         addCommentButton.setOnClickListener(v -> addComment());
+
+        commentsViewModel.fetchComments(currentVideo.getOwner(), String.valueOf(currentVideo.get_id()));
 
         return view;
     }
 
     private void addComment() {
+
+        Log.d("Comments frag" , loggedInUser.getEmail());
         if (loggedInUser.getEmail().equals("testuser@example.com")) {
             redirectToLogin();
             return;
@@ -95,10 +81,10 @@ public class Comments extends DialogFragment {
 
         String commentText = commentEditText.getText().toString().trim();
         if (!commentText.isEmpty()) {
-            Comment newComment = new Comment(loggedInUser.getEmail(), loggedInUser.getDisplayName(), commentText, loggedInUser.getPhotoUri());
-            currentVideo.addComment(newComment);
-            commentsAdapter.notifyItemInserted(commentList.size() - 1);
-            commentsRecyclerView.scrollToPosition(commentList.size() - 1);
+            String userName = loggedInUser.getDisplayName();
+            String email = loggedInUser.getEmail();
+            String profilePic = loggedInUser.getPhotoUri();
+            commentsViewModel.addComment(loggedInUser.getEmail(), String.valueOf(currentVideo.get_id()), commentText, userName, email, profilePic);
             commentEditText.setText("");
         } else {
             Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
@@ -113,14 +99,15 @@ public class Comments extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Set the dialog to appear in a specific area of the screen
         if (getDialog() != null && getDialog().getWindow() != null) {
             WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
             params.gravity = Gravity.BOTTOM;
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT; // Adjust this as needed
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             getDialog().getWindow().setAttributes(params);
             getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
     }
 }
