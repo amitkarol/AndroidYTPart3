@@ -17,12 +17,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.Api.VideoAPI;
-import com.example.myapplication.Daos.VideoDao;
-import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.utils.CurrentUser;
@@ -52,7 +49,6 @@ public class homescreen extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable User user) {
                 loggedInUser = user;
-
                 Log.d("test1", "loggedInUser: " + loggedInUser);
                 // Update UI or perform other actions based on the new loggedInUser
             }
@@ -66,14 +62,11 @@ public class homescreen extends AppCompatActivity {
 
         // Display user photo
         ImageView imageViewPerson = findViewById(R.id.imageViewPerson);
-        if (loggedInUser.getPhotoUri() != null) {
-            imageViewPerson.setImageURI(Uri.parse(getResources().getString(R.string.BaseUrl) + loggedInUser.getPhotoUri()));
+        if (loggedInUser.getPhoto() != null) {
+            imageViewPerson.setImageURI(Uri.parse(getResources().getString(R.string.BaseUrl) + loggedInUser.getPhoto()));
         }
 
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
-        AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Videos")
-                .build();
-        VideoDao videoDao = db.videoDao();
         VideoAPI videoAPI = new VideoAPI();
         videoAPI.get();
 

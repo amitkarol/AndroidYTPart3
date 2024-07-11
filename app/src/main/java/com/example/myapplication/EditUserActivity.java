@@ -43,8 +43,8 @@ public class EditUserActivity extends BaseActivity {
             firstNameEditText.setText(loggedInUser.getFirstName());
             lastNameEditText.setText(loggedInUser.getLastName());
             displayNameEditText.setText(loggedInUser.getDisplayName());
-            if (loggedInUser.getPhotoUri() != null) {
-                userPhotoImageView.setImageURI(Uri.parse(loggedInUser.getPhotoUri()));
+            if (loggedInUser.getPhoto() != null) {
+                userPhotoImageView.setImageURI(Uri.parse(loggedInUser.getPhoto()));
             } else {
                 userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
             }
@@ -67,7 +67,7 @@ public class EditUserActivity extends BaseActivity {
                         loggedInUser.setLastName(newLastName);
                         loggedInUser.setDisplayName(newDisplayName);
                         if (selectedImageUri != null) {
-                            loggedInUser.setPhotoUri(selectedImageUri.toString());
+                            loggedInUser.setPhoto(selectedImageUri.toString());
                         }
 
                         // Show a confirmation message

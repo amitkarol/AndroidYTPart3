@@ -89,13 +89,13 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         // Load the user photo
         UserManager userManager = UserManager.getInstance();
         User owner = userManager.getUserByEmail(video.getOwner());
-        if (owner != null && owner.getPhotoUri() != null && !owner.getPhotoUri().isEmpty()) {
+        if (owner != null && owner.getPhoto() != null && !owner.getPhoto().isEmpty()) {
             try {
-                InputStream inputStream = context.getContentResolver().openInputStream(Uri.parse(owner.getPhotoUri()));
+                InputStream inputStream = context.getContentResolver().openInputStream(Uri.parse(owner.getPhoto()));
                 if (inputStream != null) {
                     ImageDecoder.Source source = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        source = ImageDecoder.createSource(context.getContentResolver(), Uri.parse(owner.getPhotoUri()));
+                        source = ImageDecoder.createSource(context.getContentResolver(), Uri.parse(owner.getPhoto()));
                     }
                     Bitmap bitmap = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

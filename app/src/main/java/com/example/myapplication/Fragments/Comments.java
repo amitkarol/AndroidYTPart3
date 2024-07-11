@@ -81,10 +81,6 @@ public class Comments extends DialogFragment {
 
         String commentText = commentEditText.getText().toString().trim();
         if (!commentText.isEmpty()) {
-            String userName = loggedInUser.getDisplayName();
-            String email = loggedInUser.getEmail();
-            String profilePic = loggedInUser.getPhotoUri();
-            commentsViewModel.addComment(loggedInUser.getEmail(), String.valueOf(currentVideo.get_id()), commentText, userName, email, profilePic);
             commentEditText.setText("");
         } else {
             Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();

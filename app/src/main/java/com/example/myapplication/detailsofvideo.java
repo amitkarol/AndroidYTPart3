@@ -83,12 +83,12 @@ public class detailsofvideo extends BaseActivity {
             selectedVideo.setDescription(description);
             selectedVideo.setImg(selectedImageUri.toString());
 
-            // 
+            // Add the video
             viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
             viewModel.createVideo(title, description, selectedImageUri.toString(), selectedVideo.toString(), user.getEmail());
             
             // Add the video to VideoManager
-            VideoManager.getInstance().addVideo(selectedVideo);
+            //VideoManager.getInstance().addVideo(selectedVideo);
 
             // Save the video details and go back to the home screen
             Intent homeIntent = new Intent(detailsofvideo.this, homescreen.class);

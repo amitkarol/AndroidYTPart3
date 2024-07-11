@@ -19,7 +19,7 @@ public class User implements Serializable {
     private String lastName;
     private String password;
     private String displayName;
-    private String photoUri;
+    private String photo;
     private String token = null;
 
     @TypeConverters(VideoConverter.class)
@@ -28,24 +28,24 @@ public class User implements Serializable {
 
 
     // Constructor
-    public User(String firstName, String lastName, String email, String password, String displayName, String photoUri, List<Video> Videos) {
+    public User(String firstName, String lastName, String email, String password, String displayName, String photo, List<Video> Videos) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.displayName = displayName;
-        this.photoUri = photoUri;
+        this.photo = photo;
         this.Videos = Videos;
     }
 
     @Ignore
-    public User(String firstName, String lastName, String email, String password, String displayName, String photoUri) {
+    public User(String firstName, String lastName, String email, String password, String displayName, String photo) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.displayName = displayName;
-        this.photoUri = photoUri;
+        this.photo = photo;
         this.Videos = new ArrayList<>();
     }
 
@@ -98,12 +98,12 @@ public class User implements Serializable {
         this.displayName = displayName;
     }
 
-    public String getPhotoUri() {
-        return photoUri;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setPhotoUri(String photoUri) {
-        this.photoUri = photoUri;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public List<Video> getVideos() {
@@ -131,7 +131,7 @@ public class User implements Serializable {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", displayName='" + displayName + '\'' +
-                ", photoUri='" + photoUri + '\'' +
+                ", photoUri='" + photo + '\'' +
                 ", videos=" + Videos +
                 '}';
     }

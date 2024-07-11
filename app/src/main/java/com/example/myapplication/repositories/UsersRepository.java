@@ -48,7 +48,16 @@ public class UsersRepository {
         return userListData;
     }
 
+    public void getUserByEmail (MutableLiveData<User> owner, String email) {
+        userAPI.getUserByEmail(owner, email);
+    }
+
+    public void login(String email, String password) {
+        userAPI.login(email, password);
+    }
+
     public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
+        Log.d("test5", "user photo viewmodel " + photo);
         userAPI.createUser(firstName, lastName, email, password, displayName, photo);
     }
 }

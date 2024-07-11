@@ -33,4 +33,10 @@ public class VideosViewModel extends ViewModel {
         videoRepository.createVideo(title, description, img, video, owner);
         Log.d("test3", "viewmodel end  video: " + title);
     }
+
+    public void editVideo(String id, String title, String description, String img, String owner) {
+        Log.d("test3", "viewmodel start video: " + title);
+        videoRepository.editVideo(id, title, description, img, owner);
+        Log.d("test3", "viewmodel end  video: " + title);
+    }
 }

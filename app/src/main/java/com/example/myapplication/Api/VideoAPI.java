@@ -11,6 +11,7 @@ import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
+import com.example.myapplication.utils.CurrentUser;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -51,6 +52,8 @@ public class VideoAPI {
                     new Thread(() -> {
                         List<Video> videos = response.body();
                         for (Video res : videos) {
+                            Log.d("test2: ", "res videos: " + res.getVideo());
+                            Log.d("testt", res.get_id());
                             videoDao.insert(new Video(res.get_id(), res.getTitle(), res.getDescription(),
                                     res.getImg(), res.getVideo(), res.getOwner()));
                         }
@@ -73,8 +76,42 @@ public class VideoAPI {
     }
 
     public void createVideo(String title, String description, String img, String video, String owner) {
-        Call<Video> createVideo = webServiceAPI.createVideo(title, description, img, video, owner);
+        CurrentUser currentUser = CurrentUser.getInstance();
+        String token = "bearer " +  currentUser.getToken().getValue();
+        Log.d("test3", "token is " + token);
+        Call<Video> createVideo = webServiceAPI.createVideo(owner, title, description, img, video, owner, token);
         createVideo.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(Call<Video> call, Response<Video> response) {
+                Log.d("test3", "reached api");
+                Log.d("test3", "api response: " + response.isSuccessful());
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        Log.d("test1", "entered thread");
+                        Video newVideo = response.body();
+                        Log.d("test3", "api video: " + newVideo);
+                        videoDao.insert(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
+                                newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
+                        Log.d("test3", "api insert: " + newVideo);
+                    }).start();
+                } else {
+                    Log.d("test3", "response failed api");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Video> call, Throwable t) {
+                Log.d("test3", "failed api");
+            }
+        });
+    }
+
+    public void editVideo(String pid, String title, String description, String img, String owner) {
+        CurrentUser currentUser = CurrentUser.getInstance();
+        String token = "bearer " +  currentUser.getToken().getValue();
+        Log.d("test3", "token is " + token);
+        Call<Video> editVideo = webServiceAPI.editVideo(owner, pid, title, description, img, token);
+        editVideo.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
                 Log.d("test3", "reached api");

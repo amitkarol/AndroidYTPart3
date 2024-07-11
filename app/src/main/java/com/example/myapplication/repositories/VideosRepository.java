@@ -55,4 +55,10 @@ public class VideosRepository {
         videoAPI.createVideo(title, description, img, video, owner);
         Log.d("test3", "repository end video: " + title);
     }
+
+    public void editVideo(String id, String title, String description, String img, String owner) {
+        Log.d("test3", "repository start video: " + title);
+        videoAPI.editVideo(id, title, description, img, owner);
+        Log.d("test3", "repository end video: " + title);
+    }
 }
