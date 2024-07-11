@@ -3,14 +3,22 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.myapplication.entities.UserManager;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.utils.CurrentUser;
 
 public class login extends BaseActivity {
+
+    private UsersViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +44,27 @@ public class login extends BaseActivity {
             String username = editTextUsername.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
 
-            // Validate the username and password
-            User userFound = UserManager.getInstance().validateUser(username, password);
+            viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+            viewModel.login(username, password);
+            CurrentUser currentUser = CurrentUser.getInstance();
 
-            if (userFound != null) {
-                Intent homescreenIntent = new Intent(login.this, homescreen.class);
-                homescreenIntent.putExtra("user", userFound); // Pass the entire user object
-                startActivity(homescreenIntent);
-            } else {
-                // Display error message
-                Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show();
-            }
+            // Observe the user LiveData
+            currentUser.getUser().observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(@Nullable User user) {
+                    if (user != null) {
+                        Log.d("test1", "loggedInUser: " + user);
+                        // Navigate to homescreen activity
+                        Intent homescreenIntent = new Intent(login.this, homescreen.class);
+                        homescreenIntent.putExtra("user", user); // Pass the entire user object
+                        startActivity(homescreenIntent);
+                        finish(); // Optional: finish the login activity to prevent going back to it
+                    } else {
+                        // Display error message
+                        Toast.makeText(login.this, "User does not exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         });
     }
 }

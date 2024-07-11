@@ -39,8 +39,8 @@ public class logout extends BaseActivity {
         textViewDisplayName.setText(loggedInUser.getDisplayName());
 
         // Set the photo URI to the ImageView
-        if (loggedInUser.getPhotoUri() != null) {
-            imageViewPhoto.setImageURI(Uri.parse(loggedInUser.getPhotoUri()));
+        if (loggedInUser.getPhoto() != null) {
+            imageViewPhoto.setImageURI(Uri.parse(loggedInUser.getPhoto()));
         }
 
         // Get reference to the Logout button

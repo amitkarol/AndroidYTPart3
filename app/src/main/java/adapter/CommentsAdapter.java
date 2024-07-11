@@ -93,7 +93,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     }
 
     public void setComments(List<Comment> newCommentList) {
-        this.commentList = newCommentList != null ? newCommentList : new ArrayList<>(); // ודא שהרשימה מאותחלת
+        this.commentList = newCommentList != null ? newCommentList : new ArrayList<>();
         notifyDataSetChanged();
     }
 

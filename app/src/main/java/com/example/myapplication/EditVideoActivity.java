@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
 import com.example.myapplication.entities.User;
@@ -25,6 +28,7 @@ public class EditVideoActivity extends BaseActivity {
     private Video currentVideo;
     private User loggedInUser;
     private Uri selectedImageUri;
+    private VideosViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +73,20 @@ public class EditVideoActivity extends BaseActivity {
                         String newTitle = titleEditText.getText().toString().trim();
                         String newDescription = descriptionEditText.getText().toString().trim();
 
-                        // Update the video object
-                        currentVideo.setTitle(newTitle);
-                        currentVideo.setDescription(newDescription);
-                        if (selectedImageUri != null) {
-                            currentVideo.setImg(selectedImageUri.toString());
-                        }
+                        // update the video
+                        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+                        viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
+                                selectedImageUri.toString(), loggedInUser.getEmail());
+
+//                        // Update the video object
+//                        currentVideo.setTitle(newTitle);
+//                        currentVideo.setDescription(newDescription);
+//                        if (selectedImageUri != null) {
+//                            currentVideo.setImg(selectedImageUri.toString());
+//                        }
 
                         // Update the video in VideoManager
-                        VideoManager.getInstance().updateVideo(currentVideo, originVideo);
+                        //VideoManager.getInstance().updateVideo(currentVideo, originVideo);
 
                         // Show a confirmation message
                         Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show();

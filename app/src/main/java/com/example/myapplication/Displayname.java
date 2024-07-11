@@ -55,6 +55,7 @@ public class Displayname extends BaseActivity {
             }
 
             if (selectedImageUri == null) {
+                Log.d("test5", "selected image is null");
                 Toast.makeText(Displayname.this, "Please upload a photo", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -65,7 +66,10 @@ public class Displayname extends BaseActivity {
             String firstName = intent.getStringExtra("firstName");
             String lastName = intent.getStringExtra("lastName");
 
-            Log.d("test1", "email" + email);
+            Log.d("test5", "email" + email);
+            //Logs
+            Log.d("test5", "user photo displayname " + selectedImageUri);
+            Log.d("test5", "user photo displayname " + selectedImageUri.toString());
             viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
             viewModel.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
 //            AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Users")
@@ -137,6 +141,8 @@ public class Displayname extends BaseActivity {
                 imageView.setImageBitmap(photo);
                 imageView.setVisibility(View.VISIBLE);
                 selectedImageUri = getImageUri(this, photo);
+                Log.d("test5", "selected image down: " + selectedImageUri);
+
             }
         }
     }

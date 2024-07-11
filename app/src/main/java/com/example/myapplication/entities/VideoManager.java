@@ -70,7 +70,7 @@ public class VideoManager {
             if (owner != null) {
                 owner.getVideos().add(newVideo);
                 // Adding comments to each video
-                Comment comment = new Comment(owner.getEmail(), owner.getDisplayName(), "Great video!", owner.getPhotoUri());
+                Comment comment = new Comment(owner.getEmail(), owner.getDisplayName(), "Great video!", owner.getPhoto());
                 newVideo.addComment(comment);
             }
         }

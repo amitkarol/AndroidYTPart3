@@ -49,8 +49,8 @@ public class UserPage extends BaseActivity {
             textViewNumVideos.setText(user.getVideos().size() + " videos");
 
             // Load the user's photo
-            if (user.getPhotoUri() != null && !user.getPhotoUri().isEmpty()) {
-                imageViewUserPhoto.setImageURI(Uri.parse(user.getPhotoUri()));
+            if (user.getPhoto() != null && !user.getPhoto().isEmpty()) {
+                imageViewUserPhoto.setImageURI(Uri.parse(user.getPhoto()));
             } else {
                 imageViewUserPhoto.setImageResource(R.drawable.dog1); // Use a placeholder image
             }

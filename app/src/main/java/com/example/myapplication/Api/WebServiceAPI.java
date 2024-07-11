@@ -7,6 +7,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -37,11 +38,35 @@ public interface WebServiceAPI {
                                      @Field("email") String email, @Field("password") String password,
                                      @Field("displayName") String displayName, @Field("photo") String photo);
 
+    @GET("/api/users/{id}")
+    Call<User> getUserByEmail(@Path("id") String id);
+
     @FormUrlEncoded
     @POST("/api/users/{id}/videos")
     Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,
                           @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
                             @Header("authorization") String token);
+
+    @FormUrlEncoded
+    @PATCH("/api/users/{id}/videos/{pid}")
+    Call<Video> editVideo(@Path("id") String id, @Path("pid") String pid, @Field("title") String title,
+                          @Field("description") String description, @Field("img") String img, @Header("authorization") String token);
+
+    @GET("/api/users/{id}/videos/{pid}/likes")
+    Call<Video> isLiked(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
+
+    @FormUrlEncoded
+    @PATCH("/api/users/{id}/videos/{pid}/likes")
+    Call<Video> setLikes(
+            @Path("id") String id,
+            @Path("pid") String pid,
+            @Field("userEmail") String userEmail,
+            @Header("authorization") String token
+    );
+
+    ]    @FormUrlEncoded
+    @PATCH("/api/users/{id}/videos/{pid}/views")
+    Call<Video> updateViews(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments(
