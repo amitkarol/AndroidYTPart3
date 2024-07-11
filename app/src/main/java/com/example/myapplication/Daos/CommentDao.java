@@ -7,7 +7,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.myapplication.entities.Comment;
-import com.example.myapplication.entities.Video;
 
 import java.util.List;
 @Dao
@@ -26,4 +25,10 @@ public interface CommentDao {
 
     @Delete
     void delete(Comment... Comments);
+
+    @Query("DELETE FROM Comment WHERE 1")
+    void deleteAll();
+
+    @Query("SELECT * FROM Comment WHERE videoId = :videoId")
+    List<Comment> getCommentsByVideoId(String videoId);
 }

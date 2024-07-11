@@ -57,6 +57,7 @@ public class VideoAPI {
                             videoDao.insert(new Video(res.get_id(), res.getTitle(), res.getDescription(),
                                     res.getImg(), res.getVideo(), res.getOwner()));
                         }
+
                         // Update LiveData with the new list of videos
                         videosLiveData.postValue(videos);
                     }).start();

@@ -107,8 +107,10 @@ public class videowatching extends FragmentActivity {
                 descriptionTextView.setText(currentVideo.getDescription());
                 viewCountTextView.setText("Views " + currentVideo.getViews());
 
+
                 String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
                 Log.d("test5", videoUrl);
+                Log.d("videowatching" ,videoUrl);
                 videoView.setVideoPath(videoUrl);
                 videoView.start();
 
@@ -162,7 +164,7 @@ public class videowatching extends FragmentActivity {
 
         // Comments button listener
         commentsButton.setOnClickListener(v -> {
-            Comments commentsFragment = new Comments(currentVideo, loggedInUser);
+            Comments commentsFragment = new Comments(currentVideo);
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
         });
 
