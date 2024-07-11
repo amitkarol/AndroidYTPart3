@@ -153,7 +153,7 @@ public class videowatching extends FragmentActivity {
 
         // Comments button listener
         commentsButton.setOnClickListener(v -> {
-            Comments commentsFragment = new Comments(currentVideo, loggedInUser);
+            Comments commentsFragment = new Comments(currentVideo);
             commentsFragment.show(getSupportFragmentManager(), "CommentsFragment");
         });
 

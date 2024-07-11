@@ -6,6 +6,8 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -47,6 +49,35 @@ public interface WebServiceAPI {
             @Path("pid") String videoId
     );
 
+    @FormUrlEncoded
+    @POST("/api/users/{id}/videos/{pid}/comments")
+    Call<Comment> createComment(
+            @Header("Authorization") String token,
+            @Path("id") String userId,
+            @Path("pid") String videoId,
+            @Field("text") String text,
+            @Field("userName") String userName,
+            @Field("email") String email,
+            @Field("profilePic") String profilePic
+    );
+
+    @DELETE("/api/users/{id}/videos/{pid}/comments/{cid}")
+    Call<Void> deleteComment(
+            @Header("Authorization") String token,
+            @Path("id") String userId,
+            @Path("pid") String videoId,
+            @Path("cid") String commentId
+    );
+
+    @FormUrlEncoded
+    @PATCH("/api/users/{id}/videos/{pid}/comments/{cid}")
+    Call<Comment> editComment(
+            @Header("Authorization") String token,
+            @Path("id") String userId,
+            @Path("pid") String videoId,
+            @Path("cid") String commentId,
+            @Field("text") String text
+    );
     // Token API
     @FormUrlEncoded
     @POST("/api/tokens")

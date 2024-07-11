@@ -1,14 +1,17 @@
 package com.example.myapplication.Api;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myapplication.Daos.CommentDao;
 import com.example.myapplication.Daos.VideoDao;
 import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
+import com.example.myapplication.utils.CurrentUser;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,7 +68,123 @@ public class CommentAPI {
         });
     }
 
+    public void createComment(String userId, String videoId, String text, String userName, String email, String profilePic) {
+        String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
+        Log.d("CommentAPI", "Creating comment: userId=" + userId + ", videoId=" + videoId + ", text=" + text);
+        Call<Comment> call = webServiceAPI.createComment(token, userId, videoId, text, userName, email, profilePic);
+        call.enqueue(new Callback<Comment>() {
+            @Override
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        Video video = videoDao.get(videoId);
+                        if (video != null) {
+                            List<Comment> comments = video.getComments();
+                            comments.add(response.body());
+                            video.setComments(comments);
+                            videoDao.update(video);
+                            commentsLiveData.postValue(comments);
+                        }
+                    }).start();
+                } else {
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e("CommentAPI", "Error body: " + response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Comment> call, Throwable t) {
+                Log.e("CommentAPI", "Failed to create Comment", t);
+            }
+        });
+    }
+
+    public void deleteComment(String userId, String videoId, String commentId) {
+        String token = "Bearer " + CurrentUser.getInstance().getToken();
+        Log.d("CommentAPI", "Deleting comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId);
+        Call<Void> call = webServiceAPI.deleteComment(token, userId, videoId, commentId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    new Thread(() -> {
+                        Video video = videoDao.get(videoId);
+                        if (video != null) {
+                            List<Comment> comments = video.getComments();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                comments.removeIf(comment -> comment.get_id().equals(commentId));
+                            }
+                            video.setComments(comments);
+                            videoDao.update(video);
+                            commentsLiveData.postValue(comments);
+                        }
+                    }).start();
+                } else {
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e("CommentAPI", "Error body: " + response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("CommentAPI", "Failed to delete Comment", t);
+            }
+        });
+    }
+
+    public void editComment(String userId, String videoId, String commentId, String text) {
+        String token = "Bearer " + CurrentUser.getInstance().getToken();
+        Log.d("CommentAPI", "Editing comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId + ", text=" + text);
+        Call<Comment> call = webServiceAPI.editComment(token, userId, videoId, commentId, text);
+        call.enqueue(new Callback<Comment>() {
+            @Override
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        Video video = videoDao.get(videoId);
+                        if (video != null) {
+                            List<Comment> comments = video.getComments();
+                            for (int i = 0; i < comments.size(); i++) {
+                                if (comments.get(i).get_id().equals(commentId)) {
+                                    comments.set(i, response.body());
+                                    break;
+                                }
+                            }
+                            video.setComments(comments);
+                            videoDao.update(video);
+                            commentsLiveData.postValue(comments);
+                        }
+                    }).start();
+                } else {
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e("CommentAPI", "Error body: " + response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Comment> call, Throwable t) {
+                Log.e("CommentAPI", "Failed to edit Comment", t);
+            }
+        });
+    }
+
     public MutableLiveData<List<Comment>> getCommentsLiveData() {
         return commentsLiveData;
     }
+
 }

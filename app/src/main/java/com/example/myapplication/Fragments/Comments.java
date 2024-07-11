@@ -39,7 +39,7 @@ public class Comments extends DialogFragment {
     private Button addCommentButton;
     private CommentsViewModel commentsViewModel;
 
-    public Comments(Video currentVideo, User loggedInUser) {
+    public Comments(Video currentVideo) {
         this.currentVideo = currentVideo;
         this.loggedInUser = loggedInUser;
     }
@@ -72,6 +72,8 @@ public class Comments extends DialogFragment {
     }
 
     private void addComment() {
+
+        Log.d("Comments frag" , loggedInUser.getEmail());
         if (loggedInUser.getEmail().equals("testuser@example.com")) {
             redirectToLogin();
             return;
@@ -79,10 +81,10 @@ public class Comments extends DialogFragment {
 
         String commentText = commentEditText.getText().toString().trim();
         if (!commentText.isEmpty()) {
-            Comment newComment = new Comment(loggedInUser.getEmail(), loggedInUser.getDisplayName(), commentText, loggedInUser.getPhotoUri());
-            currentVideo.getComments().add(newComment);
-            commentsAdapter.notifyItemInserted(currentVideo.getComments().size() - 1);
-            commentsRecyclerView.scrollToPosition(currentVideo.getComments().size() - 1);
+            String userName = loggedInUser.getDisplayName();
+            String email = loggedInUser.getEmail();
+            String profilePic = loggedInUser.getPhotoUri();
+            commentsViewModel.addComment(loggedInUser.getEmail(), String.valueOf(currentVideo.get_id()), commentText, userName, email, profilePic);
             commentEditText.setText("");
         } else {
             Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
@@ -104,6 +106,8 @@ public class Comments extends DialogFragment {
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             getDialog().getWindow().setAttributes(params);
             getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         }
     }
 }

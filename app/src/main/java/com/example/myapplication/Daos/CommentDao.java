@@ -26,6 +26,9 @@ public interface CommentDao {
     @Delete
     void delete(Comment... Comments);
 
-    @Query("DELETE FROM Comment")
+    @Query("DELETE FROM Comment WHERE 1")
     void deleteAll();
+
+    @Query("SELECT * FROM Comment WHERE videoId = :videoId")
+    List<Comment> getCommentsByVideoId(String videoId);
 }

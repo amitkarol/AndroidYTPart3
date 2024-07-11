@@ -18,10 +18,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Fragments.EditCommentDialog;
 import com.example.myapplication.R;
+import com.example.myapplication.ViewModels.CommentsViewModel;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
 
@@ -36,12 +38,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     private FragmentActivity activity;
     private User loggedInUser;
     private Context context;
+    private CommentsViewModel commentsViewModel;
 
     public CommentsAdapter(FragmentActivity activity, List<Comment> commentList, User loggedInUser) {
         this.activity = activity;
-        this.commentList = commentList != null ? commentList : new ArrayList<>();
+        this.commentList = new ArrayList<>(commentList != null ? commentList : new ArrayList<>());
         this.loggedInUser = loggedInUser;
         this.context = activity.getApplicationContext();
+        this.commentsViewModel = new ViewModelProvider(activity).get(CommentsViewModel.class);
     }
 
     @NonNull
@@ -55,13 +59,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = commentList.get(position);
-        holder.userTextView.setText(comment.getuserName());
+        holder.userTextView.setText(comment.getUserName());
         holder.commentTextView.setText(comment.getText());
-        holder.timestampTextView.setText(comment.getdate());
+        holder.timestampTextView.setText(comment.getDate());
 
         // Set user image using AsyncTask
-        if (comment.getprofilePic() != null) {
-            String imageUrl = context.getResources().getString(R.string.BaseUrl) + comment.getprofilePic();
+        if (comment.getProfilePic() != null) {
+            String imageUrl = context.getResources().getString(R.string.BaseUrl) + comment.getProfilePic();
             Log.d("commentpic", imageUrl);
             new LoadImageTask(holder.userImageView, R.drawable.person).execute(imageUrl);
         } else {
@@ -90,28 +94,33 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         return commentList.size();
     }
 
+    public void setComments(List<Comment> newCommentList) {
+        commentList.clear();
+        if (newCommentList != null) {
+            commentList.addAll(newCommentList);
+        }
+        notifyDataSetChanged();
+    }
+
     private void showDeleteConfirmationDialog(int position) {
         new AlertDialog.Builder(activity)
                 .setTitle("Delete Comment")
                 .setMessage("Are you sure you want to delete this comment?")
-                .setPositiveButton("Yes", (dialog, which) -> deleteComment(position))
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    String commentId = commentList.get(position).get_id();
+                    commentsViewModel.deleteComment(loggedInUser.getEmail(), String.valueOf(commentList.get(position).getVideoId()), commentId);
+                    commentList.remove(position);
+                    notifyItemRemoved(position);
+                })
                 .setNegativeButton("No", null)
                 .show();
-    }
-
-    private void deleteComment(int position) {
-        commentList.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    public void setComments(List<Comment> newCommentList) {
-        this.commentList = newCommentList != null ? newCommentList : new ArrayList<>();
-        notifyDataSetChanged();
     }
 
     private void showEditCommentDialog(int position) {
         Comment comment = commentList.get(position);
         EditCommentDialog dialog = new EditCommentDialog(activity, comment, updatedComment -> {
+            String commentId = comment.get_id();
+            commentsViewModel.editComment(loggedInUser.getEmail(), String.valueOf(commentList.get(position).getVideoId()), commentId, updatedComment.getText());
             commentList.set(position, updatedComment);
             notifyItemChanged(position);
         });

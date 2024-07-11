@@ -10,11 +10,47 @@ import androidx.room.PrimaryKey;
 public class Comment implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    private String  email;
+
+    private String _id; // MongoDB ID
+    private String email;
     private String userName;
     private String text;
     private String date;
     private String profilePic;
+    private String videoId;
+
+    public Comment(String email, String userName, String text, String profilePic) {
+        this.email = email;
+        this.userName = userName;
+        this.text = text;
+        this.profilePic = profilePic;
+        this.date = getCurrentDate();
+    }
+
+    // Getters and setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getUserName() {
         return userName;
@@ -22,6 +58,14 @@ public class Comment implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getDate() {
@@ -40,68 +84,15 @@ public class Comment implements Serializable {
         this.profilePic = profilePic;
     }
 
-    // Constructor
-    public Comment(String email, String userName, String text, String profilePic) {
-        this.email = email;
-        this.userName = userName;
-        this.text = text;
-        this.profilePic = profilePic;
-        this.date = getCurrentdate();
+    public String getVideoId() {
+        return videoId;
     }
 
-
-
-    // Other getters and setters
-    public int getId() {
-        return id;
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getprofilePic() {
-        return profilePic;
-    }
-
-    public void setprofilePic(String profilePic) {
-        this.profilePic = profilePic;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setuserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getuserName() {
-        return userName;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getdate() {
-        return date;
-    }
-
-    public void setdate(String date) {
-        this.date = date;
-    }
-
-    private String getCurrentdate() {
-        // Implementation for getting the current date
+    private String getCurrentDate() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 }
