@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         this.activity = activity;
         this.commentList = new ArrayList<>(commentList != null ? commentList : new ArrayList<>());
         this.loggedInUser = loggedInUser;
+        Log.d("logged user", "Logged in user: " + loggedInUser.getEmail());
         this.context = activity.getApplicationContext();
         this.commentsViewModel = new ViewModelProvider(activity).get(CommentsViewModel.class);
     }
@@ -51,8 +53,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @NonNull
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.comment_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item, parent, false);
         return new CommentViewHolder(view);
     }
 
@@ -66,7 +67,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         // Set user image using AsyncTask
         if (comment.getProfilePic() != null) {
             String imageUrl = context.getResources().getString(R.string.BaseUrl) + comment.getProfilePic();
-            Log.d("commentpic", imageUrl);
             new LoadImageTask(holder.userImageView, R.drawable.person).execute(imageUrl);
         } else {
             holder.userImageView.setImageResource(R.drawable.person);
@@ -102,15 +102,25 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         notifyDataSetChanged();
     }
 
+    public void addComment(Comment comment) {
+        commentList.add(comment);
+        notifyDataSetChanged(); // Notify RecyclerView that data set has changed
+    }
+
     private void showDeleteConfirmationDialog(int position) {
         new AlertDialog.Builder(activity)
                 .setTitle("Delete Comment")
                 .setMessage("Are you sure you want to delete this comment?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     String commentId = commentList.get(position).get_id();
-                    commentsViewModel.deleteComment(loggedInUser.getEmail(), String.valueOf(commentList.get(position).getVideoId()), commentId);
-                    commentList.remove(position);
-                    notifyItemRemoved(position);
+                    String videoId = commentList.get(position).getVideoId();
+                    Log.d("deletecomment", "VideoId: " + videoId + ", CommentId: " + commentId);
+
+                    commentsViewModel.deleteComment(loggedInUser.getEmail(), videoId, commentId);
+                    // Wait for LiveData to update after deletion
+                    commentsViewModel.getCommentsByVideoId(videoId).observe(activity, updatedComments -> {
+                        setComments(updatedComments);
+                    });
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -120,9 +130,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         Comment comment = commentList.get(position);
         EditCommentDialog dialog = new EditCommentDialog(activity, comment, updatedComment -> {
             String commentId = comment.get_id();
-            commentsViewModel.editComment(loggedInUser.getEmail(), String.valueOf(commentList.get(position).getVideoId()), commentId, updatedComment.getText());
-            commentList.set(position, updatedComment);
-            notifyItemChanged(position);
+            String videoId = comment.getVideoId();
+            String newText = updatedComment.getText();
+            Log.d("editcomment", "VideoId: " + videoId + ", CommentId: " + commentId + ", newText: " + newText);
+
+            commentsViewModel.editComment(loggedInUser.getEmail(), videoId, commentId, newText);
+            commentsViewModel.getCommentsByVideoId(videoId).observe(activity, updatedComments -> {
+                Log.d("editcomment", "Updated comments received");
+                setComments(updatedComments);
+            });
         });
         dialog.show(activity.getSupportFragmentManager(), "EditCommentDialog");
     }

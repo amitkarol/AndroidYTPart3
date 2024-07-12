@@ -9,6 +9,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
 
 public class EditUserActivity extends BaseActivity {
@@ -20,6 +24,7 @@ public class EditUserActivity extends BaseActivity {
     private ImageView userPhotoImageView;
     private User loggedInUser;
     private Uri selectedImageUri;
+    private UsersViewModel usersViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +38,31 @@ public class EditUserActivity extends BaseActivity {
         userPhotoImageView = findViewById(R.id.userPhotoImageView);
         Button saveUserButton = findViewById(R.id.saveUserButton);
         Button changePhotoButton = findViewById(R.id.changePhotoButton);
+        Button deleteUserButton = findViewById(R.id.deleteUserButton);
+
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         // Retrieve data from the intent
-        Intent intent = getIntent();
-        loggedInUser = (User) intent.getSerializableExtra("user");
+        String email = getIntent().getStringExtra("user_email");
 
-        // Populate fields if data is available
-        if (loggedInUser != null) {
-            firstNameEditText.setText(loggedInUser.getFirstName());
-            lastNameEditText.setText(loggedInUser.getLastName());
-            displayNameEditText.setText(loggedInUser.getDisplayName());
-            if (loggedInUser.getPhoto() != null) {
-                userPhotoImageView.setImageURI(Uri.parse(loggedInUser.getPhoto()));
-            } else {
-                userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
-            }
+        // Load user information
+        if (email != null) {
+            usersViewModel.getUserByEmail(email).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(User loadedUser) {
+                    if (loadedUser != null) {
+                        loggedInUser = loadedUser;
+                        firstNameEditText.setText(loggedInUser.getFirstName());
+                        lastNameEditText.setText(loggedInUser.getLastName());
+                        displayNameEditText.setText(loggedInUser.getDisplayName());
+                        if (loggedInUser.getPhoto() != null) {
+                            userPhotoImageView.setImageURI(Uri.parse(loggedInUser.getPhoto()));
+                        } else {
+                            userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
+                        }
+                    }
+                }
+            });
         }
 
         // Set the save button listener
@@ -70,12 +85,37 @@ public class EditUserActivity extends BaseActivity {
                             loggedInUser.setPhoto(selectedImageUri.toString());
                         }
 
+                        // Update the user on the server
+                        usersViewModel.updateUser(loggedInUser.getEmail(), loggedInUser);
+
                         // Show a confirmation message
                         Toast.makeText(this, "User details updated", Toast.LENGTH_SHORT).show();
 
                         // Navigate back to the homescreen
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("updated_user_email", loggedInUser.getEmail());
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        });
+
+        // Set the delete button listener
+        deleteUserButton.setOnClickListener(v -> {
+            // Show confirmation dialog
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm Delete")
+                    .setMessage("Are you sure you want to delete this user?")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        // Delete the user on the server
+                        usersViewModel.deleteUser(loggedInUser.getEmail());
+
+                        // Show a confirmation message
+                        Toast.makeText(this, "User deleted", Toast.LENGTH_SHORT).show();
+
+                        // Navigate back to the homescreen
                         Intent homeIntent = new Intent(this, homescreen.class);
-                        homeIntent.putExtra("user", loggedInUser);
                         startActivity(homeIntent);
                         finish();
                     })

@@ -48,8 +48,10 @@ public class UsersRepository {
         return userListData;
     }
 
-    public void getUserByEmail (MutableLiveData<User> owner, String email) {
-        userAPI.getUserByEmail(owner, email);
+    public LiveData<User> getUserByEmail(String email) {
+        MutableLiveData<User> userLiveData = new MutableLiveData<>();
+        userAPI.getUserByEmail(userLiveData, email);
+        return userLiveData;
     }
 
     public void login(String email, String password) {
@@ -59,5 +61,14 @@ public class UsersRepository {
     public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
         Log.d("test5", "user photo viewmodel " + photo);
         userAPI.createUser(firstName, lastName, email, password, displayName, photo);
+    }
+
+
+    public void updateUser(String email, User user) {
+        userAPI.updateUser(email, user);
+    }
+
+    public void deleteUser(String email) {
+        userAPI.deleteUser(email);
     }
 }

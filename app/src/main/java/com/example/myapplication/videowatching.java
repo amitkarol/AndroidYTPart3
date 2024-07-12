@@ -11,16 +11,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.google.android.material.imageview.ShapeableImageView;
-
-import androidx.core.view.GestureDetectorCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.Fragments.Comments;
@@ -39,7 +38,6 @@ public class videowatching extends FragmentActivity {
     private ImageButton pauseResumeButton;
     private Video currentVideo;
     private User loggedInUser;
-    private MutableLiveData<User> videoOwner = new MutableLiveData<>();
     private UsersViewModel viewModel;
     private GestureDetectorCompat gestureDetector;
     private ShapeableImageView userPhotoImageView;
@@ -69,48 +67,43 @@ public class videowatching extends FragmentActivity {
         // Apply theme to all relevant views
         applyThemeToViews();
 
-        // Observe changes to videoOwner
-        videoOwner.observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User owner) {
-                if (owner != null) {
-                    // Update the UI with the owner's information
-                    channelTextView.setText(owner.getEmail());
-                    String photoUriString = owner.getPhoto();
-                    Log.d("test5", "video photo " + photoUriString);
-                    if (photoUriString != null) {
-                        Uri photoUri = Uri.parse(photoUriString);
-                        Log.d("test5", "video photo " + photoUri);
-                        userPhotoImageView.setImageURI(photoUri);
-                    } else {
-                        userPhotoImageView.setImageResource(R.drawable.dog1);
-                    }
-                } else {
-                    Log.d("test5", "Owner not found");
-                }
-            }
-        });
-
         // Get the data passed from homescreen activity
         Intent intent = getIntent();
         if (intent != null) {
-            Uri data = intent.getData();
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
 
             if (currentVideo != null) {
                 viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-                viewModel.getUserByEmail(videoOwner, currentVideo.getOwner());
+                viewModel.getUserByEmail(currentVideo.getOwner()).observe(this, new Observer<User>() {
+                    @Override
+                    public void onChanged(User owner) {
+                        if (owner != null) {
+                            // Update the UI with the owner's information
+                            channelTextView.setText(owner.getEmail());
+                            String photoUriString = owner.getPhoto();
+                            Log.d("test5", "video photo " + photoUriString);
+                            if (photoUriString != null) {
+                                Uri photoUri = Uri.parse(photoUriString);
+                                Log.d("test5", "video photo " + photoUri);
+                                userPhotoImageView.setImageURI(photoUri);
+                            } else {
+                                userPhotoImageView.setImageResource(R.drawable.dog1);
+                            }
+                        } else {
+                            Log.d("test5", "Owner not found");
+                        }
+                    }
+                });
 
                 // Set data to views
                 titleTextView.setText(currentVideo.getTitle());
                 descriptionTextView.setText(currentVideo.getDescription());
                 viewCountTextView.setText("Views " + currentVideo.getViews());
 
-
                 String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
                 Log.d("test5", videoUrl);
-                Log.d("videowatching" ,videoUrl);
+                Log.d("videowatching", videoUrl);
                 videoView.setVideoPath(videoUrl);
                 videoView.start();
 
@@ -155,10 +148,10 @@ public class videowatching extends FragmentActivity {
         pauseResumeButton.setOnClickListener(v -> {
             if (videoView.isPlaying()) {
                 videoView.pause();
-                pauseResumeButton.setImageResource(R.drawable.play); // Use the resume drawable
+                pauseResumeButton.setImageResource(R.drawable.play);
             } else {
                 videoView.start();
-                pauseResumeButton.setImageResource(R.drawable.pause); // Use the pause drawable
+                pauseResumeButton.setImageResource(R.drawable.pause);
             }
         });
 

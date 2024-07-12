@@ -169,4 +169,66 @@ public class UserAPI {
     public void login(String email, String password) {
         assignToken(email, password);
     }
+
+
+
+    public void updateUser(String email, User user) {
+        String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
+        Log.d("UserAPI", "Attempting to update user with email: " + email);
+        Log.d("UserAPI", "User details: " + user.toString());
+
+        Call<User> call = webServiceAPI.updateUser(token, email, user);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("UserAPI", "User updated successfully on server: " + response.body().toString());
+
+                    new Thread(() -> {
+                        userDao.update(user);
+                        Log.d("UserAPI", "User updated locally in the database: " + user.toString());
+
+                        // Update LiveData with the updated user
+                        usersLiveData.postValue(userDao.index());
+                        Log.d("UserAPI", "LiveData updated with the new list of users");
+                    }).start();
+                } else {
+                    Log.d("UserAPI", "Response unsuccessful for updateUser. Response code: " + response.code() + " Message: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d("UserAPI", "Failed to update user", t);
+            }
+        });
+    }
+
+
+    public void deleteUser(String email) {
+        String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
+        Call<Void> call = webServiceAPI.deleteUser(token, email);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    new Thread(() -> {
+                        User user = userDao.getUserByEmail(email);
+                        if (user != null) {
+                            userDao.delete(user);
+                            usersLiveData.postValue(userDao.index());
+                        }
+                    }).start();
+                } else {
+                    Log.d("UserAPI", "Response unsuccessful for deleteUser");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("UserAPI", "Failed to delete user", t);
+            }
+        });
+    }
+
 }

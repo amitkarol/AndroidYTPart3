@@ -3,6 +3,8 @@ package com.example.myapplication.entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -12,8 +14,8 @@ import com.example.myapplication.converters.VideoConverter;
 
 @Entity
 public class User implements Serializable {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @NonNull
+    @PrimaryKey
     private String email;
     private String firstName;
     private String lastName;
@@ -51,13 +53,6 @@ public class User implements Serializable {
 
     // Getters and setters
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
     public String getFirstName() {
         return firstName;
     }
