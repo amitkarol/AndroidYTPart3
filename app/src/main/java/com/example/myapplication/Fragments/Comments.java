@@ -12,7 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.login;
+import com.example.myapplication.utils.CurrentUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,17 +44,24 @@ public class Comments extends DialogFragment {
 
     public Comments(Video currentVideo) {
         this.currentVideo = currentVideo;
-        this.loggedInUser = loggedInUser;
+        this.loggedInUser = null;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.comments, container, false);
 
-        commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
-        commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).observe(getViewLifecycleOwner(), comments -> {
-            commentsAdapter.setComments(comments);
+        CurrentUser currentUser = CurrentUser.getInstance();
+        currentUser.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                loggedInUser = user;
+                Log.d("test1", "loggedInUser: " + loggedInUser);
+                setupCommentsAdapter();
+            }
         });
+
+        commentsViewModel = new ViewModelProvider(this).get(CommentsViewModel.class);
 
         commentsRecyclerView = view.findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -59,33 +69,65 @@ public class Comments extends DialogFragment {
         Button closeButton = view.findViewById(R.id.closeButton);
         closeButton.setOnClickListener(v -> dismiss());
 
-        commentsAdapter = new CommentsAdapter(getActivity(), commentList, loggedInUser);
-        commentsRecyclerView.setAdapter(commentsAdapter);
-
         commentEditText = view.findViewById(R.id.commentEditText);
         addCommentButton = view.findViewById(R.id.addCommentButton);
         addCommentButton.setOnClickListener(v -> addComment());
+
+        commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).observe(getViewLifecycleOwner(), new Observer<List<Comment>>() {
+            @Override
+            public void onChanged(List<Comment> comments) {
+                commentList = comments;
+                if (commentsAdapter != null) {
+                    commentsAdapter.setComments(comments);
+                }
+            }
+        });
 
         commentsViewModel.fetchComments(currentVideo.getOwner(), String.valueOf(currentVideo.get_id()));
 
         return view;
     }
 
-    private void addComment() {
+    private void setupCommentsAdapter() {
+        if (loggedInUser != null) {
+            commentsAdapter = new CommentsAdapter(getActivity(), commentList, loggedInUser);
+            commentsRecyclerView.setAdapter(commentsAdapter);
+        }
+    }
 
-        Log.d("Comments frag" , loggedInUser.getEmail());
-        if (loggedInUser.getEmail().equals("testuser@example.com")) {
+    private void addComment() {
+        if (loggedInUser == null) {
             redirectToLogin();
             return;
         }
 
         String commentText = commentEditText.getText().toString().trim();
         if (!commentText.isEmpty()) {
+            String userName = loggedInUser.getDisplayName();
+            String email = loggedInUser.getEmail();
+            String profilePic = loggedInUser.getPhoto();
+
+            commentsViewModel.addComment(loggedInUser.getEmail(), String.valueOf(currentVideo.get_id()), commentText, userName, email, profilePic);
+            Log.d("addcomment", "Adding comment to video: " + currentVideo.get_id());
+
+            commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).observe(getViewLifecycleOwner(), new Observer<List<Comment>>() {
+                @Override
+                public void onChanged(List<Comment> updatedComments) {
+                    if (commentsAdapter != null) {
+                        commentsAdapter.setComments(updatedComments);
+                    }
+                    commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).removeObserver(this);
+                }
+            });
+
             commentEditText.setText("");
         } else {
             Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 
     private void redirectToLogin() {
         Intent loginIntent = new Intent(getActivity(), login.class);

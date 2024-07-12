@@ -123,7 +123,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         // Navigate to user page on user photo click
         holder.userPhotoImageView.setOnClickListener(v -> {
             Intent intent = new Intent(context, UserPage.class);
-            intent.putExtra("user", video.getOwner());
+            Log.d("owner" , owner.getEmail());
+            intent.putExtra("user_email", owner.getEmail());
             context.startActivity(intent);
         });
 

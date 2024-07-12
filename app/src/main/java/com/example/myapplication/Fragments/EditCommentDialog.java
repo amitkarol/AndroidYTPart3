@@ -3,10 +3,13 @@ package com.example.myapplication.Fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.myapplication.R;
@@ -21,8 +24,9 @@ public class EditCommentDialog extends DialogFragment {
         this.listener = listener;
     }
 
+    @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Dialog dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_edit_comment);
@@ -39,6 +43,11 @@ public class EditCommentDialog extends DialogFragment {
                 dismiss();
             }
         });
+
+        // Set dialog width and height
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
 
         return dialog;
     }

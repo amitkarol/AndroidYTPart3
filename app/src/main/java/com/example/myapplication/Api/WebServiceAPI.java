@@ -9,6 +9,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 import com.example.myapplication.entities.Comment;
@@ -101,10 +102,16 @@ public interface WebServiceAPI {
             @Path("id") String userId,
             @Path("pid") String videoId,
             @Path("cid") String commentId,
-            @Field("text") String text
+            @Field("newText") String newText
     );
     // Token API
     @FormUrlEncoded
     @POST("/api/tokens")
     Call<Token> processLogin(@Field("email") String email, @Field("password") String password);
+    @PUT("/api/users/{id}")
+    Call<User> updateUser(@Header("Authorization") String token, @Path("id") String userId, @Body User user);
+
+    @DELETE("/api/users/{id}")
+    Call<Void> deleteUser( @Header("Authorization") String token, @Path("id") String userId);
+
 }

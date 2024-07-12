@@ -40,6 +40,8 @@ public class CommentsViewModel extends ViewModel {
         repository.editComment(userId, videoId, commentId, text);
     }
 
+
+
     public void deleteAllComments() {
         repository.deleteAllComments();
     }

@@ -2,7 +2,11 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -23,6 +27,10 @@ import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.utils.CurrentUser;
+import com.google.android.material.imageview.ShapeableImageView;
+
+import java.io.InputStream;
+import java.net.URL;
 
 import adapter.VideoListAdapter;
 
@@ -36,6 +44,7 @@ public class homescreen extends AppCompatActivity {
     private RelativeLayout homeScreenLayout;
     private SearchView searchView;
     private VideosViewModel viewModel;
+    private ShapeableImageView imageViewPerson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +52,15 @@ public class homescreen extends AppCompatActivity {
         setContentView(R.layout.homescreen);
 
         CurrentUser currentUser = CurrentUser.getInstance();
-        //loggedInUser = (User) getIntent().getSerializableExtra("user");
         // Observe the user LiveData
         currentUser.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 loggedInUser = user;
-                Log.d("test1", "loggedInUser: " + loggedInUser);
                 // Update UI or perform other actions based on the new loggedInUser
+                updateUserPhoto();
             }
         });
-
 
         if (loggedInUser == null) {
             Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
@@ -61,10 +68,8 @@ public class homescreen extends AppCompatActivity {
         }
 
         // Display user photo
-        ImageView imageViewPerson = findViewById(R.id.imageViewPerson);
-        if (loggedInUser.getPhoto() != null) {
-            imageViewPerson.setImageURI(Uri.parse(getResources().getString(R.string.BaseUrl) + loggedInUser.getPhoto()));
-        }
+        imageViewPerson = findViewById(R.id.imageViewPerson);
+        updateUserPhoto();
 
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
         VideoAPI videoAPI = new VideoAPI();
@@ -73,6 +78,7 @@ public class homescreen extends AppCompatActivity {
         viewModel.getVideos().observe(this, videos -> {
             videoAdapter.setVideos(videos);
         });
+
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
@@ -94,8 +100,8 @@ public class homescreen extends AppCompatActivity {
                 startActivity(loginIntent);
             } else {
                 // Start the logout activity with user details as extras
-                Intent logoutIntent = new Intent(homescreen.this, logout.class);
-                logoutIntent.putExtra("user", loggedInUser);
+                Intent logoutIntent = new Intent(homescreen.this, UserPage.class);
+                logoutIntent.putExtra("user_email", loggedInUser.getEmail());
                 startActivity(logoutIntent);
             }
         });
@@ -151,6 +157,23 @@ public class homescreen extends AppCompatActivity {
         });
     }
 
+    private void updateUserPhoto() {
+        try {
+            if (loggedInUser != null && loggedInUser.getEmail() != null && loggedInUser.getEmail().equals("testuser@example.com")) {
+                Uri personUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
+                imageViewPerson.setImageURI(personUri);
+            } else if (loggedInUser != null && loggedInUser.getPhoto() != null) {
+                String baseUrl = getResources().getString(R.string.BaseUrl);
+                String photoUrl = baseUrl + loggedInUser.getPhoto();
+                new LoadImageTask(imageViewPerson, R.drawable.person).execute(photoUrl);
+            } else {
+                imageViewPerson.setImageResource(R.drawable.person);
+            }
+        } catch (Exception e) {
+            Log.e("ImageViewError", "Error setting image", e);
+            imageViewPerson.setImageResource(R.drawable.person);
+        }
+    }
 
     private void filterVideos(String query) {
         if (videoAdapter != null) {
@@ -161,5 +184,54 @@ public class homescreen extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    // AsyncTask לטעינת התמונה מהאינטרנט
+    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView imageView;
+        int placeholderResId;
+
+        public LoadImageTask(ImageView imageView, int placeholderResId) {
+            this.imageView = imageView;
+            this.placeholderResId = placeholderResId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            imageView.setImageResource(placeholderResId);
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream inputStream = new URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                // Resize the image to a square
+                int width = result.getWidth();
+                int height = result.getHeight();
+                int newSize = Math.min(width, height);
+                Bitmap resizedBitmap = Bitmap.createBitmap(result, 0, 0, newSize, newSize);
+                // Rotate the image if needed
+                Matrix matrix = new Matrix();
+                matrix.postRotate(90); // Rotate 90 degrees if needed
+                Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+                imageView.setImageBitmap(rotatedBitmap);
+            } else {
+                imageView.setImageResource(placeholderResId);
+            }
+        }
     }
 }

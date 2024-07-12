@@ -1,29 +1,33 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.google.android.material.imageview.ShapeableImageView;
-
-import androidx.core.view.GestureDetectorCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.Fragments.Comments;
+
+import java.io.InputStream;
 
 public class videowatching extends FragmentActivity {
 
@@ -39,7 +43,6 @@ public class videowatching extends FragmentActivity {
     private ImageButton pauseResumeButton;
     private Video currentVideo;
     private User loggedInUser;
-    private MutableLiveData<User> videoOwner = new MutableLiveData<>();
     private UsersViewModel viewModel;
     private GestureDetectorCompat gestureDetector;
     private ShapeableImageView userPhotoImageView;
@@ -69,48 +72,42 @@ public class videowatching extends FragmentActivity {
         // Apply theme to all relevant views
         applyThemeToViews();
 
-        // Observe changes to videoOwner
-        videoOwner.observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User owner) {
-                if (owner != null) {
-                    // Update the UI with the owner's information
-                    channelTextView.setText(owner.getEmail());
-                    String photoUriString = owner.getPhoto();
-                    Log.d("test5", "video photo " + photoUriString);
-                    if (photoUriString != null) {
-                        Uri photoUri = Uri.parse(photoUriString);
-                        Log.d("test5", "video photo " + photoUri);
-                        userPhotoImageView.setImageURI(photoUri);
-                    } else {
-                        userPhotoImageView.setImageResource(R.drawable.dog1);
-                    }
-                } else {
-                    Log.d("test5", "Owner not found");
-                }
-            }
-        });
-
         // Get the data passed from homescreen activity
         Intent intent = getIntent();
         if (intent != null) {
-            Uri data = intent.getData();
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
 
             if (currentVideo != null) {
                 viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-                viewModel.getUserByEmail(videoOwner, currentVideo.getOwner());
+                viewModel.getUserByEmail(currentVideo.getOwner()).observe(this, new Observer<User>() {
+                    @Override
+                    public void onChanged(User owner) {
+                        if (owner != null) {
+                            // Update the UI with the owner's information
+                            channelTextView.setText(owner.getEmail());
+                            String photoUriString = owner.getPhoto();
+                            Log.d("test5", "video photo " + photoUriString);
+                            if (photoUriString != null) {
+                                String baseUrl = getResources().getString(R.string.BaseUrl);
+                                new LoadImageTask(userPhotoImageView).execute(baseUrl + "/" + photoUriString);
+                            } else {
+                                userPhotoImageView.setImageResource(R.drawable.dog1);
+                            }
+                        } else {
+                            Log.d("test5", "Owner not found");
+                        }
+                    }
+                });
 
                 // Set data to views
                 titleTextView.setText(currentVideo.getTitle());
                 descriptionTextView.setText(currentVideo.getDescription());
                 viewCountTextView.setText("Views " + currentVideo.getViews());
 
-
                 String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
                 Log.d("test5", videoUrl);
-                Log.d("videowatching" ,videoUrl);
+                Log.d("videowatching", videoUrl);
                 videoView.setVideoPath(videoUrl);
                 videoView.start();
 
@@ -155,10 +152,10 @@ public class videowatching extends FragmentActivity {
         pauseResumeButton.setOnClickListener(v -> {
             if (videoView.isPlaying()) {
                 videoView.pause();
-                pauseResumeButton.setImageResource(R.drawable.play); // Use the resume drawable
+                pauseResumeButton.setImageResource(R.drawable.play);
             } else {
                 videoView.start();
-                pauseResumeButton.setImageResource(R.drawable.pause); // Use the pause drawable
+                pauseResumeButton.setImageResource(R.drawable.pause);
             }
         });
 
@@ -231,5 +228,36 @@ public class videowatching extends FragmentActivity {
     private void redirectToLogin() {
         Intent loginIntent = new Intent(videowatching.this, login.class);
         startActivity(loginIntent);
+    }
+
+    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private ImageView imageView;
+
+        public LoadImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream input = new java.net.URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+            } catch (Exception e) {
+                Log.e("LoadImageTask", "Error loading image", e);
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                imageView.setImageBitmap(result);
+            } else {
+                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
+            }
+        }
     }
 }

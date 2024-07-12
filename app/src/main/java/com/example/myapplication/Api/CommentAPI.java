@@ -69,21 +69,32 @@ public class CommentAPI {
     }
 
     public void createComment(String userId, String videoId, String text, String userName, String email, String profilePic) {
-        String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
+        CurrentUser currentUser = CurrentUser.getInstance();
+        String token = "bearer " + currentUser.getToken().getValue();
         Log.d("CommentAPI", "Creating comment: userId=" + userId + ", videoId=" + videoId + ", text=" + text);
-        Call<Comment> call = webServiceAPI.createComment(token, userId, videoId, text, userName, email, profilePic);
-        call.enqueue(new Callback<Comment>() {
+        Call<Comment> createComment = webServiceAPI.createComment(token, userId, videoId, text, userName, email, profilePic);
+
+        createComment.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
+                Log.d("CommentAPI", "Reached API");
+                Log.d("CommentAPI", "API response: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
+                        Log.d("CommentAPI", "Entered thread");
+                        Comment newComment = response.body();
+                        Log.d("CommentAPI", "API comment: " + newComment);
+
+                        newComment.setVideoId(videoId);
+
                         Video video = videoDao.get(videoId);
                         if (video != null) {
                             List<Comment> comments = video.getComments();
-                            comments.add(response.body());
+                            comments.add(newComment);
                             video.setComments(comments);
                             videoDao.update(video);
                             commentsLiveData.postValue(comments);
+                            Log.d("CommentAPI", "Comment inserted: " + newComment);
                         }
                     }).start();
                 } else {
@@ -94,18 +105,20 @@ public class CommentAPI {
                             e.printStackTrace();
                         }
                     }
+                    Log.d("CommentAPI", "Response failed API");
                 }
             }
 
             @Override
             public void onFailure(Call<Comment> call, Throwable t) {
-                Log.e("CommentAPI", "Failed to create Comment", t);
+                Log.d("CommentAPI", "Failed API");
             }
         });
     }
 
+
     public void deleteComment(String userId, String videoId, String commentId) {
-        String token = "Bearer " + CurrentUser.getInstance().getToken();
+        String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
         Log.d("CommentAPI", "Deleting comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId);
         Call<Void> call = webServiceAPI.deleteComment(token, userId, videoId, commentId);
         call.enqueue(new Callback<Void>() {
@@ -116,12 +129,14 @@ public class CommentAPI {
                         Video video = videoDao.get(videoId);
                         if (video != null) {
                             List<Comment> comments = video.getComments();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                comments.removeIf(comment -> comment.get_id().equals(commentId));
+                            if (comments != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    comments.removeIf(comment -> comment.get_id() != null && comment.get_id().equals(commentId));
+                                }
+                                video.setComments(comments);
+                                videoDao.update(video);
+                                commentsLiveData.postValue(comments);
                             }
-                            video.setComments(comments);
-                            videoDao.update(video);
-                            commentsLiveData.postValue(comments);
                         }
                     }).start();
                 } else {
@@ -142,21 +157,23 @@ public class CommentAPI {
         });
     }
 
-    public void editComment(String userId, String videoId, String commentId, String text) {
-        String token = "Bearer " + CurrentUser.getInstance().getToken();
-        Log.d("CommentAPI", "Editing comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId + ", text=" + text);
-        Call<Comment> call = webServiceAPI.editComment(token, userId, videoId, commentId, text);
+
+    public void editComment(String userId, String videoId, String commentId, String newText) {
+        String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
+        Log.d("CommentAPI", "Editing comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId + ", text=" + newText);
+        Call<Comment> call = webServiceAPI.editComment(token, userId, videoId, commentId, newText);
         call.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
+                        Comment updatedComment = response.body();
                         Video video = videoDao.get(videoId);
                         if (video != null) {
                             List<Comment> comments = video.getComments();
                             for (int i = 0; i < comments.size(); i++) {
                                 if (comments.get(i).get_id().equals(commentId)) {
-                                    comments.set(i, response.body());
+                                    comments.set(i, updatedComment);
                                     break;
                                 }
                             }

@@ -31,8 +31,8 @@ public class UsersViewModel extends ViewModel {
         return users;
     }
 
-    public void getUserByEmail (MutableLiveData<User> owner, String email) {
-        usersRepository.getUserByEmail(owner, email);
+    public LiveData<User> getUserByEmail(String email) {
+        return usersRepository.getUserByEmail(email);
     }
 
     public void login(String email, String password) {
@@ -44,5 +44,14 @@ public class UsersViewModel extends ViewModel {
         Log.d("test5", "user photo viewmodel " + photo);
         usersRepository.createUser(firstName, lastName, email, password, displayName, photo);
         Log.d("test1", "viewmodel");
+    }
+
+
+    public void updateUser(String email, User user) {
+        usersRepository.updateUser(email, user);
+    }
+
+    public void deleteUser(String email) {
+        usersRepository.deleteUser(email);
     }
 }

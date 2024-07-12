@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -20,6 +21,16 @@ public class Comment implements Serializable {
     private String videoId;
 
     public Comment(String email, String userName, String text, String profilePic) {
+        this.email = email;
+        this.userName = userName;
+        this.text = text;
+        this.profilePic = profilePic;
+        this.date = getCurrentDate();
+    }
+
+    @Ignore
+    public Comment(String _id, String email, String userName, String text, String profilePic) {
+        this._id = _id;
         this.email = email;
         this.userName = userName;
         this.text = text;

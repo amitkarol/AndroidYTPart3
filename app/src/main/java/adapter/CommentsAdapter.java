@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +25,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.ViewModels.CommentsViewModel;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.utils.CurrentUser;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -44,6 +44,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         this.activity = activity;
         this.commentList = new ArrayList<>(commentList != null ? commentList : new ArrayList<>());
         this.loggedInUser = loggedInUser;
+        Log.d("logged user", "Logged in user: " + loggedInUser.getEmail());
         this.context = activity.getApplicationContext();
         this.commentsViewModel = new ViewModelProvider(activity).get(CommentsViewModel.class);
     }
@@ -51,8 +52,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     @NonNull
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.comment_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item, parent, false);
         return new CommentViewHolder(view);
     }
 
@@ -66,10 +66,18 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         // Set user image using AsyncTask
         if (comment.getProfilePic() != null) {
             String imageUrl = context.getResources().getString(R.string.BaseUrl) + comment.getProfilePic();
-            Log.d("commentpic", imageUrl);
             new LoadImageTask(holder.userImageView, R.drawable.person).execute(imageUrl);
         } else {
             holder.userImageView.setImageResource(R.drawable.person);
+        }
+
+        // Check if the current user is the owner of the comment
+        if (loggedInUser.getEmail().equals(comment.getEmail())) {
+            holder.editButton.setVisibility(View.VISIBLE);
+            holder.deleteButton.setVisibility(View.VISIBLE);
+        } else {
+            holder.editButton.setVisibility(View.GONE);
+            holder.deleteButton.setVisibility(View.GONE);
         }
 
         holder.deleteButton.setOnClickListener(v -> {
@@ -102,15 +110,43 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         notifyDataSetChanged();
     }
 
+    public void updateComment(Comment updatedComment) {
+        for (int i = 0; i < commentList.size(); i++) {
+            if (commentList.get(i).get_id().equals(updatedComment.get_id())) {
+                commentList.set(i, updatedComment);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void removeComment(String commentId) {
+        for (int i = 0; i < commentList.size(); i++) {
+            if (commentList.get(i).get_id().equals(commentId)) {
+                commentList.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
+    }
+
+    public void addComment(Comment comment) {
+        commentList.add(comment);
+        notifyDataSetChanged(); // Notify RecyclerView that data set has changed
+    }
+
     private void showDeleteConfirmationDialog(int position) {
         new AlertDialog.Builder(activity)
                 .setTitle("Delete Comment")
                 .setMessage("Are you sure you want to delete this comment?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     String commentId = commentList.get(position).get_id();
-                    commentsViewModel.deleteComment(loggedInUser.getEmail(), String.valueOf(commentList.get(position).getVideoId()), commentId);
-                    commentList.remove(position);
-                    notifyItemRemoved(position);
+                    String videoId = commentList.get(position).getVideoId();
+                    Log.d("deletecomment", "VideoId: " + videoId + ", CommentId: " + commentId);
+
+                    commentsViewModel.deleteComment(loggedInUser.getEmail(), videoId, commentId);
+                    // Remove the comment from the local list and notify RecyclerView
+                    removeComment(commentId);
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -120,9 +156,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         Comment comment = commentList.get(position);
         EditCommentDialog dialog = new EditCommentDialog(activity, comment, updatedComment -> {
             String commentId = comment.get_id();
-            commentsViewModel.editComment(loggedInUser.getEmail(), String.valueOf(commentList.get(position).getVideoId()), commentId, updatedComment.getText());
-            commentList.set(position, updatedComment);
-            notifyItemChanged(position);
+            String videoId = comment.getVideoId();
+            String newText = updatedComment.getText();
+            Log.d("editcomment", "VideoId: " + videoId + ", CommentId: " + commentId + ", newText: " + newText);
+
+            commentsViewModel.editComment(loggedInUser.getEmail(), videoId, commentId, newText);
+            commentsViewModel.getCommentsByVideoId(videoId).observe(activity, new Observer<List<Comment>>() {
+                @Override
+                public void onChanged(List<Comment> updatedComments) {
+                    Log.d("editcomment", "Updated comments received");
+                    updateComment(updatedComment); // Update the specific comment
+                    commentsViewModel.getCommentsByVideoId(videoId).removeObserver(this); // Remove observer
+                }
+            });
         });
         dialog.show(activity.getSupportFragmentManager(), "EditCommentDialog");
     }
@@ -183,16 +229,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         @Override
         protected void onPostExecute(Bitmap result) {
             if (result != null) {
-                // Resize the image to a square
-                int width = result.getWidth();
-                int height = result.getHeight();
-                int newSize = Math.min(width, height);
-                Bitmap resizedBitmap = Bitmap.createBitmap(result, 0, 0, newSize, newSize);
-                // Rotate the image if needed
-                Matrix matrix = new Matrix();
-                matrix.postRotate(90); // Rotate 90 degrees if needed
-                Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-                imageView.setImageBitmap(rotatedBitmap);
+                imageView.setImageBitmap(result);
             } else {
                 imageView.setImageResource(placeholderResId);
             }

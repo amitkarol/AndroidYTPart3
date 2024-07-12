@@ -18,9 +18,6 @@
         android:background="@null" />
 
     <!-- Search View -->
-
-    <!-- SwipeRefreshLayout and RecyclerView for swiping Videos -->
-
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="371dp"
@@ -31,6 +28,7 @@
         android:layout_marginEnd="14dp"
         android:background="@color/constant_white" />
 
+    <!-- SwipeRefreshLayout and RecyclerView for swiping Videos -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -51,9 +49,6 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Switch Mode -->
-
-    <!-- Bottom Navigation -->
-
     <Switch
         android:id="@+id/switch1"
         android:layout_width="wrap_content"
@@ -64,6 +59,7 @@
         android:layout_marginEnd="11dp"
         android:text="Night Mode" />
 
+    <!-- Bottom Navigation -->
     <RelativeLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
@@ -111,7 +107,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageViewPerson"
             android:layout_width="46dp"
-            android:layout_height="38dp"
+            android:layout_height="46dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             android:background="@null"

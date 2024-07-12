@@ -1,5 +1,6 @@
 package com.example.myapplication.repositories;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -80,6 +81,8 @@ public class CommentsRepository {
         });
     }
 
+
+
     public void deleteComment(String userId, String videoId, String commentId) {
         Log.d("CommentsRepository", "Deleting comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId);
         commentAPI.deleteComment(userId, videoId, commentId);
@@ -87,20 +90,24 @@ public class CommentsRepository {
             new Thread(() -> {
                 Video video = videoDao.get(videoId);
                 if (video != null) {
-                    video.setComments(comments);
-                    videoDao.update(video);
+                    List<Comment> commentsList = video.getComments();
+                    if (commentsList != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            commentsList.removeIf(comment -> comment.get_id() != null && comment.get_id().equals(commentId));
+                        }
+                        video.setComments(commentsList);
+                        videoDao.update(video);
 
-                    for (Comment comment : comments) {
-                        comment.setVideoId(videoId);
-                        commentDao.delete(comment);
+                        commentsLiveData.postValue(commentsList);
+                        Log.d("CommentsRepository", "Comments updated after deletion: " + commentsList.size());
                     }
-
-                    commentsLiveData.postValue(comments);
-                    Log.d("CommentsRepository", "Comments updated after deletion: " + comments.size());
                 }
             }).start();
         });
     }
+
+
+
 
     public void editComment(String userId, String videoId, String commentId, String text) {
         Log.d("CommentsRepository", "Editing comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId);
@@ -123,6 +130,8 @@ public class CommentsRepository {
             }).start();
         });
     }
+
+
 
     public void deleteAllComments() {
         new Thread(() -> {
