@@ -1,7 +1,11 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.ViewModels.UsersViewModel;
+import com.example.myapplication.utils.CurrentUser;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +38,10 @@ public class UserPage extends BaseActivity {
     private TextView textViewNumVideos;
     private RecyclerView recyclerViewUserVideos;
     private Button buttonEdit;
+    private Button buttonLogout;
     private UsersViewModel usersViewModel;
     private User user;
+    private ImageView imageViewPerson;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +54,8 @@ public class UserPage extends BaseActivity {
         textViewNumVideos = findViewById(R.id.textViewNumVideos);
         recyclerViewUserVideos = findViewById(R.id.recyclerViewUserVideos);
         buttonEdit = findViewById(R.id.buttonEdit);
+        buttonLogout = findViewById(R.id.buttonLogout);
+        imageViewPerson = findViewById(R.id.imageViewPerson); // Initializing the imageViewPerson here
 
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
@@ -61,36 +71,7 @@ public class UserPage extends BaseActivity {
                     if (loadedUser != null) {
                         user = loadedUser;
                         Log.d("UserPage", "User loaded: " + user);
-                        textViewDisplayName.setText(user.getDisplayName());
-                        textViewUserName.setText(user.getFirstName() + " " + user.getLastName());
-
-                        if (user.getVideos() != null) {
-                            textViewNumVideos.setText(user.getVideos().size() + " videos");
-                        } else {
-                            textViewNumVideos.setText("0 videos");
-                        }
-
-                        // Load the user's photo
-                        if (user.getPhoto() != null && !user.getPhoto().isEmpty()) {
-                            Log.d("uri p" , user.getPhoto());
-                            String baseUrl = getResources().getString(R.string.BaseUrl);
-                            imageViewUserPhoto.setImageURI(Uri.parse(baseUrl + user.getPhoto()));
-                        } else {
-                            imageViewUserPhoto.setImageResource(R.drawable.dog1); // Use a placeholder image
-                        }
-
-                        // Initialize RecyclerView with user videos
-                        List<Video> userVideos = user.getVideos() != null ? user.getVideos() : new ArrayList<>();
-                        VideoListAdapter adapter = new VideoListAdapter(userVideos, UserPage.this, user);
-                        recyclerViewUserVideos.setLayoutManager(new LinearLayoutManager(UserPage.this));
-                        recyclerViewUserVideos.setAdapter(adapter);
-
-                        if (userVideos.isEmpty()) {
-                            recyclerViewUserVideos.setVisibility(View.GONE);
-                            textViewNumVideos.setText("No videos available.");
-                        } else {
-                            recyclerViewUserVideos.setVisibility(View.VISIBLE);
-                        }
+                        updateUserInfo();
                     } else {
                         Log.d("UserPage", "Loaded user is null");
                     }
@@ -111,6 +92,17 @@ public class UserPage extends BaseActivity {
             }
         });
 
+        // Set the button logout listener
+        buttonLogout.setOnClickListener(v -> {
+            Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
+            User loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
+            CurrentUser.getInstance().setUser(loggedInUser);
+            CurrentUser.getInstance().setToken(null);
+            Intent logoutIntent = new Intent(UserPage.this, homescreen.class);
+            startActivity(logoutIntent);
+            finish();
+        });
+
         // Initialize Bottom Navigation (example, you can add listeners as needed)
         ImageView imageViewHome = findViewById(R.id.imageViewHome);
         imageViewHome.setOnClickListener(v -> {
@@ -127,6 +119,8 @@ public class UserPage extends BaseActivity {
         ImageView buttonUpload = findViewById(R.id.buttonUpload);
         buttonUpload.setOnClickListener(v -> {
             // Navigate to Upload screen
+            Intent uploadIntent = new Intent(UserPage.this, uploadvideo.class);
+            startActivity(uploadIntent);
         });
 
         ImageView imageViewPlay = findViewById(R.id.imageViewPlay);
@@ -134,9 +128,7 @@ public class UserPage extends BaseActivity {
             // Navigate to Play screen
         });
 
-        ImageView imageViewPerson = findViewById(R.id.imageViewPerson);
         imageViewPerson.setOnClickListener(v -> {
-            // Navigate to User Profile screen
         });
     }
 
@@ -150,11 +142,89 @@ public class UserPage extends BaseActivity {
                     @Override
                     public void onChanged(User updatedUser) {
                         if (updatedUser != null) {
-                            usersViewModel.updateUser(updatedUser.getEmail(), updatedUser);
+                            user = updatedUser;
+                            Log.d("UserPage", "User updated: " + user);
+                            updateUserInfo();
                         }
                     }
                 });
             }
+        }
+    }
+
+    private void updateUserInfo() {
+        textViewDisplayName.setText(user.getDisplayName());
+        textViewUserName.setText(user.getFirstName() + " " + user.getLastName());
+
+        if (user.getVideos() != null) {
+            textViewNumVideos.setText(user.getVideos().size() + " videos");
+        } else {
+            textViewNumVideos.setText("0 videos");
+        }
+
+        // Load the user's photo
+        if (user.getPhoto() != null && !user.getPhoto().isEmpty()) {
+            String baseUrl = getResources().getString(R.string.BaseUrl);
+            Log.d("uri p", baseUrl + "/" + user.getPhoto());
+            new LoadImageTask(imageViewUserPhoto).execute(baseUrl + user.getPhoto());
+            new LoadImageTask(imageViewPerson).execute(baseUrl + "/" + user.getPhoto());
+        } else {
+            imageViewUserPhoto.setImageResource(R.drawable.dog1); // Use a placeholder image
+            imageViewPerson.setImageResource(R.drawable.dog1); // Use a placeholder image
+        }
+
+        // Initialize RecyclerView with user videos
+        List<Video> userVideos = user.getVideos() != null ? user.getVideos() : new ArrayList<>();
+        VideoListAdapter adapter = new VideoListAdapter(userVideos, UserPage.this, user);
+        recyclerViewUserVideos.setLayoutManager(new LinearLayoutManager(UserPage.this));
+        recyclerViewUserVideos.setAdapter(adapter);
+
+        if (userVideos.isEmpty()) {
+            recyclerViewUserVideos.setVisibility(View.GONE);
+            textViewNumVideos.setText("No videos available.");
+        } else {
+            recyclerViewUserVideos.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private ImageView imageView;
+
+        public LoadImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream input = new java.net.URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+                bitmap = rotateBitmap(bitmap, 90); // Rotate the bitmap by 90 degrees
+            } catch (Exception e) {
+                Log.e("LoadImageTask", "Error loading image", e);
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                imageView.setImageBitmap(result);
+            } else {
+                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
+            }
+        }
+
+        private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
+            if (bitmap != null) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(degrees);
+                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            }
+            return bitmap;
         }
     }
 }

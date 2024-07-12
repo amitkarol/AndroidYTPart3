@@ -52,13 +52,11 @@ public class homescreen extends AppCompatActivity {
         setContentView(R.layout.homescreen);
 
         CurrentUser currentUser = CurrentUser.getInstance();
-        //loggedInUser = (User) getIntent().getSerializableExtra("user");
         // Observe the user LiveData
         currentUser.getUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 loggedInUser = user;
-                Log.d("test1", "loggedInUser: " + loggedInUser);
                 // Update UI or perform other actions based on the new loggedInUser
                 updateUserPhoto();
             }
@@ -81,6 +79,7 @@ public class homescreen extends AppCompatActivity {
             videoAdapter.setVideos(videos);
         });
 
+
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
         videoAdapter = new VideoListAdapter(null, this, loggedInUser);
@@ -101,8 +100,8 @@ public class homescreen extends AppCompatActivity {
                 startActivity(loginIntent);
             } else {
                 // Start the logout activity with user details as extras
-                Intent logoutIntent = new Intent(homescreen.this, logout.class);
-                logoutIntent.putExtra("user", loggedInUser);
+                Intent logoutIntent = new Intent(homescreen.this, UserPage.class);
+                logoutIntent.putExtra("user_email", loggedInUser.getEmail());
                 startActivity(logoutIntent);
             }
         });
@@ -161,7 +160,6 @@ public class homescreen extends AppCompatActivity {
     private void updateUserPhoto() {
         try {
             if (loggedInUser != null && loggedInUser.getEmail() != null && loggedInUser.getEmail().equals("testuser@example.com")) {
-                // אם ה-email הוא "testuser@example.com", הגדר תמונת ברירת מחדל
                 Uri personUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
                 imageViewPerson.setImageURI(personUri);
             } else if (loggedInUser != null && loggedInUser.getPhoto() != null) {
@@ -169,12 +167,10 @@ public class homescreen extends AppCompatActivity {
                 String photoUrl = baseUrl + loggedInUser.getPhoto();
                 new LoadImageTask(imageViewPerson, R.drawable.person).execute(photoUrl);
             } else {
-                // אם אין תמונה למשתמש, הגדר תמונת ברירת מחדל
                 imageViewPerson.setImageResource(R.drawable.person);
             }
         } catch (Exception e) {
             Log.e("ImageViewError", "Error setting image", e);
-            // אם יש שגיאה, הגדר תמונת ברירת מחדל
             imageViewPerson.setImageResource(R.drawable.person);
         }
     }

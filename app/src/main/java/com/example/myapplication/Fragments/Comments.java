@@ -128,6 +128,7 @@ public class Comments extends DialogFragment {
 
 
 
+
     private void redirectToLogin() {
         Intent loginIntent = new Intent(getActivity(), login.class);
         startActivity(loginIntent);

@@ -1,13 +1,17 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -20,9 +24,10 @@ import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.google.android.material.imageview.ShapeableImageView;
-
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.Fragments.Comments;
+
+import java.io.InputStream;
 
 public class videowatching extends FragmentActivity {
 
@@ -84,9 +89,8 @@ public class videowatching extends FragmentActivity {
                             String photoUriString = owner.getPhoto();
                             Log.d("test5", "video photo " + photoUriString);
                             if (photoUriString != null) {
-                                Uri photoUri = Uri.parse(photoUriString);
-                                Log.d("test5", "video photo " + photoUri);
-                                userPhotoImageView.setImageURI(photoUri);
+                                String baseUrl = getResources().getString(R.string.BaseUrl);
+                                new LoadImageTask(userPhotoImageView).execute(baseUrl + "/" + photoUriString);
                             } else {
                                 userPhotoImageView.setImageResource(R.drawable.dog1);
                             }
@@ -224,5 +228,36 @@ public class videowatching extends FragmentActivity {
     private void redirectToLogin() {
         Intent loginIntent = new Intent(videowatching.this, login.class);
         startActivity(loginIntent);
+    }
+
+    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private ImageView imageView;
+
+        public LoadImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream input = new java.net.URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+            } catch (Exception e) {
+                Log.e("LoadImageTask", "Error loading image", e);
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                imageView.setImageBitmap(result);
+            } else {
+                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
+            }
+        }
     }
 }

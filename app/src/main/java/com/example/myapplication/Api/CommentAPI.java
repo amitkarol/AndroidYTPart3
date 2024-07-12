@@ -83,7 +83,7 @@ public class CommentAPI {
                     new Thread(() -> {
                         Log.d("CommentAPI", "Entered thread");
                         Comment newComment = response.body();
-                        Log.d("CommentAPIc", "API comment: " + newComment);
+                        Log.d("CommentAPI", "API comment: " + newComment);
 
                         newComment.setVideoId(videoId);
 
@@ -117,7 +117,6 @@ public class CommentAPI {
     }
 
 
-
     public void deleteComment(String userId, String videoId, String commentId) {
         String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
         Log.d("CommentAPI", "Deleting comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId);
@@ -130,12 +129,14 @@ public class CommentAPI {
                         Video video = videoDao.get(videoId);
                         if (video != null) {
                             List<Comment> comments = video.getComments();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                comments.removeIf(comment -> comment.get_id().equals(commentId));
+                            if (comments != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    comments.removeIf(comment -> comment.get_id() != null && comment.get_id().equals(commentId));
+                                }
+                                video.setComments(comments);
+                                videoDao.update(video);
+                                commentsLiveData.postValue(comments);
                             }
-                            video.setComments(comments);
-                            videoDao.update(video);
-                            commentsLiveData.postValue(comments);
                         }
                     }).start();
                 } else {
@@ -156,9 +157,9 @@ public class CommentAPI {
         });
     }
 
+
     public void editComment(String userId, String videoId, String commentId, String newText) {
         String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
-        Log.d("token iss" ,CurrentUser.getInstance().getToken().getValue() );
         Log.d("CommentAPI", "Editing comment: userId=" + userId + ", videoId=" + videoId + ", commentId=" + commentId + ", text=" + newText);
         Call<Comment> call = webServiceAPI.editComment(token, userId, videoId, commentId, newText);
         call.enqueue(new Callback<Comment>() {
@@ -166,12 +167,13 @@ public class CommentAPI {
             public void onResponse(Call<Comment> call, Response<Comment> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
+                        Comment updatedComment = response.body();
                         Video video = videoDao.get(videoId);
                         if (video != null) {
                             List<Comment> comments = video.getComments();
                             for (int i = 0; i < comments.size(); i++) {
                                 if (comments.get(i).get_id().equals(commentId)) {
-                                    comments.set(i, response.body());
+                                    comments.set(i, updatedComment);
                                     break;
                                 }
                             }

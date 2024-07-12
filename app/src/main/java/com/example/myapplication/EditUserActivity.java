@@ -2,8 +2,13 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
+
+import java.io.InputStream;
 
 public class EditUserActivity extends BaseActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
@@ -56,7 +63,8 @@ public class EditUserActivity extends BaseActivity {
                         lastNameEditText.setText(loggedInUser.getLastName());
                         displayNameEditText.setText(loggedInUser.getDisplayName());
                         if (loggedInUser.getPhoto() != null) {
-                            userPhotoImageView.setImageURI(Uri.parse(loggedInUser.getPhoto()));
+                            String baseUrl = getResources().getString(R.string.BaseUrl);
+                            new LoadImageTask(userPhotoImageView).execute(baseUrl + loggedInUser.getPhoto());
                         } else {
                             userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
                         }
@@ -85,13 +93,12 @@ public class EditUserActivity extends BaseActivity {
                             loggedInUser.setPhoto(selectedImageUri.toString());
                         }
 
-                        // Update the user on the server
                         usersViewModel.updateUser(loggedInUser.getEmail(), loggedInUser);
 
                         // Show a confirmation message
                         Toast.makeText(this, "User details updated", Toast.LENGTH_SHORT).show();
 
-                        // Navigate back to the homescreen
+                        // Navigate back to the UserPage
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("updated_user_email", loggedInUser.getEmail());
                         setResult(RESULT_OK, resultIntent);
@@ -137,6 +144,47 @@ public class EditUserActivity extends BaseActivity {
             selectedImageUri = data.getData();
             userPhotoImageView.setImageURI(selectedImageUri);
             Toast.makeText(this, "New photo selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private ImageView imageView;
+
+        public LoadImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String url = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream input = new java.net.URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+                bitmap = rotateBitmap(bitmap, 90); // Rotate the bitmap by 90 degrees
+            } catch (Exception e) {
+                Log.e("LoadImageTask", "Error loading image", e);
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) {
+                imageView.setImageBitmap(result);
+            } else {
+                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
+            }
+        }
+
+        private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
+            if (bitmap != null) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(degrees);
+                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            }
+            return bitmap;
         }
     }
 }
