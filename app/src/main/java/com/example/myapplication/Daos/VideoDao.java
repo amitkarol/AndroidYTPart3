@@ -18,6 +18,9 @@ public interface VideoDao {
     @Query("SELECT * FROM Video WHERE _id = :id")
     Video get(String id);
 
+    @Query("SELECT * FROM Video WHERE Video.owner = :id")
+    List<Video> getUserVideos(String id);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Video... Videos);
 

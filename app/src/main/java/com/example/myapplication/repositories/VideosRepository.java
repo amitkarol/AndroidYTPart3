@@ -45,6 +45,19 @@ public class VideosRepository {
                 postValue(videos);
             }).start();
         }
+
+        public LiveData<List<Video>> getUserVideos(String id) {
+            Log.d("user videos", "repository getUserVideos");
+            MutableLiveData<List<Video>> userVideos = new MutableLiveData<>();
+            new Thread(() -> {
+                Log.d("user videos", "repository getUserVideos in thread");
+                List<Video> videos = videoDao.getUserVideos(id);
+                Log.d("user videos", "repository getUserVideos after dao: " +videos);
+                userVideos.postValue(videos);
+                Log.d("user videos", "repository getUserVideos after dao: " + userVideos.getValue());
+            }).start();
+            return userVideos;
+        }
     }
 
     public LiveData<List<Video>> getAll() {
@@ -53,6 +66,11 @@ public class VideosRepository {
 
     public LiveData<List<Video>> getVideos() {
         return videoListData;
+    }
+
+    public  LiveData<List<Video>> getUserVideos(String id) {
+        Log.d("user videos", "repository before:");
+        return videoListData.getUserVideos(id);
     }
 
     public void createVideo(String title, String description, String img, String video, String owner) {

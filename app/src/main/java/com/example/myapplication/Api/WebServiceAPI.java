@@ -42,6 +42,9 @@ public interface WebServiceAPI {
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
 
+    @GET("/api/users/{id}/videos")
+    Call<List<Video>> getUserVideos(@Path("id") String id);
+
     @FormUrlEncoded
     @POST("/api/users/{id}/videos")
     Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,

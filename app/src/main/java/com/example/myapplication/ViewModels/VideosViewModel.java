@@ -23,6 +23,11 @@ public class VideosViewModel extends ViewModel {
         return videos;
     }
 
+    public  LiveData<List<Video>> getUserVideos(String id) {
+        Log.d("user videos", "viewmodel before:");
+        return videoRepository.getUserVideos(id);
+    }
+
     public void createVideo(String title, String description, String img, String video, String owner) {
         Log.d("test3", "viewmodel start video: " + title);
         videoRepository.createVideo(title, description, img, video, owner);
