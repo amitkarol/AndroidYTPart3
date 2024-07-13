@@ -48,6 +48,8 @@ public class videowatching extends FragmentActivity {
     private VideosViewModel videoViewModel;
     private GestureDetectorCompat gestureDetector;
     private ShapeableImageView userPhotoImageView;
+    private Boolean hasLiked;
+    private int likes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,8 @@ public class videowatching extends FragmentActivity {
         if (intent != null) {
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
+            hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
+            likes = currentVideo.getLikes();
 
             if (currentVideo != null) {
                 userViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
@@ -187,11 +191,11 @@ public class videowatching extends FragmentActivity {
     }
 
     private void updateLikeButton() {
+        Log.d("like", "in function");
         if (currentVideo != null && loggedInUser != null) {
-            boolean hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
-            int likeCount = currentVideo.getLikes();
-            likeButton.setText(likeCount + " likes");
+            likeButton.setText(hasLiked ? likes-- + " likes " : likes++ + " likes ");
             likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
+            hasLiked = !hasLiked;
         }
     }
 
