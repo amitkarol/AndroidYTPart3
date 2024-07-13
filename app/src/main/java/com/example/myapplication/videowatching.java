@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
+import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -43,7 +44,8 @@ public class videowatching extends FragmentActivity {
     private ImageButton pauseResumeButton;
     private Video currentVideo;
     private User loggedInUser;
-    private UsersViewModel viewModel;
+    private UsersViewModel userViewModel;
+    private VideosViewModel videoViewModel;
     private GestureDetectorCompat gestureDetector;
     private ShapeableImageView userPhotoImageView;
 
@@ -52,6 +54,7 @@ public class videowatching extends FragmentActivity {
         ThemeUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.videowatching);
+        videoViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
 
         // Initialize GestureDetector
         gestureDetector = new GestureDetectorCompat(this, new GestureListener());
@@ -79,8 +82,8 @@ public class videowatching extends FragmentActivity {
             loggedInUser = (User) intent.getSerializableExtra("user");
 
             if (currentVideo != null) {
-                viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-                viewModel.getUserByEmail(currentVideo.getOwner()).observe(this, new Observer<User>() {
+                userViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+                userViewModel.getUserByEmail(currentVideo.getOwner()).observe(this, new Observer<User>() {
                     @Override
                     public void onChanged(User owner) {
                         if (owner != null) {
@@ -103,7 +106,7 @@ public class videowatching extends FragmentActivity {
                 // Set data to views
                 titleTextView.setText(currentVideo.getTitle());
                 descriptionTextView.setText(currentVideo.getDescription());
-                viewCountTextView.setText("Views " + currentVideo.getViews());
+                viewCountTextView.setText("Views " + (currentVideo.getViews() + 1));
 
                 String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
                 Log.d("test5", videoUrl);
@@ -112,31 +115,26 @@ public class videowatching extends FragmentActivity {
                 videoView.start();
 
                 // Update view count
-                currentVideo.incrementViewCount();
-                viewCountTextView.setText("Views " + currentVideo.getViews());
+                videoViewModel.updateViews(currentVideo.getOwner(), currentVideo.get_id());
                 updateLikeButton();
             }
         }
 
         // Like button listener
         likeButton.setOnClickListener(v -> {
-            if (loggedInUser.getEmail().equals("testuser@example.com")) {
+            if (loggedInUser == null || loggedInUser.getEmail().equals("testuser@example.com")) {
                 redirectToLogin();
                 return;
             }
             if (currentVideo != null && loggedInUser != null) {
-                if (currentVideo.hasLiked(loggedInUser.getEmail())) {
-                    currentVideo.unlikeVideo(loggedInUser.getEmail());
-                } else {
-                    currentVideo.likeVideo(loggedInUser.getEmail());
-                }
+                videoViewModel.setLikes(currentVideo.getOwner(), currentVideo.get_id(), loggedInUser.getEmail());
                 updateLikeButton();
             }
         });
 
         // Edit button listener
         editButton.setOnClickListener(v -> {
-            if (loggedInUser.getEmail().equals("testuser@example.com")) {
+            if (loggedInUser == null || loggedInUser.getEmail().equals("testuser@example.com")) {
                 redirectToLogin();
                 return;
             }
@@ -190,7 +188,7 @@ public class videowatching extends FragmentActivity {
 
     private void updateLikeButton() {
         if (currentVideo != null && loggedInUser != null) {
-            boolean hasLiked = currentVideo.hasLiked(loggedInUser.getEmail());
+            boolean hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
             int likeCount = currentVideo.getLikes();
             likeButton.setText(likeCount + " likes");
             likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);

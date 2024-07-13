@@ -175,7 +175,7 @@ public class UserPage extends BaseActivity {
 
         // Initialize RecyclerView with user videos
         List<Video> userVideos = user.getVideos() != null ? user.getVideos() : new ArrayList<>();
-        VideoListAdapter adapter = new VideoListAdapter(userVideos, UserPage.this, user);
+        VideoListAdapter adapter = new VideoListAdapter(userVideos, UserPage.this);
         recyclerViewUserVideos.setLayoutManager(new LinearLayoutManager(UserPage.this));
         recyclerViewUserVideos.setAdapter(adapter);
 

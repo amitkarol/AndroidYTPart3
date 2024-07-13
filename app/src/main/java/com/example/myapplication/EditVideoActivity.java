@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -35,6 +36,7 @@ public class EditVideoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ThemeUtil.applyTheme(this);
         setContentView(R.layout.edit_video);
+        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
 
         // Initialize views
         titleEditText = findViewById(R.id.titleEditText);
@@ -74,19 +76,8 @@ public class EditVideoActivity extends BaseActivity {
                         String newDescription = descriptionEditText.getText().toString().trim();
 
                         // update the video
-                        viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
                                 selectedImageUri.toString(), loggedInUser.getEmail());
-
-//                        // Update the video object
-//                        currentVideo.setTitle(newTitle);
-//                        currentVideo.setDescription(newDescription);
-//                        if (selectedImageUri != null) {
-//                            currentVideo.setImg(selectedImageUri.toString());
-//                        }
-
-                        // Update the video in VideoManager
-                        //VideoManager.getInstance().updateVideo(currentVideo, originVideo);
 
                         // Show a confirmation message
                         Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show();
@@ -108,8 +99,13 @@ public class EditVideoActivity extends BaseActivity {
                     .setTitle("Confirm Delete")
                     .setMessage("Are you sure you want to delete this video?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        Log.d("test10", "Current video: " +currentVideo);
+                        // Delete the video
+                        Log.d("test11", "video edit before " + currentVideo);
+                        viewModel.deleteVideo(currentVideo);
+                        Log.d("test11", "video edit after " + currentVideo);
                         // Remove the video from VideoManager
-                        VideoManager.getInstance().removeVideo(currentVideo);
+                        //VideoManager.getInstance().removeVideo(currentVideo);
 
                         // Show a confirmation message
                         Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();

@@ -26,11 +26,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.ViewModels.VideosViewModel;
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.utils.CurrentUser;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import adapter.VideoListAdapter;
 
@@ -79,18 +81,39 @@ public class homescreen extends AppCompatActivity {
             videoAdapter.setVideos(videos);
         });
 
+//        viewModel.getVideos().observe(this, new Observer<List<Video>>() {
+//            @Override
+//            public void onChanged(@Nullable List<Video> videos) {
+//                Log.d("test9", "videos: " + videos);
+//                videoAdapter.setVideos(videos);
+//            }
+//        });
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
-        videoAdapter = new VideoListAdapter(null, this, loggedInUser);
+        videoAdapter = new VideoListAdapter(null, this);
         recyclerView.setAdapter(videoAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+//        // Set up SwipeRefreshLayout
+//        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+//        swipeRefreshLayout.setOnRefreshListener(() -> {
+//            viewModel.getVideos().observe(homescreen.this, new Observer<List<Video>>() {
+//                @Override
+//                public void onChanged(@Nullable List<Video> videos) {
+//                    videoAdapter.setVideos(videos);
+//                    Log.d("test10", "test");
+//                    swipeRefreshLayout.setRefreshing(false);
+//                }
+//            });
+//        });
 
         // Set up SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
         });
+
 
         // Set an OnClickListener to the imageViewPerson
         imageViewPerson.setOnClickListener(v -> {

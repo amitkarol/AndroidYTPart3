@@ -24,7 +24,7 @@ public interface WebServiceAPI {
     @GET("/api/videos")
     Call<List<Video>> getVideos();
 
-    @POST("/api/videos")
+    @POST("/api/videos/all")
     Call<Void> createVideo(@Body Video video);
 
     @DELETE("/api/videos/{id}")
@@ -53,8 +53,13 @@ public interface WebServiceAPI {
     Call<Video> editVideo(@Path("id") String id, @Path("pid") String pid, @Field("title") String title,
                           @Field("description") String description, @Field("img") String img, @Header("authorization") String token);
 
+
+    @DELETE("/api/users/{id}/videos/{pid}")
+    Call<Void> deleteVideo(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
+
+
     @GET("/api/users/{id}/videos/{pid}/likes")
-    Call<Video> isLiked(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
+    Call<Boolean> isLiked(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
 
     @FormUrlEncoded
     @PATCH("/api/users/{id}/videos/{pid}/likes")
@@ -65,9 +70,8 @@ public interface WebServiceAPI {
             @Header("authorization") String token
     );
 
-    @FormUrlEncoded
     @PATCH("/api/users/{id}/videos/{pid}/views")
-    Call<Video> updateViews(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
+    Call<Video> updateViews(@Path("id") String id, @Path("pid") String pid);
 
     @GET("/api/users/{id}/videos/{pid}/comments")
     Call<List<Comment>> getComments(
