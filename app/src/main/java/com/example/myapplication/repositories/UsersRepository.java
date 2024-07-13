@@ -62,6 +62,11 @@ public class UsersRepository {
         Log.d("test5", "user photo viewmodel " + photo);
         userAPI.createUser(firstName, lastName, email, password, displayName, photo);
     }
+    public LiveData<Boolean> checkEmailExists(String email) {
+        MutableLiveData<Boolean> emailExists = new MutableLiveData<>();
+        userAPI.checkEmailExists(email, emailExists);
+        return emailExists;
+    }
 
 
     public void updateUser(String email, User user) {

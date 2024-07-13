@@ -46,6 +46,9 @@ public class UsersViewModel extends ViewModel {
         Log.d("test1", "viewmodel");
     }
 
+    public LiveData<Boolean> checkEmailExists(String email) {
+        return usersRepository.checkEmailExists(email);
+    }
 
     public void updateUser(String email, User user) {
         usersRepository.updateUser(email, user);

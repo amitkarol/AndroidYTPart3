@@ -1,86 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".TrendingActivity">
 
-    <!-- User Photo -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imageViewUserPhoto"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="16dp"
+    <TextView
+        android:id="@+id/textViewTrending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trending Videos"
+        android:textSize="24sp"
+        android:textStyle="bold"
         android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/person"
-        app:shapeAppearanceOverlay="@style/CircularImageView" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
 
-    <!-- Display Name -->
-    <TextView
-        android:id="@+id/textViewDisplayName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/imageViewUserPhoto"
-        android:layout_toEndOf="@id/imageViewUserPhoto"
-        android:text="Display Name"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <!-- User Name -->
-    <TextView
-        android:id="@+id/textViewUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/imageViewUserPhoto"
-        android:layout_below="@id/textViewDisplayName"
-        android:text="username"
-        android:textSize="14sp" />
-
-    <!-- Number of Uploaded Videos -->
-    <TextView
-        android:id="@+id/textViewNumVideos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/imageViewUserPhoto"
-        android:layout_below="@id/textViewUserName"
-        android:text="0 Videos"
-        android:textSize="14sp" />
-
-    <!-- Button Edit Details -->
-    <Button
-        android:id="@+id/buttonEdit"
-        style="@style/TransparentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_alignTop="@id/imageViewUserPhoto"
-        android:text="Edit Details"
-        android:textSize="10sp" />
-
-    <!-- Logout Button -->
-    <Button
-        android:id="@+id/buttonLogout"
-        style="@style/TransparentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_below="@id/buttonEdit"
-        android:text="Logout"
-        android:textSize="10sp" />
-
-    <!-- RecyclerView for User's Videos -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewUserVideos"
+        android:id="@+id/recyclerViewTrendingVideos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@+id/bottomNavigation"
-        android:layout_below="@id/imageViewUserPhoto"
-        android:layout_marginTop="16dp"
+        android:layout_below="@+id/textViewTrending"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layoutManager="LinearLayoutManager" />
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
     <!-- Bottom Navigation -->
     <RelativeLayout

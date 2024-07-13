@@ -165,8 +165,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
                 @Override
                 public void onChanged(List<Comment> updatedComments) {
                     Log.d("editcomment", "Updated comments received");
-                    updateComment(updatedComment); // Update the specific comment
-                    commentsViewModel.getCommentsByVideoId(videoId).removeObserver(this); // Remove observer
+                    updateComment(updatedComment);
+                    commentsViewModel.getCommentsByVideoId(videoId).removeObserver(this);
                 }
             });
         });

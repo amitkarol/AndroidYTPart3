@@ -131,11 +131,14 @@ public class UserAPI {
                         Log.d("test1", "user in assignToken: " + currentUser.getUser().getValue());
                     }).start();
                 } else {
+                    currentUser.getUser().postValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<Token> call, Throwable t) {
+                CurrentUser currentUser = CurrentUser.getInstance();
+                currentUser.getUser().postValue(null);
             }
         });
     }
@@ -157,11 +160,14 @@ public class UserAPI {
                         Log.d("test1", "user in assignToken: " + currentUser.getUser().getValue());
                     }).start();
                 } else {
+                    currentUser.getUser().postValue(null);
                 }
             }
 
             @Override
             public void onFailure(Call<Token> call, Throwable t) {
+                CurrentUser currentUser = CurrentUser.getInstance();
+                currentUser.getUser().postValue(null);
             }
         });
     }
@@ -227,6 +233,31 @@ public class UserAPI {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.d("UserAPI", "Failed to delete user", t);
+            }
+        });
+    }
+
+
+    public void checkEmailExists(String email, MutableLiveData<Boolean> emailExists) {
+        Call<User> call = webServiceAPI.getUserByEmail(email);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    emailExists.postValue(true);
+                } else if (response.code() == 404) {
+                    emailExists.postValue(false);
+                } else {
+                    // Handle other response codes
+                    emailExists.postValue(false);
+                    Log.d("UserAPI", "Response unsuccessful for checkEmailExists. Response code: " + response.code() + " Message: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                emailExists.postValue(false); // treat as email does not exist or handle error
+                Log.d("UserAPI", "Failed to check email existence", t);
             }
         });
     }

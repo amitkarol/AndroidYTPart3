@@ -20,4 +20,3 @@ public class UserConverter {
         return gson.toJson(list);
     }
 }
-

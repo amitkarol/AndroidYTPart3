@@ -55,7 +55,7 @@ public class UserPage extends BaseActivity {
         recyclerViewUserVideos = findViewById(R.id.recyclerViewUserVideos);
         buttonEdit = findViewById(R.id.buttonEdit);
         buttonLogout = findViewById(R.id.buttonLogout);
-        imageViewPerson = findViewById(R.id.imageViewPerson); // Initializing the imageViewPerson here
+        imageViewPerson = findViewById(R.id.imageViewPerson);
 
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
@@ -72,6 +72,17 @@ public class UserPage extends BaseActivity {
                         user = loadedUser;
                         Log.d("UserPage", "User loaded: " + user);
                         updateUserInfo();
+
+                        // Check the condition and set the visibility of buttonEdit and buttonLogout
+                        if (CurrentUser.getInstance().getUser().getValue() != null &&
+                                CurrentUser.getInstance().getUser().getValue().getEmail() != null &&
+                                CurrentUser.getInstance().getUser().getValue().getEmail().equals(user.getEmail())) {
+                            buttonEdit.setVisibility(View.VISIBLE); // Show the button
+                            buttonLogout.setVisibility(View.VISIBLE); // Show the button
+                        } else {
+                            buttonEdit.setVisibility(View.GONE); // Hide the button
+                            buttonLogout.setVisibility(View.GONE); // Hide the button
+                        }
                     } else {
                         Log.d("UserPage", "Loaded user is null");
                     }
@@ -81,7 +92,7 @@ public class UserPage extends BaseActivity {
             Log.d("UserPage", "Email is null");
         }
 
-        // Set the button edit listener
+        // check if the logged user is the same user of this page
         buttonEdit.setOnClickListener(v -> {
             if (user != null) {
                 Intent editUserIntent = new Intent(UserPage.this, EditUserActivity.class);
@@ -113,8 +124,9 @@ public class UserPage extends BaseActivity {
 
         ImageView imageViewLightning = findViewById(R.id.imageViewLightning);
         imageViewLightning.setOnClickListener(v -> {
-            // Navigate to Lightning screen
-        });
+            Intent trendingIntent = new Intent(UserPage.this , trending.class);
+            startActivity(trendingIntent);
+         });
 
         ImageView buttonUpload = findViewById(R.id.buttonUpload);
         buttonUpload.setOnClickListener(v -> {
@@ -128,8 +140,8 @@ public class UserPage extends BaseActivity {
             // Navigate to Play screen
         });
 
-        imageViewPerson.setOnClickListener(v -> {
-        });
+        // Load current user photo for bottom navigation
+        loadCurrentUserPhoto();
     }
 
     @Override
@@ -167,10 +179,8 @@ public class UserPage extends BaseActivity {
             String baseUrl = getResources().getString(R.string.BaseUrl);
             Log.d("uri p", baseUrl + "/" + user.getPhoto());
             new LoadImageTask(imageViewUserPhoto).execute(baseUrl + user.getPhoto());
-            new LoadImageTask(imageViewPerson).execute(baseUrl + "/" + user.getPhoto());
         } else {
             imageViewUserPhoto.setImageResource(R.drawable.dog1); // Use a placeholder image
-            imageViewPerson.setImageResource(R.drawable.dog1); // Use a placeholder image
         }
 
         // Initialize RecyclerView with user videos
@@ -184,6 +194,16 @@ public class UserPage extends BaseActivity {
             textViewNumVideos.setText("No videos available.");
         } else {
             recyclerViewUserVideos.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadCurrentUserPhoto() {
+        User currentUser = CurrentUser.getInstance().getUser().getValue();
+        if (currentUser != null && currentUser.getPhoto() != null && !currentUser.getPhoto().isEmpty()) {
+            String baseUrl = getResources().getString(R.string.BaseUrl);
+            new LoadImageTask(imageViewPerson).execute(baseUrl + currentUser.getPhoto());
+        } else {
+            imageViewPerson.setImageResource(R.drawable.person); // Use a placeholder image
         }
     }
 

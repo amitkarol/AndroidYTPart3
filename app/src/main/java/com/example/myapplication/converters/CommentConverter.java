@@ -20,4 +20,3 @@ public class CommentConverter {
         return gson.toJson(list);
     }
 }
-

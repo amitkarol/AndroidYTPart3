@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -22,7 +23,7 @@ import com.example.myapplication.entities.User;
 
 import java.io.InputStream;
 
-public class EditUserActivity extends BaseActivity {
+public class EditUserActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
 
     private EditText firstNameEditText;
