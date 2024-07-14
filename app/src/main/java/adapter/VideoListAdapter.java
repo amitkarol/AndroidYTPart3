@@ -25,6 +25,7 @@ import com.example.myapplication.UserPage;
 import com.example.myapplication.entities.UserManager;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.utils.CurrentUser;
 import com.example.myapplication.videowatching;
 
 import java.io.InputStream;
@@ -39,11 +40,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     private Context context;
     private User loggedInUser;
 
-    public VideoListAdapter(List<Video> videoList, Context context, User loggedInUser) {
+    public VideoListAdapter(List<Video> videoList, Context context) {
         this.videoList = videoList != null ? videoList : new ArrayList<>();
         this.filteredVideoList = new ArrayList<>(this.videoList);
         this.context = context;
-        this.loggedInUser = loggedInUser;
+        CurrentUser currentUser = CurrentUser.getInstance();
+        loggedInUser = currentUser.getUser().getValue();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -76,6 +78,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         holder.titleTextView.setText(video.getTitle());
         holder.channelTextView.setText(video.getOwner());
 
+        Log.d("test8", "video views: " + video.getTitle() + " " + video.getViews());
         Log.d("VideoAdapter", "Empty or null image URI for video: " + video.getImg());
         // Load the video thumbnail
         if (video.getImg() != null && !video.getImg().isEmpty()) {
