@@ -1,5 +1,8 @@
 package com.example.myapplication.Api;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -7,9 +10,11 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 import com.example.myapplication.entities.Comment;
@@ -45,11 +50,23 @@ public interface WebServiceAPI {
     @GET("/api/users/{id}/videos")
     Call<List<Video>> getUserVideos(@Path("id") String id);
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/api/users/{id}/videos")
-    Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,
-                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
-                            @Header("authorization") String token);
+    Call<Video> createVideo(
+            @Path("id") String id,
+            @Part("title") RequestBody title,
+            @Part("description") RequestBody description,
+            @Part MultipartBody.Part img,
+            @Part MultipartBody.Part video,
+            @Part("owner") RequestBody owner,
+            @Header("authorization") String token
+    );
+
+//    @FormUrlEncoded
+//    @POST("/api/users/{id}/videos")
+//    Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,
+//                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
+//                            @Header("authorization") String token);
 
     @FormUrlEncoded
     @PATCH("/api/users/{id}/videos/{pid}")

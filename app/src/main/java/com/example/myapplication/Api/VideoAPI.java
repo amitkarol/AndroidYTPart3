@@ -1,5 +1,7 @@
 package com.example.myapplication.Api;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -9,9 +11,14 @@ import com.example.myapplication.db.AppDB;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.retrofit.RetrofitClient;
 import com.example.myapplication.utils.CurrentUser;
+import com.example.myapplication.utils.FileUtils;
 
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,34 +66,43 @@ public class VideoAPI {
         });
     }
 
-    public void createVideo(String title, String description, String img, String video, String owner, Runnable onSuccess) {
+    public void createVideo(String userId, String title, String description, Uri imgUri, Uri videoUri, Context context, Runnable onSuccess) {
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
-        Log.d("test3", "token is " + token);
-        Call<Video> createVideo = webServiceAPI.createVideo(owner, title, description, img, video, owner, token);
-        createVideo.enqueue(new Callback<Video>() {
+
+        File videoFile = new File(FileUtils.getPathFromUri(context, videoUri));
+        File imageFile = new File(FileUtils.getPathFromUri(context, imgUri));
+
+        RequestBody videoRequestBody = RequestBody.create(MediaType.parse("video/*"), videoFile);
+        RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+
+        MultipartBody.Part videoPart = MultipartBody.Part.createFormData("video", videoFile.getName(), videoRequestBody);
+        MultipartBody.Part imgPart = MultipartBody.Part.createFormData("img", imageFile.getName(), imageRequestBody);
+
+        RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
+        RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"), description);
+        RequestBody ownerBody = RequestBody.create(MediaType.parse("text/plain"), userId);
+
+        Call<Video> call = webServiceAPI.createVideo(userId, titleBody, descriptionBody, imgPart, videoPart, ownerBody, token);
+        call.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
-                Log.d("test3", "reached api");
-                Log.d("test3", "api response: " + response.isSuccessful());
+                Log.d("VideoAPI", "API response: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
-                        Log.d("test1", "entered thread");
                         Video newVideo = response.body();
-                        Log.d("test3", "api video: " + newVideo);
                         videoDao.insert(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
                                 newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
-                        Log.d("test3", "api insert: " + newVideo);
                         onSuccess.run();
                     }).start();
                 } else {
-                    Log.d("test3", "response failed api");
+                    Log.d("VideoAPI", "Response failed: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<Video> call, Throwable t) {
-                Log.d("test3", "failed api");
+                Log.d("VideoAPI", "API call failed: " + t.getMessage());
             }
         });
     }

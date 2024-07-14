@@ -30,17 +30,10 @@ public class uploadvideo extends BaseActivity {
         ThemeUtil.applyTheme(this);
         setContentView(R.layout.uploadvideo);
 
-        //
         CurrentUser currentUser = CurrentUser.getInstance();
-        //user = (User) getIntent().getSerializableExtra("user");
-        // Observe the user LiveData
-        currentUser.getUser().observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(@Nullable User user) {
-                loggedInUser = user;
-                Log.d("test3", "uploadVideo user: " + loggedInUser);
-                // Update UI or perform other actions based on the new user
-            }
+        currentUser.getUser().observe(this, user -> {
+            loggedInUser = user;
+            Log.d("uploadVideo", "User: " + loggedInUser);
         });
 
         Button closeButton = findViewById(R.id.closeButton);
@@ -61,18 +54,17 @@ public class uploadvideo extends BaseActivity {
         continueButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
         continueButton.setOnClickListener(v -> {
             if (selectedVideoUri != null) {
-                Log.d("UploadVideo", "Continue button clicked, videoUri: " + selectedVideoUri);
+                Log.d("uploadVideo", "Continue button clicked, videoUri: " + selectedVideoUri);
                 Intent intent = new Intent(this, detailsofvideo.class);
                 intent.putExtra("videoUrl", selectedVideoUri.toString());
                 intent.putExtra("user", loggedInUser);
                 startActivity(intent);
             } else {
-                Log.d("UploadVideo", "No video selected");
+                Log.d("uploadVideo", "No video selected");
                 Toast.makeText(this, "Please select a video first", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Initialize the VideoView
         videoView.setOnPreparedListener(mediaPlayer -> {
             mediaPlayer.setLooping(true);
             videoView.start();
