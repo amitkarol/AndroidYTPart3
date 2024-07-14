@@ -198,7 +198,7 @@ public class Video implements Serializable {
         this.comments.add(comment);
     }
 
-    public void incrementViewCount() {
+    public void incrementViews() {
         this.views++;
     }
 
@@ -231,7 +231,7 @@ public class Video implements Serializable {
                 ", thumbnailResId=" + thumbnailResId +
                 ", videoUrl='" + video + '\'' +
                 ", user=" + owner + // Add this line
-                ", viewCount=" + views +
+                ", views=" + views +
                 ", likeCount=" + likes +
                 ", userLikes=" + likedBy +
                 ", comments=" + comments +

@@ -19,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.Api.VideoAPI;
+import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.ViewModels.UsersViewModel;
@@ -40,7 +42,9 @@ public class UserPage extends BaseActivity {
     private Button buttonEdit;
     private Button buttonLogout;
     private UsersViewModel usersViewModel;
+    private VideosViewModel videosViewModel;
     private User user;
+    private List<Video> userVideos;
     private ImageView imageViewPerson;
 
     @Override
@@ -58,6 +62,9 @@ public class UserPage extends BaseActivity {
         imageViewPerson = findViewById(R.id.imageViewPerson);
 
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        videosViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
+
+        userVideos = new ArrayList<>(); // Initialize the list to avoid null pointer exceptions
 
         // Get the email from the intent
         String email = getIntent().getStringExtra("user_email");
@@ -73,6 +80,7 @@ public class UserPage extends BaseActivity {
                         Log.d("UserPage", "User loaded: " + user);
                         updateUserInfo();
 
+
                         // Check the condition and set the visibility of buttonEdit and buttonLogout
                         if (CurrentUser.getInstance().getUser().getValue() != null &&
                                 CurrentUser.getInstance().getUser().getValue().getEmail() != null &&
@@ -83,6 +91,9 @@ public class UserPage extends BaseActivity {
                             buttonEdit.setVisibility(View.GONE); // Hide the button
                             buttonLogout.setVisibility(View.GONE); // Hide the button
                         }
+
+                        observeUserVideos(user.getEmail());
+
                     } else {
                         Log.d("UserPage", "Loaded user is null");
                     }
@@ -93,17 +104,17 @@ public class UserPage extends BaseActivity {
         }
 
         // check if the logged user is the same user of this page
+
         buttonEdit.setOnClickListener(v -> {
             if (user != null) {
                 Intent editUserIntent = new Intent(UserPage.this, EditUserActivity.class);
                 editUserIntent.putExtra("user_email", user.getEmail());
-                startActivityForResult(editUserIntent, 1); // 1 is requestCode for editing user
+                startActivityForResult(editUserIntent, 1);
             } else {
                 Log.d("UserPage", "Edit button clicked but user is null");
             }
         });
 
-        // Set the button logout listener
         buttonLogout.setOnClickListener(v -> {
             Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
             User loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
@@ -117,7 +128,6 @@ public class UserPage extends BaseActivity {
         // Initialize Bottom Navigation (example, you can add listeners as needed)
         ImageView imageViewHome = findViewById(R.id.imageViewHome);
         imageViewHome.setOnClickListener(v -> {
-            // Navigate to Home screen
             Intent homeIntent = new Intent(UserPage.this, homescreen.class);
             startActivity(homeIntent);
         });
@@ -130,7 +140,6 @@ public class UserPage extends BaseActivity {
 
         ImageView buttonUpload = findViewById(R.id.buttonUpload);
         buttonUpload.setOnClickListener(v -> {
-            // Navigate to Upload screen
             Intent uploadIntent = new Intent(UserPage.this, uploadvideo.class);
             startActivity(uploadIntent);
         });
@@ -142,6 +151,7 @@ public class UserPage extends BaseActivity {
 
         // Load current user photo for bottom navigation
         loadCurrentUserPhoto();
+
     }
 
     @Override
@@ -168,8 +178,8 @@ public class UserPage extends BaseActivity {
         textViewDisplayName.setText(user.getDisplayName());
         textViewUserName.setText(user.getFirstName() + " " + user.getLastName());
 
-        if (user.getVideos() != null) {
-            textViewNumVideos.setText(user.getVideos().size() + " videos");
+        if (userVideos != null) {
+            textViewNumVideos.setText(userVideos.size() + " videos");
         } else {
             textViewNumVideos.setText("0 videos");
         }
@@ -184,8 +194,7 @@ public class UserPage extends BaseActivity {
         }
 
         // Initialize RecyclerView with user videos
-        List<Video> userVideos = user.getVideos() != null ? user.getVideos() : new ArrayList<>();
-        VideoListAdapter adapter = new VideoListAdapter(userVideos, UserPage.this, user);
+        VideoListAdapter adapter = new VideoListAdapter(userVideos, UserPage.this);
         recyclerViewUserVideos.setLayoutManager(new LinearLayoutManager(UserPage.this));
         recyclerViewUserVideos.setAdapter(adapter);
 
@@ -197,6 +206,7 @@ public class UserPage extends BaseActivity {
         }
     }
 
+
     private void loadCurrentUserPhoto() {
         User currentUser = CurrentUser.getInstance().getUser().getValue();
         if (currentUser != null && currentUser.getPhoto() != null && !currentUser.getPhoto().isEmpty()) {
@@ -205,6 +215,18 @@ public class UserPage extends BaseActivity {
         } else {
             imageViewPerson.setImageResource(R.drawable.person); // Use a placeholder image
         }
+      
+    private void observeUserVideos(String userEmail) {
+        videosViewModel.getUserVideos(userEmail).observe(this, new Observer<List<Video>>() {
+            @Override
+            public void onChanged(List<Video> videos) {
+                if (videos != null) {
+                    userVideos = videos;
+                    Log.d("user videos", "videos: " + userVideos);
+                    updateUserInfo();
+                }
+            }
+        });
     }
 
     private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
