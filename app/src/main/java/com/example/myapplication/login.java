@@ -7,11 +7,9 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.utils.CurrentUser;
@@ -19,6 +17,7 @@ import com.example.myapplication.utils.CurrentUser;
 public class login extends BaseActivity {
 
     private UsersViewModel viewModel;
+    private boolean isLoginAttempted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +48,27 @@ public class login extends BaseActivity {
             CurrentUser currentUser = CurrentUser.getInstance();
 
             // Observe the user LiveData
-            currentUser.getUser().observe(this, new Observer<User>() {
-                @Override
-                public void onChanged(@Nullable User user) {
-                    if (user != null) {
-                        Log.d("test1", "loggedInUser: " + user);
-                        // Navigate to homescreen activity
-                        Intent homescreenIntent = new Intent(login.this, homescreen.class);
-                        homescreenIntent.putExtra("user", user); // Pass the entire user object
-                        startActivity(homescreenIntent);
-                        finish(); // Optional: finish the login activity to prevent going back to it
-                    } else {
-                        // Display error message
-                        Toast.makeText(login.this, "User does not exist", Toast.LENGTH_SHORT).show();
-                    }
+            currentUser.getUser().observe(this, user -> {
+                if (user != null && isLoginAttempted) {
+                    isLoginAttempted = false;
+                    // Navigate to homescreen activity
+                    Intent homescreenIntent = new Intent(login.this, homescreen.class);
+                    homescreenIntent.putExtra("user", user);
+                    startActivity(homescreenIntent);
+                    finish();
+                } else if (user == null && isLoginAttempted) {
+                    isLoginAttempted = false;
+                    // Show toast if user does not exist
+                    showLoginFailedToast();
                 }
             });
+
+            // Set login attempt flag
+            isLoginAttempted = true;
         });
+    }
+
+    private void showLoginFailedToast() {
+        Toast.makeText(this, "Login Failed. User does not exist. Please check your credentials or create a new account.", Toast.LENGTH_LONG).show();
     }
 }

@@ -11,7 +11,7 @@
         android:id="@+id/editTextText8"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="20dp"
         android:text="Upload a video"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -24,24 +24,24 @@
         android:id="@+id/closeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:text="X"
         android:textSize="24sp"
-        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/editTextText8"
         app:layout_constraintEnd_toStartOf="@+id/editTextText8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextText8" />
+        app:layout_constraintTop_toTopOf="@+id/editTextText8"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/uploadVideoButton"
+        style="@style/RedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Upload a Video"
-        style="@style/RedButton"
         android:background="@color/custom_red"
+        android:text="Upload a Video"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextText8" />
 

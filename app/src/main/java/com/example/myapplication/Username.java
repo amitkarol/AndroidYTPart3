@@ -8,11 +8,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.myapplication.entities.UserManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
-public class Username extends BaseActivity {
+import com.example.myapplication.ViewModels.UsersViewModel;
+
+public class Username extends AppCompatActivity {
     private EditText emailEditText;
-    private UserManager usermanager;
+    private UsersViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,31 +28,34 @@ public class Username extends BaseActivity {
         Button secbtnName = findViewById(R.id.second_button);
         secbtnName.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
 
+        viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+
         secbtnName.setOnClickListener(v -> {
             String email = emailEditText.getText().toString().trim();
-            usermanager = UserManager.getInstance();
-            if (usermanager.isAlreadyExists(email)) {
-                Toast.makeText(Username.this, "email already taken. try another one", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             if (!isValidEmail(email)) {
                 // Display error message for invalid email format
                 Toast.makeText(this, "Invalid email format. Please enter a valid email address.", Toast.LENGTH_SHORT).show();
-            } else {
-                // Proceed to next screen
-                Intent intent = new Intent(this, password.class);
-                intent.putExtra("firstName", getIntent().getStringExtra("firstName"));
-                intent.putExtra("lastName", getIntent().getStringExtra("lastName"));
-                intent.putExtra("email", email);
-                startActivity(intent);
+                return;
             }
-        });
 
+            // Check if email already exists
+            viewModel.checkEmailExists(email).observe(this, exists -> {
+                if (exists) {
+                    Toast.makeText(Username.this, "Email already taken. Try another one.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Proceed to next screen
+                    Intent intent = new Intent(this, password.class);
+                    intent.putExtra("firstName", getIntent().getStringExtra("firstName"));
+                    intent.putExtra("lastName", getIntent().getStringExtra("lastName"));
+                    intent.putExtra("email", email);
+                    startActivity(intent);
+                }
+            });
+        });
     }
 
     private boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
-
 }

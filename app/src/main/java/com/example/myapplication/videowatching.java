@@ -138,10 +138,12 @@ public class videowatching extends FragmentActivity {
 
         // Edit button listener
         editButton.setOnClickListener(v -> {
+
             if (loggedInUser == null || loggedInUser.getEmail().equals("testuser@example.com")) {
                 redirectToLogin();
                 return;
             }
+
             if (currentVideo != null) {
                 Intent editIntent = new Intent(videowatching.this, EditVideoActivity.class);
                 editIntent.putExtra("video", currentVideo);

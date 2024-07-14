@@ -16,7 +16,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +35,7 @@ import java.util.List;
 
 import adapter.VideoListAdapter;
 
-public class homescreen extends AppCompatActivity {
+public class homescreen extends BaseActivity {
 
     private RecyclerView recyclerView;
     private VideoListAdapter videoAdapter;
@@ -81,32 +80,11 @@ public class homescreen extends AppCompatActivity {
             videoAdapter.setVideos(videos);
         });
 
-//        viewModel.getVideos().observe(this, new Observer<List<Video>>() {
-//            @Override
-//            public void onChanged(@Nullable List<Video> videos) {
-//                Log.d("test9", "videos: " + videos);
-//                videoAdapter.setVideos(videos);
-//            }
-//        });
-
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewVideos);
         videoAdapter = new VideoListAdapter(null, this);
         recyclerView.setAdapter(videoAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-//        // Set up SwipeRefreshLayout
-//        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-//        swipeRefreshLayout.setOnRefreshListener(() -> {
-//            viewModel.getVideos().observe(homescreen.this, new Observer<List<Video>>() {
-//                @Override
-//                public void onChanged(@Nullable List<Video> videos) {
-//                    videoAdapter.setVideos(videos);
-//                    Log.d("test10", "test");
-//                    swipeRefreshLayout.setRefreshing(false);
-//                }
-//            });
-//        });
 
         // Set up SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
@@ -144,6 +122,13 @@ public class homescreen extends AppCompatActivity {
             }
         });
 
+        ImageView imageViewLightning = findViewById(R.id.imageViewLightning);
+        imageViewLightning.setOnClickListener(v -> {
+            Intent trendingIntent = new Intent(homescreen.this , trending.class);
+            startActivity(trendingIntent);
+        });
+
+
         // Initialize UI elements for manual theme change
         homeScreenLayout = findViewById(R.id.homeScreenLayout);
 
@@ -171,14 +156,14 @@ public class homescreen extends AppCompatActivity {
 
         modeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // Save the new theme preference
-            SharedPreferences.Editor editor = getSharedPreferences("theme_prefs", MODE_PRIVATE).edit();
-            editor.putBoolean("night_mode", isChecked);
-            editor.apply();
+            ThemeUtil.setNightMode(this, isChecked);
 
             // Recreate the activity to apply the new theme
             recreate();
         });
     }
+
+
 
     private void updateUserPhoto() {
         try {

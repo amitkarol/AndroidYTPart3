@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.VideosViewModel;
@@ -20,7 +21,7 @@ import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.VideoManager;
 import com.example.myapplication.entities.User;
 
-public class EditVideoActivity extends BaseActivity {
+public class EditVideoActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
 
     private EditText titleEditText;
@@ -77,7 +78,8 @@ public class EditVideoActivity extends BaseActivity {
 
                         // update the video
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
-                                selectedImageUri.toString(), loggedInUser.getEmail());
+                                selectedImageUri != null ? selectedImageUri.toString() : null, loggedInUser.getEmail());
+
 
                         // Show a confirmation message
                         Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show();
