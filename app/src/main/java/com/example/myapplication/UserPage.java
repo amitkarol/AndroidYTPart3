@@ -92,7 +92,7 @@ public class UserPage extends BaseActivity {
                             buttonLogout.setVisibility(View.GONE); // Hide the button
                         }
 
-                        observeUserVideos(user.getEmail());
+                        //  observeUserVideos(user.getEmail());
 
                     } else {
                         Log.d("UserPage", "Loaded user is null");
@@ -134,9 +134,9 @@ public class UserPage extends BaseActivity {
 
         ImageView imageViewLightning = findViewById(R.id.imageViewLightning);
         imageViewLightning.setOnClickListener(v -> {
-            Intent trendingIntent = new Intent(UserPage.this , trending.class);
+            Intent trendingIntent = new Intent(UserPage.this, trending.class);
             startActivity(trendingIntent);
-         });
+        });
 
         ImageView buttonUpload = findViewById(R.id.buttonUpload);
         buttonUpload.setOnClickListener(v -> {
@@ -206,16 +206,6 @@ public class UserPage extends BaseActivity {
         }
     }
 
-
-    private void loadCurrentUserPhoto() {
-        User currentUser = CurrentUser.getInstance().getUser().getValue();
-        if (currentUser != null && currentUser.getPhoto() != null && !currentUser.getPhoto().isEmpty()) {
-            String baseUrl = getResources().getString(R.string.BaseUrl);
-            new LoadImageTask(imageViewPerson).execute(baseUrl + currentUser.getPhoto());
-        } else {
-            imageViewPerson.setImageResource(R.drawable.person); // Use a placeholder image
-        }
-      
     private void observeUserVideos(String userEmail) {
         videosViewModel.getUserVideos(userEmail).observe(this, new Observer<List<Video>>() {
             @Override
@@ -227,6 +217,16 @@ public class UserPage extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void loadCurrentUserPhoto() {
+        User currentUser = CurrentUser.getInstance().getUser().getValue();
+        if (currentUser != null && currentUser.getPhoto() != null && !currentUser.getPhoto().isEmpty()) {
+            String baseUrl = getResources().getString(R.string.BaseUrl);
+            new LoadImageTask(imageViewPerson).execute(baseUrl + currentUser.getPhoto());
+        } else {
+            imageViewPerson.setImageResource(R.drawable.person); // Use a placeholder image
+        }
     }
 
     private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {

@@ -55,7 +55,7 @@ public class trending extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerViewTrendingVideos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        videoAdapter = new VideoListAdapter(null, this, loggedInUser);
+        videoAdapter = new VideoListAdapter(null, this);
         recyclerView.setAdapter(videoAdapter);
 
         // Initialize ViewModel and observe video list
