@@ -49,14 +49,10 @@ public class VideosRepository {
         }
 
         public LiveData<List<Video>> getUserVideos(String id) {
-            Log.d("user videos", "repository getUserVideos");
             MutableLiveData<List<Video>> userVideos = new MutableLiveData<>();
             new Thread(() -> {
-                Log.d("user videos", "repository getUserVideos in thread");
                 List<Video> videos = videoDao.getUserVideos(id);
-                Log.d("user videos", "repository getUserVideos after dao: " +videos);
                 userVideos.postValue(videos);
-                Log.d("user videos", "repository getUserVideos after dao: " + userVideos.getValue());
             }).start();
             return userVideos;
         }
@@ -68,6 +64,10 @@ public class VideosRepository {
 
     public LiveData<List<Video>> getVideos() {
         return videoListData;
+    }
+
+    public Video getVideoById (String id) {
+        return videoAPI.getVideoById(id);
     }
 
     public  LiveData<List<Video>> getUserVideos(String id) {

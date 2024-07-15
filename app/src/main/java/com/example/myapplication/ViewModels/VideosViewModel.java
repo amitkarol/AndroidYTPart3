@@ -30,6 +30,10 @@ public class VideosViewModel extends ViewModel {
         return videoRepository.getUserVideos(id);
     }
 
+    public Video getVideoById (String id) {
+        return videoRepository.getVideoById(id);
+    }
+
     public void createVideo(String userId, String title, String description, Uri imgUri, Uri videoUri, Context context, Runnable onSuccess) {
         videoRepository.createVideo(userId, title, description, imgUri, videoUri, context, onSuccess);
     }

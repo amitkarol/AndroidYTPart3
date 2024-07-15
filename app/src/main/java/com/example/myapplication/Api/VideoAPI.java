@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Daos.VideoDao;
@@ -64,6 +65,10 @@ public class VideoAPI {
         });
     }
 
+    public Video getVideoById(String id) {
+        return videoDao.get(id);
+    }
+
     public void createVideo(String userId, String title, String description, Uri imgUri, Uri videoUri, Context context, Runnable onSuccess) {
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
@@ -108,7 +113,6 @@ public class VideoAPI {
     public void editVideo(String pid, String title, String description, Uri imgUri, String owner, Context context) {
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
-        Log.d("test3", "token is " + token);
 
         RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"), description);
@@ -124,17 +128,10 @@ public class VideoAPI {
         editVideoCall.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
-                Log.d("test3", "reached api");
-                Log.d("test3", "api response: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
-                        Log.d("test1", "entered thread");
-                        Video newVideo = response.body();
-                        Log.d("test3", "api video: " + newVideo);
-                        videoDao.update(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
-                                newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
-                        Log.d("test3", "api insert: " + newVideo);
-                        //onSuccess.run();
+                        Video responseVideo = response.body();
+                        videoDao.update(responseVideo);
                     }).start();
                 } else {
                     Log.d("test3", "response failed api");

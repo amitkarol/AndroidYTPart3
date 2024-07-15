@@ -79,6 +79,13 @@ public class homescreen extends BaseActivity {
         VideoAPI videoAPI = new VideoAPI();
         videoAPI.get();
 
+//        viewModel.getVideos().observe(this, new Observer<List<Video>>() {
+//            @Override
+//            public void onChanged(@Nullable List<Video> videos) {
+//                videoAdapter.setVideos(videos);
+//            }
+//        });
+
         viewModel.getVideos().observe(this, videos -> {
             videoAdapter.setVideos(videos);
         });

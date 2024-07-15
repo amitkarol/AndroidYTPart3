@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -76,13 +77,8 @@ public class EditVideoActivity extends AppCompatActivity {
                         // Update the video
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
                                 selectedImageUri, loggedInUser.getEmail(), this);
-
-                        // Update the currentVideo object with new values
-                        currentVideo.setTitle(newTitle);
-                        currentVideo.setDescription(newDescription);
-                        if (selectedImageUri != null) {
-                            currentVideo.setImg(selectedImageUri.toString());
-                        }
+                        currentVideo = viewModel.getVideoById(currentVideo.get_id());
+                        Log.d("videoedit", "current video: " + currentVideo);
 
                         // Show a confirmation message on the main thread
                         runOnUiThread(() -> Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show());

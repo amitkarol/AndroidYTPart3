@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
@@ -50,6 +51,8 @@ public class videowatching extends FragmentActivity {
     private ShapeableImageView userPhotoImageView;
     private Boolean hasLiked;
     private int likes;
+    private String videoId;
+    private Video video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,7 @@ public class videowatching extends FragmentActivity {
             loggedInUser = (User) intent.getSerializableExtra("user");
             hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
             likes = currentVideo.getLikes();
+            currentVideo = videoViewModel.getVideoById(currentVideo.get_id());
 
             if (currentVideo != null) {
                 userViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
