@@ -48,8 +48,6 @@ public class VideoAPI {
                     new Thread(() -> {
                         List<Video> videos = response.body();
                         for (Video res : videos) {
-                            Log.d("test7: ", "res videos: " + res);
-                            Log.d("testt", res.get_id());
                             videoDao.insert(new Video(res));
                         }
                     }).start();
@@ -107,12 +105,23 @@ public class VideoAPI {
         });
     }
 
-    public void editVideo(String pid, String title, String description, String img, String owner, Runnable onSuccess) {
+    public void editVideo(String pid, String title, String description, Uri imgUri, String owner, Context context) {
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
         Log.d("test3", "token is " + token);
-        Call<Video> editVideo = webServiceAPI.editVideo(owner, pid, title, description, img, token);
-        editVideo.enqueue(new Callback<Video>() {
+
+        RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
+        RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"), description);
+
+        MultipartBody.Part imgPart = null;
+        if (imgUri != null) {
+            File imageFile = new File(FileUtils.getPathFromUri(context, imgUri));
+            RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+            imgPart = MultipartBody.Part.createFormData("img", imageFile.getName(), imageRequestBody);
+        }
+
+        Call<Video> editVideoCall = webServiceAPI.editVideo(owner, pid, titleBody, descriptionBody, imgPart, token);
+        editVideoCall.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
                 Log.d("test3", "reached api");
@@ -122,10 +131,10 @@ public class VideoAPI {
                         Log.d("test1", "entered thread");
                         Video newVideo = response.body();
                         Log.d("test3", "api video: " + newVideo);
-                        videoDao.insert(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
+                        videoDao.update(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
                                 newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
                         Log.d("test3", "api insert: " + newVideo);
-                        onSuccess.run();
+                        //onSuccess.run();
                     }).start();
                 } else {
                     Log.d("test3", "response failed api");
@@ -134,7 +143,7 @@ public class VideoAPI {
 
             @Override
             public void onFailure(Call<Video> call, Throwable t) {
-                Log.d("test3", "failed api");
+                Log.d("test3", "failed api", t);
             }
         });
     }

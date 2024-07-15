@@ -68,11 +68,16 @@ public interface WebServiceAPI {
 //                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
 //                            @Header("authorization") String token);
 
-    @FormUrlEncoded
+    @Multipart
     @PATCH("/api/users/{id}/videos/{pid}")
-    Call<Video> editVideo(@Path("id") String id, @Path("pid") String pid, @Field("title") String title,
-                          @Field("description") String description, @Field("img") String img, @Header("authorization") String token);
-
+    Call<Video> editVideo(
+            @Path("id") String id,
+            @Path("pid") String pid,
+            @Part("title") RequestBody title,
+            @Part("description") RequestBody description,
+            @Part MultipartBody.Part img,
+            @Header("authorization") String token
+    );
 
     @DELETE("/api/users/{id}/videos/{pid}")
     Call<Void> deleteVideo(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);

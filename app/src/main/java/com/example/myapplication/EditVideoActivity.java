@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -18,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.Video;
-import com.example.myapplication.entities.VideoManager;
 import com.example.myapplication.entities.User;
 
 public class EditVideoActivity extends AppCompatActivity {
@@ -52,7 +50,6 @@ public class EditVideoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         currentVideo = (Video) intent.getSerializableExtra("video");
         loggedInUser = (User) intent.getSerializableExtra("user");
-        Video originVideo = new Video(currentVideo);
 
         // Populate fields if data is available
         if (currentVideo != null) {
@@ -76,18 +73,26 @@ public class EditVideoActivity extends AppCompatActivity {
                         String newTitle = titleEditText.getText().toString().trim();
                         String newDescription = descriptionEditText.getText().toString().trim();
 
-                        // update the video
+                        // Update the video
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
-                                selectedImageUri != null ? selectedImageUri.toString() : null, loggedInUser.getEmail());
+                                selectedImageUri, loggedInUser.getEmail(), this);
 
+                        // Update the currentVideo object with new values
+                        currentVideo.setTitle(newTitle);
+                        currentVideo.setDescription(newDescription);
+                        if (selectedImageUri != null) {
+                            currentVideo.setImg(selectedImageUri.toString());
+                        }
 
-                        // Show a confirmation message
-                        Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show();
+                        // Show a confirmation message on the main thread
+                        runOnUiThread(() -> Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show());
 
-                        // Navigate back to the homescreen
-                        Intent homeIntent = new Intent(this, homescreen.class);
-                        homeIntent.putExtra("user", loggedInUser);
-                        startActivity(homeIntent);
+                        // Navigate back to the videowatching activity
+                        Intent videoIntent = new Intent(this, videowatching.class);
+                        videoIntent.putExtra("video", currentVideo);
+                        videoIntent.putExtra("user", loggedInUser);
+                        videoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(videoIntent);
                         finish();
                     })
                     .setNegativeButton(android.R.string.no, null)
@@ -101,22 +106,17 @@ public class EditVideoActivity extends AppCompatActivity {
                     .setTitle("Confirm Delete")
                     .setMessage("Are you sure you want to delete this video?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        Log.d("test10", "Current video: " +currentVideo);
-                        // Delete the video
-                        Log.d("test11", "video edit before " + currentVideo);
-                        viewModel.deleteVideo(currentVideo);
-                        Log.d("test11", "video edit after " + currentVideo);
-                        // Remove the video from VideoManager
-                        //VideoManager.getInstance().removeVideo(currentVideo);
+                        viewModel.deleteVideo(currentVideo, () -> {
+                            // Show a confirmation message on the main thread
+                            runOnUiThread(() -> Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show());
 
-                        // Show a confirmation message
-                        Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
-
-                        // Navigate back to the homescreen
-                        Intent homeIntent = new Intent(this, homescreen.class);
-                        homeIntent.putExtra("user", loggedInUser);
-                        startActivity(homeIntent);
-                        finish();
+                            // Navigate back to the homescreen
+                            Intent homeIntent = new Intent(EditVideoActivity.this, homescreen.class);
+                            homeIntent.putExtra("user", loggedInUser);
+                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(homeIntent);
+                            finish();
+                        });
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -146,7 +146,7 @@ public class EditVideoActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.getData();
             thumbnailImageView.setImageURI(selectedImageUri);
-            Toast.makeText(this, "New thumbnail selected", Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> Toast.makeText(this, "New thumbnail selected", Toast.LENGTH_SHORT).show());
         }
     }
 }

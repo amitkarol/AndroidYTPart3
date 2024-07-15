@@ -37,6 +37,9 @@ import adapter.VideoListAdapter;
 
 public class homescreen extends BaseActivity {
 
+    private static final int REQUEST_UPLOAD_VIDEO = 1;
+    private static final int REQUEST_WATCH_VIDEO = 2;
+
     private RecyclerView recyclerView;
     private VideoListAdapter videoAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -90,8 +93,8 @@ public class homescreen extends BaseActivity {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(false);
+            refreshVideos();
         });
-
 
         // Set an OnClickListener to the imageViewPerson
         imageViewPerson.setOnClickListener(v -> {
@@ -118,16 +121,15 @@ public class homescreen extends BaseActivity {
             } else {
                 Intent uploadIntent = new Intent(this, uploadvideo.class);
                 uploadIntent.putExtra("user", loggedInUser);
-                startActivity(uploadIntent);
+                startActivityForResult(uploadIntent, REQUEST_UPLOAD_VIDEO);
             }
         });
 
         ImageView imageViewLightning = findViewById(R.id.imageViewLightning);
         imageViewLightning.setOnClickListener(v -> {
-            Intent trendingIntent = new Intent(homescreen.this , trending.class);
+            Intent trendingIntent = new Intent(homescreen.this, trending.class);
             startActivity(trendingIntent);
         });
-
 
         // Initialize UI elements for manual theme change
         homeScreenLayout = findViewById(R.id.homeScreenLayout);
@@ -163,8 +165,6 @@ public class homescreen extends BaseActivity {
         });
     }
 
-
-
     private void updateUserPhoto() {
         try {
             if (loggedInUser != null && loggedInUser.getEmail() != null && loggedInUser.getEmail().equals("testuser@example.com")) {
@@ -192,6 +192,21 @@ public class homescreen extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        refreshVideos();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == REQUEST_UPLOAD_VIDEO || requestCode == REQUEST_WATCH_VIDEO) && resultCode == RESULT_OK) {
+            refreshVideos();
+        }
+    }
+
+    private void refreshVideos() {
+        viewModel.getVideos().observe(this, videos -> {
+            videoAdapter.setVideos(videos);
+        });
     }
 
     // AsyncTask לטעינת התמונה מהאינטרנט

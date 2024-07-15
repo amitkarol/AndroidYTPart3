@@ -34,16 +34,14 @@ public class VideosViewModel extends ViewModel {
         videoRepository.createVideo(userId, title, description, imgUri, videoUri, context, onSuccess);
     }
 
-    public void editVideo(String id, String title, String description, String img, String owner) {
-        Log.d("test3", "viewmodel start video: " + title);
-        videoRepository.editVideo(id, title, description, img, owner);
-        Log.d("test3", "viewmodel end  video: " + title);
+    public void editVideo(String id, String title, String description, Uri imgUri, String owner, Context context) {
+        videoRepository.editVideo(id, title, description, imgUri, owner, context);
     }
 
-    public void deleteVideo(Video video) {
+    public void deleteVideo(Video video, Runnable onSuccess) {
         Log.d("test10", "reached viewmodel start");
         Log.d("test10", "reached viewmodel start: " + video);
-        videoRepository.deleteVideo(video);
+        videoRepository.deleteVideo(video, onSuccess);
         Log.d("test10", "reached viewmodel end");
     }
 

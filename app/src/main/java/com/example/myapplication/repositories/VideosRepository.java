@@ -79,17 +79,14 @@ public class VideosRepository {
         videoAPI.createVideo(userId, title, description, imgUri, videoUri, context, onSuccess);
     }
 
-    public void editVideo(String id, String title, String description, String img, String owner) {
-        Log.d("test3", "repository start video: " + title);
-        videoAPI.editVideo(id, title, description, img, owner, () -> videoListData.refreshData());
-        Log.d("test3", "repository end video: " + title);
+    public void editVideo(String id, String title, String description, Uri imgUri, String owner, Context context) {
+        videoAPI.editVideo(id, title, description, imgUri, owner, context);
+        videoListData.refreshData();
     }
 
-    public void deleteVideo(Video video) {
-        Log.d("test10", "reached repository start");
-        Log.d("test10", "reached repository start: " + video);
-        videoAPI.deleteVideo(video, () -> videoListData.refreshData());
-        Log.d("test10", "reached repository end");
+    public void deleteVideo(Video video, Runnable onSuccess) {
+        videoAPI.deleteVideo(video, onSuccess);
+        videoListData.refreshData();
     }
 
     public void updateViews(String id, String pid) {
