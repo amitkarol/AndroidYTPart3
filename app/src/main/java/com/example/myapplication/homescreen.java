@@ -27,6 +27,7 @@ import com.example.myapplication.entities.User;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.utils.CurrentUser;
+import com.example.myapplication.utils.ImageLoader;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.InputStream;
@@ -163,8 +164,6 @@ public class homescreen extends BaseActivity {
         });
     }
 
-
-
     private void updateUserPhoto() {
         try {
             if (loggedInUser != null && loggedInUser.getEmail() != null && loggedInUser.getEmail().equals("testuser@example.com")) {
@@ -173,7 +172,7 @@ public class homescreen extends BaseActivity {
             } else if (loggedInUser != null && loggedInUser.getPhoto() != null) {
                 String baseUrl = getResources().getString(R.string.BaseUrl);
                 String photoUrl = baseUrl + loggedInUser.getPhoto();
-                new LoadImageTask(imageViewPerson, R.drawable.person).execute(photoUrl);
+                new ImageLoader.LoadImageTask(imageViewPerson, R.drawable.person).execute(photoUrl);
             } else {
                 imageViewPerson.setImageResource(R.drawable.person);
             }
@@ -185,6 +184,7 @@ public class homescreen extends BaseActivity {
 
     private void filterVideos(String query) {
         if (videoAdapter != null) {
+            Log.d("Filter", "Filtering videos with query: " + query);
             videoAdapter.filter(query);
         }
     }
@@ -194,52 +194,5 @@ public class homescreen extends BaseActivity {
         super.onResume();
     }
 
-    // AsyncTask לטעינת התמונה מהאינטרנט
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-        int placeholderResId;
 
-        public LoadImageTask(ImageView imageView, int placeholderResId) {
-            this.imageView = imageView;
-            this.placeholderResId = placeholderResId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            imageView.setImageResource(placeholderResId);
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream inputStream = new URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                // Resize the image to a square
-                int width = result.getWidth();
-                int height = result.getHeight();
-                int newSize = Math.min(width, height);
-                Bitmap resizedBitmap = Bitmap.createBitmap(result, 0, 0, newSize, newSize);
-                // Rotate the image if needed
-                Matrix matrix = new Matrix();
-                matrix.postRotate(90); // Rotate 90 degrees if needed
-                Bitmap rotatedBitmap = Bitmap.createBitmap(resizedBitmap, 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
-                imageView.setImageBitmap(rotatedBitmap);
-            } else {
-                imageView.setImageResource(placeholderResId);
-            }
-        }
-    }
 }

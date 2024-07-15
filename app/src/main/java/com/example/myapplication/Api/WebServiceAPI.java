@@ -41,8 +41,8 @@ public interface WebServiceAPI {
     @FormUrlEncoded
     @POST("/api/users")
     Call<User> createUser(@Field("firstName") String firstName, @Field("lastName") String lastName,
-                                     @Field("email") String email, @Field("password") String password,
-                                     @Field("displayName") String displayName, @Field("photo") String photo);
+                          @Field("email") String email, @Field("password") String password,
+                          @Field("displayName") String displayName, @Field("photo") String photo);
 
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
@@ -138,4 +138,6 @@ public interface WebServiceAPI {
     @DELETE("/api/users/{id}")
     Call<Void> deleteUser( @Header("Authorization") String token, @Path("id") String userId);
 
+    @GET("/api/videos/")
+    Call<List<Video>> getTrendingVideos();
 }

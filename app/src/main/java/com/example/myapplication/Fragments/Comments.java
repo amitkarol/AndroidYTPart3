@@ -107,27 +107,20 @@ public class Comments extends DialogFragment {
             String email = loggedInUser.getEmail();
             String profilePic = loggedInUser.getPhoto();
 
+            Comment newComment = new Comment(email, userName, commentText, profilePic);
+            newComment.setVideoId(String.valueOf(currentVideo.get_id()));
+
+            // הוספת התגובה למאגר
             commentsViewModel.addComment(loggedInUser.getEmail(), String.valueOf(currentVideo.get_id()), commentText, userName, email, profilePic);
             Log.d("addcomment", "Adding comment to video: " + currentVideo.get_id());
 
-            commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).observe(getViewLifecycleOwner(), new Observer<List<Comment>>() {
-                @Override
-                public void onChanged(List<Comment> updatedComments) {
-                    if (commentsAdapter != null) {
-                        commentsAdapter.setComments(updatedComments);
-                    }
-                    commentsViewModel.getCommentsByVideoId(String.valueOf(currentVideo.get_id())).removeObserver(this);
-                }
-            });
-
+            // עדכון ה-Adapter עם התגובה החדשה
+            commentsAdapter.addComment(newComment);
             commentEditText.setText("");
         } else {
             Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-
 
     private void redirectToLogin() {
         Intent loginIntent = new Intent(getActivity(), login.class);

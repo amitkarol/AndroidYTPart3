@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,9 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.VideosViewModel;
-import com.example.myapplication.entities.Video;
-import com.example.myapplication.entities.VideoManager;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
+import com.example.myapplication.utils.ImageLoader;
+
+import java.io.InputStream;
+import java.net.URL;
 
 public class EditVideoActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
@@ -31,6 +38,7 @@ public class EditVideoActivity extends AppCompatActivity {
     private User loggedInUser;
     private Uri selectedImageUri;
     private VideosViewModel viewModel;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +60,16 @@ public class EditVideoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         currentVideo = (Video) intent.getSerializableExtra("video");
         loggedInUser = (User) intent.getSerializableExtra("user");
-        Video originVideo = new Video(currentVideo);
 
         // Populate fields if data is available
         if (currentVideo != null) {
             titleEditText.setText(currentVideo.getTitle());
             descriptionEditText.setText(currentVideo.getDescription());
+            String baseUrl = getResources().getString(R.string.BaseUrl);
+            String imageUrl = baseUrl + currentVideo.getImg();
+            Log.d("imageofvideo", imageUrl);
             if (currentVideo.getImg() != null) {
-                thumbnailImageView.setImageURI(Uri.parse(currentVideo.getImg()));
+                new ImageLoader.LoadImageTask(thumbnailImageView, R.drawable.placeholder_thumbnail).execute(imageUrl);
             } else {
                 thumbnailImageView.setImageResource(R.drawable.placeholder_thumbnail);
             }
@@ -79,7 +89,6 @@ public class EditVideoActivity extends AppCompatActivity {
                         // update the video
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
                                 selectedImageUri != null ? selectedImageUri.toString() : null, loggedInUser.getEmail());
-
 
                         // Show a confirmation message
                         Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show();
@@ -106,9 +115,6 @@ public class EditVideoActivity extends AppCompatActivity {
                         Log.d("test11", "video edit before " + currentVideo);
                         viewModel.deleteVideo(currentVideo);
                         Log.d("test11", "video edit after " + currentVideo);
-                        // Remove the video from VideoManager
-                        //VideoManager.getInstance().removeVideo(currentVideo);
-
                         // Show a confirmation message
                         Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
 
