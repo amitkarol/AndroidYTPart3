@@ -110,7 +110,8 @@ public class VideoAPI {
         });
     }
 
-    public void editVideo(String pid, String title, String description, Uri imgUri, String owner, Context context) {
+    public void editVideo(String pid, String title, String description, Uri imgUri, String owner, Context context, Runnable onSuccess) {
+        Log.d("editVideo", "API editVideo called with pid: " + pid + ", title: " + title);
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
 
@@ -128,19 +129,22 @@ public class VideoAPI {
         editVideoCall.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
+                Log.d("editVideo", "API response: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
                         Video responseVideo = response.body();
                         videoDao.update(responseVideo);
+                        Log.d("editVideo", "Video updated in database: " + responseVideo.getTitle());
+                       onSuccess.run();
                     }).start();
                 } else {
-                    Log.d("test3", "response failed api");
+                    Log.d("editVideo", "Response failed: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<Video> call, Throwable t) {
-                Log.d("test3", "failed api", t);
+                Log.d("editVideo", "API call failed: " + t.getMessage());
             }
         });
     }

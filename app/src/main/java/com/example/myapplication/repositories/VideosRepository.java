@@ -71,7 +71,7 @@ public class VideosRepository {
     }
 
     public  LiveData<List<Video>> getUserVideos(String id) {
-        Log.d("user videos", "repository before:");
+        Log.d("uservideos", "repository before:");
         return videoListData.getUserVideos(id);
     }
 
@@ -79,8 +79,9 @@ public class VideosRepository {
         videoAPI.createVideo(userId, title, description, imgUri, videoUri, context, onSuccess);
     }
 
-    public void editVideo(String id, String title, String description, Uri imgUri, String owner, Context context) {
-        videoAPI.editVideo(id, title, description, imgUri, owner, context);
+    public void editVideo(String id, String title, String description, Uri imgUri, String owner, Context context, Runnable onSuccess) {
+        videoAPI.editVideo(id, title, description, imgUri, owner, context, onSuccess);
+        Log.d("edittest", "repository");
         videoListData.refreshData();
     }
 

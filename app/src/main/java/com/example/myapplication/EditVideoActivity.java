@@ -64,6 +64,7 @@ public class EditVideoActivity extends AppCompatActivity {
         }
 
         // Set the save button listener
+        // In EditVideoActivity.java
         saveButton.setOnClickListener(v -> {
             // Show confirmation dialog
             new AlertDialog.Builder(this)
@@ -76,20 +77,19 @@ public class EditVideoActivity extends AppCompatActivity {
 
                         // Update the video
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
-                                selectedImageUri, loggedInUser.getEmail(), this);
-                        currentVideo = viewModel.getVideoById(currentVideo.get_id());
-                        Log.d("videoedit", "current video: " + currentVideo);
+                                selectedImageUri, loggedInUser.getEmail(), this, () -> {
+                                    // Show a confirmation message on the main thread
+                                    runOnUiThread(() -> Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show());
+                                    Log.d("editVideo", "Video updated successfully");
 
-                        // Show a confirmation message on the main thread
-                        runOnUiThread(() -> Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show());
-
-                        // Navigate back to the videowatching activity
-                        Intent videoIntent = new Intent(this, videowatching.class);
-                        videoIntent.putExtra("video", currentVideo);
-                        videoIntent.putExtra("user", loggedInUser);
-                        videoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(videoIntent);
-                        finish();
+                                    // Navigate back to the homescreen
+                                    Intent homeIntent = new Intent(EditVideoActivity.this, homescreen.class);
+                                    homeIntent.putExtra("user", loggedInUser);
+                                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(homeIntent);
+                                    finish();
+                                });
+                        Log.d("editVideo", "Edit video method called");
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -108,6 +108,8 @@ public class EditVideoActivity extends AppCompatActivity {
 
                             // Navigate back to the homescreen
                             Intent homeIntent = new Intent(EditVideoActivity.this, homescreen.class);
+                            Log.d("edittest", "1111");
+
                             homeIntent.putExtra("user", loggedInUser);
                             homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                             startActivity(homeIntent);

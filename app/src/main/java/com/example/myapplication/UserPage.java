@@ -92,7 +92,7 @@ public class UserPage extends BaseActivity {
                             buttonLogout.setVisibility(View.GONE); // Hide the button
                         }
 
-                        //  observeUserVideos(user.getEmail());
+                        observeUserVideos(user.getEmail());
 
                     } else {
                         Log.d("UserPage", "Loaded user is null");
