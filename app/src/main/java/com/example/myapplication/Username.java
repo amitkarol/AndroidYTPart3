@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
 
-public class Username extends AppCompatActivity {
+public class Username extends BaseActivity {
     private EditText emailEditText;
     private UsersViewModel viewModel;
 

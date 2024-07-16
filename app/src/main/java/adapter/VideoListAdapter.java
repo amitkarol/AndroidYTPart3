@@ -79,9 +79,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
                     String baseUrl = context.getResources().getString(R.string.BaseUrl);
                     String photoUrl = baseUrl + owner.getPhoto();
                     Log.d("photo", photoUrl);
-                    new ImageLoader.LoadImageTask(holder.userPhotoImageView, R.drawable.person).execute(photoUrl);
+                    new ImageLoader.LoadImageTask(holder.userPhotoImageView, R.drawable.dog3).execute(photoUrl);
                 } else {
-                    holder.userPhotoImageView.setImageResource(R.drawable.person);
+                    holder.userPhotoImageView.setImageResource(R.drawable.dog3);
                 }
             }
         });
@@ -91,7 +91,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         // Load the video thumbnail
         if (video.getImg() != null && !video.getImg().isEmpty()) {
             String imageUrl = context.getResources().getString(R.string.BaseUrl) + video.getImg();
-            new ImageLoader.LoadImageTask(holder.thumbnailImageView, R.drawable.dog1).execute(imageUrl);
+            new ImageLoader.LoadImageTask(holder.thumbnailImageView, R.drawable.dog3).execute(imageUrl);
         } else {
             holder.thumbnailImageView.setImageResource(video.getThumbnailResId());
         }

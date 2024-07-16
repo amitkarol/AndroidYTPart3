@@ -1,10 +1,6 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,7 +8,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -21,7 +16,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
@@ -30,8 +24,6 @@ import com.example.myapplication.utils.ImageLoader;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.Fragments.Comments;
-
-import java.io.InputStream;
 
 public class videowatching extends FragmentActivity {
 
@@ -103,9 +95,9 @@ public class videowatching extends FragmentActivity {
                             Log.d("test5", "video photo " + photoUriString);
                             if (photoUriString != null) {
                                 String baseUrl = getResources().getString(R.string.BaseUrl);
-                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog1).execute(baseUrl + "/" + photoUriString);
+                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + "/" + photoUriString);
                             } else {
-                                userPhotoImageView.setImageResource(R.drawable.dog1);
+                                userPhotoImageView.setImageResource(R.drawable.dog3);
                             }
                         } else {
                             Log.d("test5", "Owner not found");

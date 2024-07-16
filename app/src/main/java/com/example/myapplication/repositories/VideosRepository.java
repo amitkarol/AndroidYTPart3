@@ -65,7 +65,7 @@ public class VideosRepository {
     public LiveData<List<Video>> getVideos() {
         return videoListData;
     }
-.
+
     public Video getVideoById (String id) {
         return videoAPI.getVideoById(id);
     }

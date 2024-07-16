@@ -2,8 +2,6 @@ package com.example.myapplication;
 
 import android.content.Intent;
 
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.Api.VideoAPI;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
@@ -25,7 +22,6 @@ import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.utils.CurrentUser;
 import com.example.myapplication.utils.ImageLoader;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,15 +111,19 @@ public class UserPage extends BaseActivity {
         });
 
         buttonLogout.setOnClickListener(v -> {
-            Uri person = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.person);
-            User loggedInUser = new User("Test", "User", "testuser@example.com", "Password@123", "TestUser", person.toString());
-            CurrentUser.getInstance().setUser(loggedInUser);
-            CurrentUser.getInstance().setToken(null);
-            Intent logoutIntent = new Intent(UserPage.this, homescreen.class);
-            startActivity(logoutIntent);
-            finish();
+            if (CurrentUser.getInstance().getUser().getValue() == null || CurrentUser.getInstance().getUser().getValue().getEmail().equals("test@gmail.com")) {
+                // If no user is logged in, redirect to login activity
+                Intent loginIntent = new Intent(UserPage.this, login.class);
+                startActivity(loginIntent);
+            } else {
+                // Logout the user
+                CurrentUser.getInstance().setUser(null);
+                CurrentUser.getInstance().setToken(null);
+                Intent logoutIntent = new Intent(UserPage.this, homescreen.class);
+                startActivity(logoutIntent);
+                finish();
+            }
         });
-
         // Initialize Bottom Navigation (example, you can add listeners as needed)
         ImageView imageViewHome = findViewById(R.id.imageViewHome);
         imageViewHome.setOnClickListener(v -> {
@@ -146,6 +146,23 @@ public class UserPage extends BaseActivity {
         ImageView imageViewPlay = findViewById(R.id.imageViewPlay);
         imageViewPlay.setOnClickListener(v -> {
             // Navigate to Play screen
+        });
+
+        ImageView imageViewPerson = findViewById(R.id.imageViewPerson);
+        imageViewPerson.setOnClickListener(v -> {
+            if (CurrentUser.getInstance().getUser().getValue() == null )
+            {
+                    Intent loginIntent = new Intent(UserPage.this,login.class);
+                    startActivity(loginIntent);
+            } else if ( CurrentUser.getInstance().getUser().getValue().getEmail().equals("test@gmail.com")) {
+                Intent loginIntent = new Intent(UserPage.this,login.class);
+                startActivity(loginIntent);
+            } else
+                if (!CurrentUser.getInstance().getUser().getValue().getEmail().equals(user.getEmail())) {
+                Intent logoutIntent = new Intent(UserPage.this, UserPage.class);
+                logoutIntent.putExtra("user_email", CurrentUser.getInstance().getUser().getValue().getEmail());
+                startActivity(logoutIntent);
+            }
         });
 
         // Load current user photo for bottom navigation
@@ -187,9 +204,9 @@ public class UserPage extends BaseActivity {
         if (user.getPhoto() != null && !user.getPhoto().isEmpty()) {
             String baseUrl = getResources().getString(R.string.BaseUrl);
             Log.d("uri p", baseUrl + "/" + user.getPhoto());
-            new ImageLoader.LoadImageTask(imageViewUserPhoto ,R.drawable.dog1).execute(baseUrl + user.getPhoto());
+            new ImageLoader.LoadImageTask(imageViewUserPhoto ,R.drawable.dog3).execute(baseUrl + user.getPhoto());
         } else {
-            imageViewUserPhoto.setImageResource(R.drawable.dog1); // Use a placeholder image
+            imageViewUserPhoto.setImageResource(R.drawable.dog3); // Use a placeholder image
         }
 
         // Initialize RecyclerView with user videos
@@ -222,7 +239,7 @@ public class UserPage extends BaseActivity {
         User currentUser = CurrentUser.getInstance().getUser().getValue();
         if (currentUser != null && currentUser.getPhoto() != null && !currentUser.getPhoto().isEmpty()) {
             String baseUrl = getResources().getString(R.string.BaseUrl);
-            new ImageLoader.LoadImageTask(imageViewPerson, R.drawable.dog1).execute(baseUrl + currentUser.getPhoto());
+            new ImageLoader.LoadImageTask(imageViewPerson, R.drawable.dog3).execute(baseUrl + currentUser.getPhoto());
         } else {
             imageViewPerson.setImageResource(R.drawable.person); // Use a placeholder image
         }

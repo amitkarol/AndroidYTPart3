@@ -102,7 +102,7 @@ public class EditUserActivity extends BaseActivity {
                         displayNameEditText.setText(loggedInUser.getDisplayName());
                         if (loggedInUser.getPhoto() != null) {
                             String baseUrl = getResources().getString(R.string.BaseUrl);
-                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog1).execute(baseUrl + loggedInUser.getPhoto());
+                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + loggedInUser.getPhoto());
                         } else {
                             userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
                         }
@@ -243,7 +243,7 @@ public class EditUserActivity extends BaseActivity {
             if (result != null) {
                 imageView.setImageBitmap(result);
             } else {
-                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
+                imageView.setImageResource(R.drawable.dog3); // Use a placeholder image
             }
         }
 
