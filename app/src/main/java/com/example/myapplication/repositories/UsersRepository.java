@@ -72,8 +72,9 @@ public class UsersRepository {
     }
 
 
-    public void updateUser(String email, User user) {
-        userAPI.updateUser(email, user);
+    public void updateUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photo) {
+        Log.d("useredit", "photo repository" + photo);
+        userAPI.updateUser(firstName, lastName, email, password, displayName, context, photo);
     }
 
     public void deleteUser(String email) {

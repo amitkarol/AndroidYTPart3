@@ -196,12 +196,23 @@ public class UserAPI {
 
 
 
-    public void updateUser(String email, User user) {
+    public void updateUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photoUri) {
         String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
-        Log.d("UserAPI", "Attempting to update user with email: " + email);
-        Log.d("UserAPI", "User details: " + user.toString());
 
-        Call<User> call = webServiceAPI.updateUser(token, email, user);
+        Log.d("useredit", "photo api" + photoUri);
+        File photoFile = new File(FileUtils.getPathFromUri(context, photoUri));
+        Log.d("useredit", "photo api 2" + photoFile);
+
+        RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), photoFile);
+        MultipartBody.Part photoPart = MultipartBody.Part.createFormData("photo", photoFile.getName(), imageRequestBody);
+        Log.d("useredit", "photo api 3" + photoPart);
+
+        RequestBody firstNameBody = RequestBody.create(MediaType.parse("text/plain"), firstName);
+        RequestBody lastNameBody = RequestBody.create(MediaType.parse("text/plain"), lastName);
+        RequestBody passwordBody = RequestBody.create(MediaType.parse("text/plain"), password);
+        RequestBody displayNameBody = RequestBody.create(MediaType.parse("text/plain"), displayName);
+
+        Call<User> call = webServiceAPI.updateUser(email, firstNameBody, lastNameBody, passwordBody, displayNameBody, photoPart, token);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -209,9 +220,8 @@ public class UserAPI {
                     Log.d("UserAPI", "User updated successfully on server: " + response.body().toString());
 
                     new Thread(() -> {
-                        userDao.update(user);
-                        Log.d("UserAPI", "User updated locally in the database: " + user.toString());
-
+                        userDao.update(response.body());
+                        Log.d("useredit", "response: " + response.body());
                         // Update LiveData with the updated user
                         usersLiveData.postValue(userDao.index());
                         Log.d("UserAPI", "LiveData updated with the new list of users");

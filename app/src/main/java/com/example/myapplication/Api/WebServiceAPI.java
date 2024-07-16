@@ -52,6 +52,18 @@ public interface WebServiceAPI {
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
 
+    @Multipart
+    @PATCH("/api/users/{id}")
+    Call<User> updateUser(
+            @Path("id") String id,
+            @Part("firstName") RequestBody firstName,
+            @Part("lastName") RequestBody lastName,
+            @Part("password") RequestBody password,
+            @Part("displayName") RequestBody displayName,
+            @Part MultipartBody.Part photo,
+            @Header("authorization") String token
+    );
+
     @GET("/api/users/{id}/videos")
     Call<List<Video>> getUserVideos(@Path("id") String id);
 

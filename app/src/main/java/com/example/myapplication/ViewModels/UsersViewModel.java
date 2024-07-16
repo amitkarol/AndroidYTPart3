@@ -52,8 +52,10 @@ public class UsersViewModel extends ViewModel {
         return usersRepository.checkEmailExists(email);
     }
 
-    public void updateUser(String email, User user) {
-        usersRepository.updateUser(email, user);
+    public void updateUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photo) {
+        Log.d("useredit", "photo viewmodel " + photo);
+
+        usersRepository.updateUser(firstName, lastName, email, password, displayName, context, photo);
     }
 
     public void deleteUser(String email) {
