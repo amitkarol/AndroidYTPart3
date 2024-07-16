@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.VideosViewModel;
+import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.utils.ImageLoader;
@@ -76,6 +77,7 @@ public class EditVideoActivity extends AppCompatActivity {
         }
 
         // Set the save button listener
+        // In EditVideoActivity.java
         saveButton.setOnClickListener(v -> {
             // Show confirmation dialog
             new AlertDialog.Builder(this)
@@ -86,18 +88,21 @@ public class EditVideoActivity extends AppCompatActivity {
                         String newTitle = titleEditText.getText().toString().trim();
                         String newDescription = descriptionEditText.getText().toString().trim();
 
-                        // update the video
+                        // Update the video
                         viewModel.editVideo(currentVideo.get_id(), newTitle, newDescription,
-                                selectedImageUri != null ? selectedImageUri.toString() : null, loggedInUser.getEmail());
+                                selectedImageUri, loggedInUser.getEmail(), this, () -> {
+                                    // Show a confirmation message on the main thread
+                                    runOnUiThread(() -> Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show());
+                                    Log.d("editVideo", "Video updated successfully");
 
-                        // Show a confirmation message
-                        Toast.makeText(this, "Video updated", Toast.LENGTH_SHORT).show();
-
-                        // Navigate back to the homescreen
-                        Intent homeIntent = new Intent(this, homescreen.class);
-                        homeIntent.putExtra("user", loggedInUser);
-                        startActivity(homeIntent);
-                        finish();
+                                    // Navigate back to the homescreen
+                                    Intent homeIntent = new Intent(EditVideoActivity.this, homescreen.class);
+                                    homeIntent.putExtra("user", loggedInUser);
+                                    homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(homeIntent);
+                                    finish();
+                                });
+                        Log.d("editVideo", "Edit video method called");
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -110,19 +115,19 @@ public class EditVideoActivity extends AppCompatActivity {
                     .setTitle("Confirm Delete")
                     .setMessage("Are you sure you want to delete this video?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        Log.d("test10", "Current video: " +currentVideo);
-                        // Delete the video
-                        Log.d("test11", "video edit before " + currentVideo);
-                        viewModel.deleteVideo(currentVideo);
-                        Log.d("test11", "video edit after " + currentVideo);
-                        // Show a confirmation message
-                        Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
+                        viewModel.deleteVideo(currentVideo, () -> {
+                            // Show a confirmation message on the main thread
+                            runOnUiThread(() -> Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show());
 
-                        // Navigate back to the homescreen
-                        Intent homeIntent = new Intent(this, homescreen.class);
-                        homeIntent.putExtra("user", loggedInUser);
-                        startActivity(homeIntent);
-                        finish();
+                            // Navigate back to the homescreen
+                            Intent homeIntent = new Intent(EditVideoActivity.this, homescreen.class);
+                            Log.d("edittest", "1111");
+
+                            homeIntent.putExtra("user", loggedInUser);
+                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(homeIntent);
+                            finish();
+                        });
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .show();
@@ -152,7 +157,7 @@ public class EditVideoActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.getData();
             thumbnailImageView.setImageURI(selectedImageUri);
-            Toast.makeText(this, "New thumbnail selected", Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> Toast.makeText(this, "New thumbnail selected", Toast.LENGTH_SHORT).show());
         }
     }
 }

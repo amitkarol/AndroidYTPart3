@@ -49,14 +49,10 @@ public class VideosRepository {
         }
 
         public LiveData<List<Video>> getUserVideos(String id) {
-            Log.d("user videos", "repository getUserVideos");
             MutableLiveData<List<Video>> userVideos = new MutableLiveData<>();
             new Thread(() -> {
-                Log.d("user videos", "repository getUserVideos in thread");
                 List<Video> videos = videoDao.getUserVideos(id);
-                Log.d("user videos", "repository getUserVideos after dao: " +videos);
                 userVideos.postValue(videos);
-                Log.d("user videos", "repository getUserVideos after dao: " + userVideos.getValue());
             }).start();
             return userVideos;
         }
@@ -69,10 +65,13 @@ public class VideosRepository {
     public LiveData<List<Video>> getVideos() {
         return videoListData;
     }
-
+.
+    public Video getVideoById (String id) {
+        return videoAPI.getVideoById(id);
+    }
 
     public  LiveData<List<Video>> getUserVideos(String id) {
-        Log.d("user videos", "repository before:");
+        Log.d("uservideos", "repository before:");
         return videoListData.getUserVideos(id);
     }
 
@@ -80,17 +79,15 @@ public class VideosRepository {
         videoAPI.createVideo(userId, title, description, imgUri, videoUri, context, onSuccess);
     }
 
-    public void editVideo(String id, String title, String description, String img, String owner) {
-        Log.d("test3", "repository start video: " + title);
-        videoAPI.editVideo(id, title, description, img, owner, () -> videoListData.refreshData());
-        Log.d("test3", "repository end video: " + title);
+    public void editVideo(String id, String title, String description, Uri imgUri, String owner, Context context, Runnable onSuccess) {
+        videoAPI.editVideo(id, title, description, imgUri, owner, context, onSuccess);
+        Log.d("edittest", "repository");
+        videoListData.refreshData();
     }
 
-    public void deleteVideo(Video video) {
-        Log.d("test10", "reached repository start");
-        Log.d("test10", "reached repository start: " + video);
-        videoAPI.deleteVideo(video, () -> videoListData.refreshData());
-        Log.d("test10", "reached repository end");
+    public void deleteVideo(Video video, Runnable onSuccess) {
+        videoAPI.deleteVideo(video, onSuccess);
+        videoListData.refreshData();
     }
 
     public void updateViews(String id, String pid) {

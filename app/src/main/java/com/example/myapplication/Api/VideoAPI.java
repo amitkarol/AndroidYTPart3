@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Daos.VideoDao;
@@ -48,8 +49,6 @@ public class VideoAPI {
                     new Thread(() -> {
                         List<Video> videos = response.body();
                         for (Video res : videos) {
-                            Log.d("test7: ", "res videos: " + res);
-                            Log.d("testt", res.get_id());
                             videoDao.insert(new Video(res));
                         }
                     }).start();
@@ -64,6 +63,10 @@ public class VideoAPI {
                 Log.e("VideoAPI", "Failed to fetch Videos", t);
             }
         });
+    }
+
+    public Video getVideoById(String id) {
+        return videoDao.get(id);
     }
 
     public void createVideo(String userId, String title, String description, Uri imgUri, Uri videoUri, Context context, Runnable onSuccess) {
@@ -107,34 +110,41 @@ public class VideoAPI {
         });
     }
 
-    public void editVideo(String pid, String title, String description, String img, String owner, Runnable onSuccess) {
+    public void editVideo(String pid, String title, String description, Uri imgUri, String owner, Context context, Runnable onSuccess) {
+        Log.d("editVideo", "API editVideo called with pid: " + pid + ", title: " + title);
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
-        Log.d("test3", "token is " + token);
-        Call<Video> editVideo = webServiceAPI.editVideo(owner, pid, title, description, img, token);
-        editVideo.enqueue(new Callback<Video>() {
+
+        RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
+        RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"), description);
+
+        MultipartBody.Part imgPart = null;
+        if (imgUri != null) {
+            File imageFile = new File(FileUtils.getPathFromUri(context, imgUri));
+            RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+            imgPart = MultipartBody.Part.createFormData("img", imageFile.getName(), imageRequestBody);
+        }
+
+        Call<Video> editVideoCall = webServiceAPI.editVideo(owner, pid, titleBody, descriptionBody, imgPart, token);
+        editVideoCall.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
-                Log.d("test3", "reached api");
-                Log.d("test3", "api response: " + response.isSuccessful());
+                Log.d("editVideo", "API response: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
-                        Log.d("test1", "entered thread");
-                        Video newVideo = response.body();
-                        Log.d("test3", "api video: " + newVideo);
-                        videoDao.insert(new Video(newVideo.get_id(), newVideo.getTitle(), newVideo.getDescription(),
-                                newVideo.getImg(), newVideo.getVideo(), newVideo.getOwner()));
-                        Log.d("test3", "api insert: " + newVideo);
-                        onSuccess.run();
+                        Video responseVideo = response.body();
+                        videoDao.update(responseVideo);
+                        Log.d("editVideo", "Video updated in database: " + responseVideo.getTitle());
+                       onSuccess.run();
                     }).start();
                 } else {
-                    Log.d("test3", "response failed api");
+                    Log.d("editVideo", "Response failed: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<Video> call, Throwable t) {
-                Log.d("test3", "failed api");
+                Log.d("editVideo", "API call failed: " + t.getMessage());
             }
         });
     }

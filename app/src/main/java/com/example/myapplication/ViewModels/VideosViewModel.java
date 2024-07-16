@@ -30,21 +30,21 @@ public class VideosViewModel extends ViewModel {
         return videoRepository.getUserVideos(id);
     }
 
+    public Video getVideoById (String id) {
+        return videoRepository.getVideoById(id);
+    }
+
     public void createVideo(String userId, String title, String description, Uri imgUri, Uri videoUri, Context context, Runnable onSuccess) {
         videoRepository.createVideo(userId, title, description, imgUri, videoUri, context, onSuccess);
     }
 
-    public void editVideo(String id, String title, String description, String img, String owner) {
-        Log.d("test3", "viewmodel start video: " + title);
-        videoRepository.editVideo(id, title, description, img, owner);
-        Log.d("test3", "viewmodel end  video: " + title);
+    public void editVideo(String id, String title, String description, Uri imgUri, String owner, Context context, Runnable onSuccess) {
+        Log.d("editVideo", "ViewModel editVideo called with id: " + id + ", title: " + title);
+        videoRepository.editVideo(id, title, description, imgUri, owner, context, onSuccess);
     }
 
-    public void deleteVideo(Video video) {
-        Log.d("test10", "reached viewmodel start");
-        Log.d("test10", "reached viewmodel start: " + video);
-        videoRepository.deleteVideo(video);
-        Log.d("test10", "reached viewmodel end");
+    public void deleteVideo(Video video, Runnable onSuccess) {
+        videoRepository.deleteVideo(video, onSuccess);
     }
 
     public void updateViews(String id, String pid) {

@@ -1,5 +1,7 @@
 package com.example.myapplication.ViewModels;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -39,10 +41,10 @@ public class UsersViewModel extends ViewModel {
         usersRepository.login(email, password);
     }
 
-    public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
+    public void createUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photo) {
         Log.d("test1", "viewmodel email" + email);
         Log.d("test5", "user photo viewmodel " + photo);
-        usersRepository.createUser(firstName, lastName, email, password, displayName, photo);
+        usersRepository.createUser(firstName, lastName, email, password, displayName, context, photo);
         Log.d("test1", "viewmodel");
     }
 
@@ -50,8 +52,10 @@ public class UsersViewModel extends ViewModel {
         return usersRepository.checkEmailExists(email);
     }
 
-    public void updateUser(String email, User user) {
-        usersRepository.updateUser(email, user);
+    public void updateUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photo) {
+        Log.d("useredit", "photo viewmodel " + photo);
+
+        usersRepository.updateUser(firstName, lastName, email, password, displayName, context, photo);
     }
 
     public void deleteUser(String email) {

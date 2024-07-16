@@ -38,14 +38,32 @@ public interface WebServiceAPI {
     @GET("/api/users")
     Call<List<User>> getUsers();
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/api/users")
-    Call<User> createUser(@Field("firstName") String firstName, @Field("lastName") String lastName,
-                          @Field("email") String email, @Field("password") String password,
-                          @Field("displayName") String displayName, @Field("photo") String photo);
+    Call<User> createUser(
+            @Part("firstName") RequestBody firstName,
+            @Part("lastName") RequestBody lastName,
+            @Part("email") RequestBody email,
+            @Part("password") RequestBody password,
+            @Part("displayName") RequestBody displayName,
+            @Part MultipartBody.Part photo
+    );
+
 
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
+
+    @Multipart
+    @PATCH("/api/users/{id}")
+    Call<User> updateUser(
+            @Path("id") String id,
+            @Part("firstName") RequestBody firstName,
+            @Part("lastName") RequestBody lastName,
+            @Part("password") RequestBody password,
+            @Part("displayName") RequestBody displayName,
+            @Part MultipartBody.Part photo,
+            @Header("authorization") String token
+    );
 
     @GET("/api/users/{id}/videos")
     Call<List<Video>> getUserVideos(@Path("id") String id);
@@ -62,17 +80,16 @@ public interface WebServiceAPI {
             @Header("authorization") String token
     );
 
-//    @FormUrlEncoded
-//    @POST("/api/users/{id}/videos")
-//    Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,
-//                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
-//                            @Header("authorization") String token);
-
-    @FormUrlEncoded
+    @Multipart
     @PATCH("/api/users/{id}/videos/{pid}")
-    Call<Video> editVideo(@Path("id") String id, @Path("pid") String pid, @Field("title") String title,
-                          @Field("description") String description, @Field("img") String img, @Header("authorization") String token);
-
+    Call<Video> editVideo(
+            @Path("id") String id,
+            @Path("pid") String pid,
+            @Part("title") RequestBody title,
+            @Part("description") RequestBody description,
+            @Part MultipartBody.Part img,
+            @Header("authorization") String token
+    );
 
     @DELETE("/api/users/{id}/videos/{pid}")
     Call<Void> deleteVideo(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);

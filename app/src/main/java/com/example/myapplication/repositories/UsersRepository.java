@@ -1,5 +1,7 @@
 package com.example.myapplication.repositories;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -58,10 +60,11 @@ public class UsersRepository {
         userAPI.login(email, password);
     }
 
-    public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
+    public void createUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photo) {
         Log.d("test5", "user photo viewmodel " + photo);
-        userAPI.createUser(firstName, lastName, email, password, displayName, photo);
+        userAPI.createUser(firstName, lastName, email, password, displayName, context, photo);
     }
+
     public LiveData<Boolean> checkEmailExists(String email) {
         MutableLiveData<Boolean> emailExists = new MutableLiveData<>();
         userAPI.checkEmailExists(email, emailExists);
@@ -69,8 +72,9 @@ public class UsersRepository {
     }
 
 
-    public void updateUser(String email, User user) {
-        userAPI.updateUser(email, user);
+    public void updateUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photo) {
+        Log.d("useredit", "photo repository" + photo);
+        userAPI.updateUser(firstName, lastName, email, password, displayName, context, photo);
     }
 
     public void deleteUser(String email) {
