@@ -62,11 +62,21 @@
         android:focusable="true"
         android:focusableInTouchMode="true" />
 
+    <CheckBox
+        android:id="@+id/showPasswordCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPassword"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Show Password"
+        style="@style/Widget.AppCompat.CompoundButton.CheckBox" />
+
     <Button
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextPassword"
+        android:layout_below="@id/showPasswordCheckBox"
         android:layout_marginTop="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -85,6 +95,4 @@
         android:text="Create account"
         android:background="@android:color/transparent"
         android:textColor="@color/black" />
-
-
 </RelativeLayout>

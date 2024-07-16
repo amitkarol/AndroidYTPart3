@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.utils.ImageLoader;
 
 import java.io.InputStream;
 
@@ -65,7 +66,7 @@ public class EditUserActivity extends AppCompatActivity {
                         displayNameEditText.setText(loggedInUser.getDisplayName());
                         if (loggedInUser.getPhoto() != null) {
                             String baseUrl = getResources().getString(R.string.BaseUrl);
-                            new LoadImageTask(userPhotoImageView).execute(baseUrl + loggedInUser.getPhoto());
+                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog1).execute(baseUrl + loggedInUser.getPhoto());
                         } else {
                             userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
                         }
@@ -148,44 +149,4 @@ public class EditUserActivity extends AppCompatActivity {
         }
     }
 
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageView;
-
-        public LoadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream input = new java.net.URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(input);
-                input.close();
-                bitmap = rotateBitmap(bitmap, 90); // Rotate the bitmap by 90 degrees
-            } catch (Exception e) {
-                Log.e("LoadImageTask", "Error loading image", e);
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
-            }
-        }
-
-        private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
-            if (bitmap != null) {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(degrees);
-                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            }
-            return bitmap;
-        }
-    }
 }

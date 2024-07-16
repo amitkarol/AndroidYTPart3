@@ -26,6 +26,7 @@ import com.example.myapplication.ViewModels.CommentsViewModel;
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.utils.CurrentUser;
+import com.example.myapplication.utils.ImageLoader;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -66,7 +67,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         // Set user image using AsyncTask
         if (comment.getProfilePic() != null) {
             String imageUrl = context.getResources().getString(R.string.BaseUrl) + comment.getProfilePic();
-            new LoadImageTask(holder.userImageView, R.drawable.person).execute(imageUrl);
+            new ImageLoader.LoadImageTask(holder.userImageView, R.drawable.person).execute(imageUrl);
         } else {
             holder.userImageView.setImageResource(R.drawable.person);
         }
@@ -132,7 +133,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     public void addComment(Comment comment) {
         commentList.add(comment);
-        notifyDataSetChanged(); // Notify RecyclerView that data set has changed
+        notifyItemInserted(commentList.size() - 1);
     }
 
     private void showDeleteConfirmationDialog(int position) {
@@ -197,42 +198,4 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         }
     }
 
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageView;
-        private int placeholderResId;
-
-        public LoadImageTask(ImageView imageView, int placeholderResId) {
-            this.imageView = imageView;
-            this.placeholderResId = placeholderResId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            imageView.setImageResource(placeholderResId);
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream inputStream = new URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                imageView.setImageResource(placeholderResId);
-            }
-        }
-    }
 }

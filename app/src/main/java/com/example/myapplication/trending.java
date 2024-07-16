@@ -21,6 +21,7 @@ import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.utils.CurrentUser;
+import com.example.myapplication.utils.ImageLoader;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.InputStream;
@@ -60,14 +61,14 @@ public class trending extends BaseActivity {
 
         // Initialize ViewModel and observe video list
         viewModel = new ViewModelProvider(this).get(VideosViewModel.class);
-        viewModel.getVideos().observe(this, new Observer<List<Video>>() {
+        viewModel.getTrendingVideos().observe(this, new Observer<List<Video>>() {
             @Override
             public void onChanged(List<Video> videos) {
                 videoAdapter.setVideos(videos);
             }
         });
 
-        viewModel.getVideos();
+        viewModel.getTrendingVideos();
 
         // Handle bottom navigation
         ImageView imageViewHome = findViewById(R.id.imageViewHome);
@@ -123,7 +124,7 @@ public class trending extends BaseActivity {
             } else if (loggedInUser != null && loggedInUser.getPhoto() != null) {
                 String baseUrl = getResources().getString(R.string.BaseUrl);
                 String photoUrl = baseUrl + loggedInUser.getPhoto();
-                new LoadImageTask(imageViewPerson, R.drawable.person).execute(photoUrl);
+                new ImageLoader.LoadImageTask(imageViewPerson, R.drawable.person).execute(photoUrl);
             } else {
                 imageViewPerson.setImageResource(R.drawable.person);
             }
@@ -132,43 +133,4 @@ public class trending extends BaseActivity {
         }
     }
 
-    // AsyncTask to load user photo
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-        int placeholderResId;
-
-        public LoadImageTask(ImageView imageView, int placeholderResId) {
-            this.imageView = imageView;
-            this.placeholderResId = placeholderResId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            imageView.setImageResource(placeholderResId);
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream inputStream = new URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                imageView.setImageResource(placeholderResId);
-            }
-        }
-    }
 }

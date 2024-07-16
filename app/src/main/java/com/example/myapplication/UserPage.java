@@ -1,9 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +23,7 @@ import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.utils.CurrentUser;
+import com.example.myapplication.utils.ImageLoader;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class UserPage extends BaseActivity {
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         videosViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
 
-        userVideos = new ArrayList<>(); // Initialize the list to avoid null pointer exceptions
+        userVideos = new ArrayList<>();
 
         // Get the email from the intent
         String email = getIntent().getStringExtra("user_email");
@@ -188,7 +187,7 @@ public class UserPage extends BaseActivity {
         if (user.getPhoto() != null && !user.getPhoto().isEmpty()) {
             String baseUrl = getResources().getString(R.string.BaseUrl);
             Log.d("uri p", baseUrl + "/" + user.getPhoto());
-            new LoadImageTask(imageViewUserPhoto).execute(baseUrl + user.getPhoto());
+            new ImageLoader.LoadImageTask(imageViewUserPhoto ,R.drawable.dog1).execute(baseUrl + user.getPhoto());
         } else {
             imageViewUserPhoto.setImageResource(R.drawable.dog1); // Use a placeholder image
         }
@@ -223,50 +222,11 @@ public class UserPage extends BaseActivity {
         User currentUser = CurrentUser.getInstance().getUser().getValue();
         if (currentUser != null && currentUser.getPhoto() != null && !currentUser.getPhoto().isEmpty()) {
             String baseUrl = getResources().getString(R.string.BaseUrl);
-            new LoadImageTask(imageViewPerson).execute(baseUrl + currentUser.getPhoto());
+            new ImageLoader.LoadImageTask(imageViewPerson, R.drawable.dog1).execute(baseUrl + currentUser.getPhoto());
         } else {
             imageViewPerson.setImageResource(R.drawable.person); // Use a placeholder image
         }
     }
 
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageView;
 
-        public LoadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream input = new java.net.URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(input);
-                input.close();
-                bitmap = rotateBitmap(bitmap, 90); // Rotate the bitmap by 90 degrees
-            } catch (Exception e) {
-                Log.e("LoadImageTask", "Error loading image", e);
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
-            }
-        }
-
-        private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
-            if (bitmap != null) {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(degrees);
-                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            }
-            return bitmap;
-        }
-    }
 }

@@ -255,4 +255,25 @@ public class VideoAPI {
             }
         });
     }
+    public void getTrendingVideos(MutableLiveData<List<Video>> trendingVideos) {
+        Call<List<Video>> call = webServiceAPI.getTrendingVideos();
+        call.enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Video> videos = response.body();
+                    trendingVideos.postValue(videos);
+                } else {
+                    Log.e("VideoAPI", "Failed to fetch trending videos: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Video>> call, Throwable t) {
+                Log.e("VideoAPI", "Failed to fetch trending videos", t);
+            }
+        });
+    }
+
+
 }
