@@ -38,11 +38,16 @@ public interface WebServiceAPI {
     @GET("/api/users")
     Call<List<User>> getUsers();
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/api/users")
-    Call<User> createUser(@Field("firstName") String firstName, @Field("lastName") String lastName,
-                                     @Field("email") String email, @Field("password") String password,
-                                     @Field("displayName") String displayName, @Field("photo") String photo);
+    Call<User> createUser(
+            @Part("firstName") RequestBody firstName,
+            @Part("lastName") RequestBody lastName,
+            @Part("email") RequestBody email,
+            @Part("password") RequestBody password,
+            @Part("displayName") RequestBody displayName,
+            @Part MultipartBody.Part photo
+    );
 
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
@@ -61,12 +66,6 @@ public interface WebServiceAPI {
             @Part("owner") RequestBody owner,
             @Header("authorization") String token
     );
-
-//    @FormUrlEncoded
-//    @POST("/api/users/{id}/videos")
-//    Call<Video> createVideo(@Path("id") String id, @Field("title") String title, @Field("description") String description,
-//                          @Field("img") String img, @Field("video") String video, @Field("owner") String owner,
-//                            @Header("authorization") String token);
 
     @Multipart
     @PATCH("/api/users/{id}/videos/{pid}")

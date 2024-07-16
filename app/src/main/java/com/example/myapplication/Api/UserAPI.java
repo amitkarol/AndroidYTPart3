@@ -1,5 +1,7 @@
 package com.example.myapplication.Api;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -10,9 +12,14 @@ import com.example.myapplication.entities.Token;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.retrofit.RetrofitClient;
 import com.example.myapplication.utils.CurrentUser;
+import com.example.myapplication.utils.FileUtils;
 
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -85,13 +92,24 @@ public class UserAPI {
         });
     }
 
-    public void createUser(String firstName, String lastName, String email, String password, String displayName, String photo) {
-        Call<User> createUser = webServiceAPI.createUser(firstName, lastName, email, password, displayName, photo);
+    public void createUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photoUri) {
+        File photoFile = new File(FileUtils.getPathFromUri(context, photoUri));
+
+        RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), photoFile);
+        MultipartBody.Part photoPart = MultipartBody.Part.createFormData("photo", photoFile.getName(), imageRequestBody);
+
+        RequestBody firstNameBody = RequestBody.create(MediaType.parse("text/plain"), firstName);
+        RequestBody lastNameBody = RequestBody.create(MediaType.parse("text/plain"), lastName);
+        RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody passwordBody = RequestBody.create(MediaType.parse("text/plain"), password);
+        RequestBody displayNameBody = RequestBody.create(MediaType.parse("text/plain"), displayName);
+
+        Call<User> createUser = webServiceAPI.createUser(firstNameBody, lastNameBody, emailBody, passwordBody, displayNameBody, photoPart);
         createUser.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d("test5", "user photo api " + photo);
+                    Log.d("test5", "user photo api " + photoUri);
                     new Thread(() -> {
                         Log.d("test1", "entered thread");
                         User user = response.body();

@@ -16,24 +16,50 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.example.myapplication.Api.UserAPI;
 import com.example.myapplication.ViewModels.UsersViewModel;
+
 import java.io.ByteArrayOutputStream;
 
 public class Displayname extends BaseActivity {
 
-    private static final int REQUEST_IMAGE_PICK = 102;
-    private static final int REQUEST_IMAGE_CAPTURE = 123;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-
     private EditText displayNameEdittext;
     private Uri selectedImageUri;
-
     private UsersViewModel viewModel;
+    private ImageView imageViewPhoto;
+
+    private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    selectedImageUri = result.getData().getData();
+                    imageViewPhoto.setImageURI(selectedImageUri);
+                    imageViewPhoto.setVisibility(View.VISIBLE);
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> captureImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
+                    imageViewPhoto.setImageBitmap(photo);
+                    imageViewPhoto.setVisibility(View.VISIBLE);
+                    selectedImageUri = getImageUri(this, photo);
+                    Log.d("test5", "selected image down: " + selectedImageUri);
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +68,7 @@ public class Displayname extends BaseActivity {
         setContentView(R.layout.displayname);
 
         displayNameEdittext = findViewById(R.id.editTextText2);
+        imageViewPhoto = findViewById(R.id.imageViewPhoto);
 
         Button continueButton = findViewById(R.id.button3);
         continueButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
@@ -66,24 +93,15 @@ public class Displayname extends BaseActivity {
             String firstName = intent.getStringExtra("firstName");
             String lastName = intent.getStringExtra("lastName");
 
-            Log.d("test5", "email" + email);
-            //Logs
-            Log.d("test5", "user photo displayname " + selectedImageUri);
-            Log.d("test5", "user photo displayname " + selectedImageUri.toString());
+            Log.d("test5", "email: " + email);
+            Log.d("test5", "user photo displayname: " + selectedImageUri);
+            Log.d("test5", "user photo displayname: " + selectedImageUri.toString());
             viewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-            viewModel.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
-//            AppDB db = Room.databaseBuilder(getApplicationContext(), AppDB.class, "Users")
-//                    .build();
-//            VideoDao videoDao = db.videoDao();
-            UserAPI userAPI = new UserAPI();
-            userAPI.createUser(firstName, lastName, email, password, displayName, selectedImageUri.toString());
-
-//            User user = new User(firstName, lastName, email, password, displayName, selectedImageUri.toString());
-//            UserManager.getInstance().addUser(user);
+            viewModel.createUser(firstName, lastName, email, password, displayName, this, selectedImageUri);
+//            UserAPI userAPI = new UserAPI();
+//            userAPI.createUser(firstName, lastName, email, password, displayName, this, selectedImageUri);
 
             Intent homescreenIntent = new Intent(Displayname.this, homescreen.class);
-      //      homescreenIntent.putExtra("user", user);
-
             startActivity(homescreenIntent);
         });
 
@@ -92,22 +110,19 @@ public class Displayname extends BaseActivity {
 
         buttonUploadPhoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, REQUEST_IMAGE_PICK);
+            pickImageLauncher.launch(intent);
         });
 
         Button buttonTakePhoto = findViewById(R.id.buttonTakePhoto);
         buttonTakePhoto.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.custom_red)));
 
-        buttonTakePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(Displayname.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                        || ContextCompat.checkSelfPermission(Displayname.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Displayname.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                } else {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                }
+        buttonTakePhoto.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(Displayname.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    || ContextCompat.checkSelfPermission(Displayname.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(Displayname.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+            } else {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                captureImageLauncher.launch(intent);
             }
         });
     }
@@ -118,31 +133,9 @@ public class Displayname extends BaseActivity {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                captureImageLauncher.launch(intent);
             } else {
                 Toast.makeText(this, "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_PICK && data != null) {
-                selectedImageUri = data.getData();
-                ImageView imageView = findViewById(R.id.imageViewPhoto);
-                imageView.setImageURI(selectedImageUri);
-                imageView.setVisibility(View.VISIBLE);
-            } else if (requestCode == REQUEST_IMAGE_CAPTURE && data != null) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                ImageView imageView = findViewById(R.id.imageViewPhoto);
-                imageView.setImageBitmap(photo);
-                imageView.setVisibility(View.VISIBLE);
-                selectedImageUri = getImageUri(this, photo);
-                Log.d("test5", "selected image down: " + selectedImageUri);
-
             }
         }
     }
