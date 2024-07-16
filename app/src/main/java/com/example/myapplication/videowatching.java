@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.User;
 import com.example.myapplication.entities.Video;
+import com.example.myapplication.utils.ImageLoader;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.Fragments.Comments;
@@ -101,7 +103,7 @@ public class videowatching extends FragmentActivity {
                             Log.d("test5", "video photo " + photoUriString);
                             if (photoUriString != null) {
                                 String baseUrl = getResources().getString(R.string.BaseUrl);
-                                new LoadImageTask(userPhotoImageView).execute(baseUrl + "/" + photoUriString);
+                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog1).execute(baseUrl + "/" + photoUriString);
                             } else {
                                 userPhotoImageView.setImageResource(R.drawable.dog1);
                             }
@@ -125,12 +127,17 @@ public class videowatching extends FragmentActivity {
                 // Update view count
                 videoViewModel.updateViews(currentVideo.getOwner(), currentVideo.get_id());
                 updateLikeButton();
+
+                // Check if the logged-in user is the owner of the video
+                if (loggedInUser == null || !loggedInUser.getEmail().equals(currentVideo.getOwner())) {
+                    editButton.setVisibility(View.GONE); // Hide the edit button
+                }
             }
         }
 
         // Like button listener
         likeButton.setOnClickListener(v -> {
-            if (loggedInUser == null || loggedInUser.getEmail().equals("testuser@example.com")) {
+            if (loggedInUser.getEmail().equals("testuser@example.com")) {
                 redirectToLogin();
                 return;
             }
@@ -238,34 +245,4 @@ public class videowatching extends FragmentActivity {
         startActivity(loginIntent);
     }
 
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageView;
-
-        public LoadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream input = new java.net.URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(input);
-                input.close();
-            } catch (Exception e) {
-                Log.e("LoadImageTask", "Error loading image", e);
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                imageView.setImageResource(R.drawable.dog1); // Use a placeholder image
-            }
-        }
-    }
 }

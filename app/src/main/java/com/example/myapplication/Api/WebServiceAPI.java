@@ -49,6 +49,7 @@ public interface WebServiceAPI {
             @Part MultipartBody.Part photo
     );
 
+
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
 
@@ -154,4 +155,6 @@ public interface WebServiceAPI {
     @DELETE("/api/users/{id}")
     Call<Void> deleteUser( @Header("Authorization") String token, @Path("id") String userId);
 
+    @GET("/api/videos/")
+    Call<List<Video>> getTrendingVideos();
 }

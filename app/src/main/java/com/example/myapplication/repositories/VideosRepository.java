@@ -65,7 +65,7 @@ public class VideosRepository {
     public LiveData<List<Video>> getVideos() {
         return videoListData;
     }
-
+.
     public Video getVideoById (String id) {
         return videoAPI.getVideoById(id);
     }
@@ -105,4 +105,19 @@ public class VideosRepository {
     public void setLikes(String id, String pid, String userEmail) {
         videoAPI.setLikes(id, pid, userEmail, () -> videoListData.refreshData());
     }
+
+    public LiveData<List<Video>> getTrendingVideos() {
+        MutableLiveData<List<Video>> trendingVideos = new MutableLiveData<>();
+        videoAPI.getTrendingVideos(trendingVideos);
+        return trendingVideos;
+    }
+
+//    public LiveData<Video> getVideoById(String id) {
+//        MutableLiveData<Video> videoData = new MutableLiveData<>();
+//        new Thread(() -> {
+//            Video video = dao.get(id);
+//            videoData.postValue(video);
+//        }).start();
+//        return videoData;
+//    }
 }

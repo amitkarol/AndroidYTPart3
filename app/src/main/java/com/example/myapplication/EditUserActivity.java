@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.utils.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -101,7 +102,7 @@ public class EditUserActivity extends BaseActivity {
                         displayNameEditText.setText(loggedInUser.getDisplayName());
                         if (loggedInUser.getPhoto() != null) {
                             String baseUrl = getResources().getString(R.string.BaseUrl);
-                            new LoadImageTask(userPhotoImageView).execute(baseUrl + loggedInUser.getPhoto());
+                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog1).execute(baseUrl + loggedInUser.getPhoto());
                         } else {
                             userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
                         }
@@ -208,7 +209,6 @@ public class EditUserActivity extends BaseActivity {
             }
         }
     }
-
     public Uri getImageUri(Context context, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);

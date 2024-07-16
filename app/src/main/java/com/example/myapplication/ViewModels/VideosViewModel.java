@@ -60,4 +60,13 @@ public class VideosViewModel extends ViewModel {
     public void setLikes(String id, String pid, String userEmail) {
         videoRepository.setLikes(id, pid, userEmail);
     }
+
+    public LiveData<List<Video>> getTrendingVideos() {
+        return videoRepository.getTrendingVideos();
+    }
+
+
+//    public LiveData<Video> getVideoById(String id) {
+//        return videoRepository.getVideoById(id);
+//    }
 }

@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +23,11 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.ViewModels.VideosViewModel;
 import com.example.myapplication.entities.Video;
 import com.example.myapplication.entities.User;
+import com.example.myapplication.entities.Video;
+import com.example.myapplication.utils.ImageLoader;
+
+import java.io.InputStream;
+import java.net.URL;
 
 public class EditVideoActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_PICK = 1;
@@ -30,6 +39,7 @@ public class EditVideoActivity extends AppCompatActivity {
     private User loggedInUser;
     private Uri selectedImageUri;
     private VideosViewModel viewModel;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +66,11 @@ public class EditVideoActivity extends AppCompatActivity {
         if (currentVideo != null) {
             titleEditText.setText(currentVideo.getTitle());
             descriptionEditText.setText(currentVideo.getDescription());
+            String baseUrl = getResources().getString(R.string.BaseUrl);
+            String imageUrl = baseUrl + currentVideo.getImg();
+            Log.d("imageofvideo", imageUrl);
             if (currentVideo.getImg() != null) {
-                thumbnailImageView.setImageURI(Uri.parse(currentVideo.getImg()));
+                new ImageLoader.LoadImageTask(thumbnailImageView, R.drawable.placeholder_thumbnail).execute(imageUrl);
             } else {
                 thumbnailImageView.setImageResource(R.drawable.placeholder_thumbnail);
             }
