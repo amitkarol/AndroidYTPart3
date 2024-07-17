@@ -49,7 +49,8 @@ If you want to run the application on a physical device, change the IP address t
 2. Update the BaseUrl in `res/values/strings.xml`:
    ```xml
    <string name="BaseUrl">http://{your_computer_ip}:{port_number}</string>
-   For example:
+For example:
+
   ```bash
 <string name="BaseUrl">http://192.168.1.10:8200</string>
   ```
