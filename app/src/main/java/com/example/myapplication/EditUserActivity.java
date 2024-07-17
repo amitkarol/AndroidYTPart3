@@ -100,7 +100,8 @@ public class EditUserActivity extends BaseActivity {
                         displayNameEditText.setText(loggedInUser.getDisplayName());
                         if (loggedInUser.getPhoto() != null) {
                             String baseUrl = getResources().getString(R.string.BaseUrl);
-                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.placeholder_thumbnail).execute(baseUrl + loggedInUser.getPhoto());
+                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + loggedInUser.getPhoto());
+                            //new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.placeholder_thumbnail).execute(baseUrl + loggedInUser.getPhoto());
                         } else {
                             userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
                         }
@@ -223,5 +224,6 @@ public class EditUserActivity extends BaseActivity {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
+    }
     }
 }
