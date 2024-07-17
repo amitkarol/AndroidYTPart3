@@ -80,8 +80,8 @@ public class videowatching extends FragmentActivity {
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
             hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
-            updateLikeButton();
             likes = currentVideo.getLikes();
+            updateLikeButton();
             currentVideo = videoViewModel.getVideoById(currentVideo.get_id());
 
             if (currentVideo != null) {
@@ -96,7 +96,7 @@ public class videowatching extends FragmentActivity {
                             Log.d("test5", "video photo " + photoUriString);
                             if (photoUriString != null) {
                                 String baseUrl = getResources().getString(R.string.BaseUrl);
-                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + "/" + photoUriString);
+                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + photoUriString);
                             } else {
                                 userPhotoImageView.setImageResource(R.drawable.dog3);
                             }
@@ -198,6 +198,9 @@ public class videowatching extends FragmentActivity {
 
     private void updateLikeButton() {
         Log.d("like", "in function");
+        if (loggedInUser == null) {
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
+        }
         if (currentVideo != null && loggedInUser != null) {
             likeButton.setText(hasLiked ? likes-- + " likes " : likes++ + " likes ");
             likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
