@@ -13,7 +13,7 @@
   CONNECTION_STRING="{your_mongoDB_connection_string}/YouTube_101"
   PORT={port_number}
   ```
-  For example:
+For example:
   ```bash
   CONNECTION_STRING="mongodb://localhost:27017/YouTube_101"
   PORT=8200
@@ -37,7 +37,7 @@ The project is currently configured to run on port 8200. If you choose a differe
 2. Update the BaseUrl string to the new port:
    ```xml
    <string name="BaseUrl">http://10.0.2.2:{new_port_number}</string>
-    For example:
+For example:
   ```bash
 <string name="BaseUrl">http://10.0.2.2:8200</string>
   ```
