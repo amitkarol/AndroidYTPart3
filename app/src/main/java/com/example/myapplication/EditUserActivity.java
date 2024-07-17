@@ -7,14 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,10 +31,10 @@ import com.example.myapplication.entities.User;
 import com.example.myapplication.utils.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 
 public class EditUserActivity extends BaseActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
+    private static final int REQUEST_IMAGE_PICK = 1;
 
     private EditText firstNameEditText;
     private EditText lastNameEditText;
@@ -88,7 +86,7 @@ public class EditUserActivity extends BaseActivity {
 
         // Retrieve data from the intent
         String email = getIntent().getStringExtra("user_email");
-        Log.d("useredit", "email" + email);
+        Log.d("useredit", "email: " + email);
 
         // Load user information
         if (email != null) {
@@ -103,6 +101,7 @@ public class EditUserActivity extends BaseActivity {
                         if (loggedInUser.getPhoto() != null) {
                             String baseUrl = getResources().getString(R.string.BaseUrl);
                             new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + loggedInUser.getPhoto());
+                            //new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.placeholder_thumbnail).execute(baseUrl + loggedInUser.getPhoto());
                         } else {
                             userPhotoImageView.setImageResource(R.drawable.placeholder_thumbnail);
                         }
@@ -128,12 +127,13 @@ public class EditUserActivity extends BaseActivity {
                         loggedInUser.setLastName(newLastName);
                         loggedInUser.setDisplayName(newDisplayName);
 
+                        // Handle photo update only if selectedImageUri is not null
                         if (selectedImageUri == null && loggedInUser.getPhoto() != null) {
                             selectedImageUri = Uri.parse(loggedInUser.getPhoto());
                         }
 
-                        Log.d("useredit", "photo " + selectedImageUri);
-                        Log.d("useredit", "user " + loggedInUser.getEmail());
+                        Log.d("useredit", "photo: " + selectedImageUri);
+                        Log.d("useredit", "user: " + loggedInUser.getEmail());
                         usersViewModel.updateUser(newFirstName, newLastName, email, loggedInUser.getPassword(), newDisplayName, this, selectedImageUri);
 
                         // Show a confirmation message
@@ -195,65 +195,35 @@ public class EditUserActivity extends BaseActivity {
             });
             builder.show();
         });
+
+        // Request focus and show keyboard when EditText is clicked
+        View.OnFocusChangeListener onFocusChangeListener = (v, hasFocus) -> {
+            if (hasFocus) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+            }
+        };
+
+        firstNameEditText.setOnFocusChangeListener(onFocusChangeListener);
+        lastNameEditText.setOnFocusChangeListener(onFocusChangeListener);
+        displayNameEditText.setOnFocusChangeListener(onFocusChangeListener);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                captureImageLauncher.launch(intent);
-            } else {
-                Toast.makeText(this, "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
-            }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+            userPhotoImageView.setImageURI(selectedImageUri);
+            runOnUiThread(() -> Toast.makeText(this, "New photo selected", Toast.LENGTH_SHORT).show());
         }
     }
+
     public Uri getImageUri(Context context, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
-
-    private static class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView imageView;
-
-        public LoadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream input = new java.net.URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(input);
-                input.close();
-                bitmap = rotateBitmap(bitmap, 90); // Rotate the bitmap by 90 degrees
-            } catch (Exception e) {
-                Log.e("LoadImageTask", "Error loading image", e);
-            }
-            return bitmap;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                imageView.setImageResource(R.drawable.dog3); // Use a placeholder image
-            }
-        }
-
-        private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
-            if (bitmap != null) {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(degrees);
-                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            }
-            return bitmap;
-        }
     }
 }
