@@ -225,5 +225,4 @@ public class EditUserActivity extends BaseActivity {
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
-    }
 }

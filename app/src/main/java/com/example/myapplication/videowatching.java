@@ -80,6 +80,7 @@ public class videowatching extends FragmentActivity {
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
             hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
+            updateLikeButton();
             likes = currentVideo.getLikes();
             currentVideo = videoViewModel.getVideoById(currentVideo.get_id());
 
@@ -129,7 +130,7 @@ public class videowatching extends FragmentActivity {
 
         // Like button listener
         likeButton.setOnClickListener(v -> {
-            if (loggedInUser.getEmail().equals("testuser@example.com")) {
+            if (loggedInUser == null || loggedInUser.getEmail().equals("testuser@example.com")) {
                 redirectToLogin();
                 return;
             }
