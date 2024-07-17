@@ -111,7 +111,6 @@ public class VideoAPI {
     }
 
     public void editVideo(String pid, String title, String description, Uri imgUri, String owner, Context context, Runnable onSuccess) {
-        Log.d("editVideo", "API editVideo called with pid: " + pid + ", title: " + title);
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
 

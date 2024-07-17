@@ -199,18 +199,20 @@ public class UserAPI {
     public void updateUser(String firstName, String lastName, String email, String password, String displayName, Context context, Uri photoUri) {
         String token = "bearer " + CurrentUser.getInstance().getToken().getValue();
 
-        Log.d("useredit", "photo api" + photoUri);
-        File photoFile = new File(FileUtils.getPathFromUri(context, photoUri));
-        Log.d("useredit", "photo api 2" + photoFile);
-
-        RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), photoFile);
-        MultipartBody.Part photoPart = MultipartBody.Part.createFormData("photo", photoFile.getName(), imageRequestBody);
-        Log.d("useredit", "photo api 3" + photoPart);
-
         RequestBody firstNameBody = RequestBody.create(MediaType.parse("text/plain"), firstName);
         RequestBody lastNameBody = RequestBody.create(MediaType.parse("text/plain"), lastName);
         RequestBody passwordBody = RequestBody.create(MediaType.parse("text/plain"), password);
         RequestBody displayNameBody = RequestBody.create(MediaType.parse("text/plain"), displayName);
+
+        MultipartBody.Part photoPart = null;
+        if (photoUri != null) {
+            String photoPath = FileUtils.getPathFromUri(context, photoUri);
+            if (photoPath != null) {
+                File imageFile = new File(photoPath);
+                RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+                photoPart = MultipartBody.Part.createFormData("photo", imageFile.getName(), imageRequestBody);
+            }
+        }
 
         Call<User> call = webServiceAPI.updateUser(email, firstNameBody, lastNameBody, passwordBody, displayNameBody, photoPart, token);
         call.enqueue(new Callback<User>() {
