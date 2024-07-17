@@ -96,7 +96,7 @@ public class videowatching extends FragmentActivity {
                             Log.d("test5", "video photo " + photoUriString);
                             if (photoUriString != null) {
                                 String baseUrl = getResources().getString(R.string.BaseUrl);
-                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + "/" + photoUriString);
+                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl+ photoUriString);
                             } else {
                                 userPhotoImageView.setImageResource(R.drawable.dog3);
                             }
