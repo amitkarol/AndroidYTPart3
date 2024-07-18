@@ -142,7 +142,16 @@ public class videowatching extends FragmentActivity {
             }
             if (currentVideo != null && loggedInUser != null) {
                 videoViewModel.setLikes(currentVideo.getOwner(), currentVideo.get_id(), loggedInUser.getEmail());
-                updateLikeButton();
+                if (!hasLiked) {
+                    likes++;
+                    hasLiked = true;
+                    likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unlike, 0, 0, 0);
+                } else {
+                    likes--;
+                    hasLiked = false;
+                    likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
+                }
+                likeButton.setText(likes + " likes ");
             }
         });
 
@@ -203,12 +212,17 @@ public class videowatching extends FragmentActivity {
     private void updateLikeButton() {
         Log.d("like", "in function");
         if (loggedInUser == null) {
-
             likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
         }
         if (currentVideo != null && loggedInUser != null) {
-            likeButton.setText(hasLiked ? (likes-- + " likes ") : (likes++ + " likes "));
-            likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
+            if (hasLiked) {
+                likes++;
+                likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unlike, 0, 0, 0);
+            } else {
+                likes--;
+                likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
+            }
+            likeButton.setText(likes + " likes ");
             hasLiked = !hasLiked;
         }
     }
