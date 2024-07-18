@@ -96,10 +96,8 @@ public class VideosRepository {
         Log.d("test6", "updateViews repository end");
     }
 
-    public Boolean isLiked(String id, String pid) {
-        MutableLiveData<Boolean> isLiked = new MutableLiveData<>(false);
+    public void isLiked(String id, String pid, MutableLiveData<Boolean> isLiked) {
         videoAPI.isLiked(id, pid, isLiked);
-        return isLiked.getValue();
     }
 
     public void setLikes(String id, String pid, String userEmail) {

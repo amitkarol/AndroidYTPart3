@@ -43,10 +43,8 @@ public class videowatching extends FragmentActivity {
     private VideosViewModel videoViewModel;
     private GestureDetectorCompat gestureDetector;
     private ShapeableImageView userPhotoImageView;
-    private Boolean hasLiked;
+    private Boolean hasLiked = false; // Initialize with a default value
     private int likes;
-    private String videoId;
-    private Video video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +77,18 @@ public class videowatching extends FragmentActivity {
         if (intent != null) {
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
-            hasLiked = videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id());
             likes = currentVideo.getLikes();
-            updateLikeButton();
+            videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id()).observe(this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean liked) {
+                    if (liked != null) {
+                        hasLiked = liked;
+                        setLikeButton();
+                        Log.d("liketest", "hasLiked: " + hasLiked);
+                    }
+                }
+            });
+            setLikeButton();
             currentVideo = videoViewModel.getVideoById(currentVideo.get_id());
 
             if (currentVideo != null) {
@@ -119,7 +126,6 @@ public class videowatching extends FragmentActivity {
 
                 // Update view count
                 videoViewModel.updateViews(currentVideo.getOwner(), currentVideo.get_id());
-                updateLikeButton();
 
                 // Check if the logged-in user is the owner of the video
                 if (loggedInUser == null || !loggedInUser.getEmail().equals(currentVideo.getOwner())) {
@@ -136,18 +142,25 @@ public class videowatching extends FragmentActivity {
             }
             if (currentVideo != null && loggedInUser != null) {
                 videoViewModel.setLikes(currentVideo.getOwner(), currentVideo.get_id(), loggedInUser.getEmail());
-                updateLikeButton();
+                if (!hasLiked) {
+                    likes++;
+                    hasLiked = true;
+                    likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unlike, 0, 0, 0);
+                } else {
+                    likes--;
+                    hasLiked = false;
+                    likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
+                }
+                likeButton.setText(likes + " likes ");
             }
         });
 
         // Edit button listener
         editButton.setOnClickListener(v -> {
-
             if (loggedInUser == null || loggedInUser.getEmail().equals("testuser@example.com")) {
                 redirectToLogin();
                 return;
             }
-
             if (currentVideo != null) {
                 Intent editIntent = new Intent(videowatching.this, EditVideoActivity.class);
                 editIntent.putExtra("video", currentVideo);
@@ -202,9 +215,26 @@ public class videowatching extends FragmentActivity {
             likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
         }
         if (currentVideo != null && loggedInUser != null) {
-            likeButton.setText(hasLiked ? likes-- + " likes " : likes++ + " likes ");
-            likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
+            if (hasLiked) {
+                likes++;
+                likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unlike, 0, 0, 0);
+            } else {
+                likes--;
+                likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
+            }
+            likeButton.setText(likes + " likes ");
             hasLiked = !hasLiked;
+        }
+    }
+
+    private void setLikeButton() {
+        if (loggedInUser == null) {
+            likeButton.setText(likes + " likes ");
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
+        }
+        if (currentVideo != null && loggedInUser != null) {
+            likeButton.setText(likes + " likes ");
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
         }
     }
 
@@ -240,5 +270,4 @@ public class videowatching extends FragmentActivity {
         Intent loginIntent = new Intent(videowatching.this, login.class);
         startActivity(loginIntent);
     }
-
 }

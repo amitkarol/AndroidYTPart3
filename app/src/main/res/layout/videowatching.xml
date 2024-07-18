@@ -75,7 +75,6 @@
             android:id="@+id/editButton"
             android:layout_width="48dp"
             android:layout_height="49dp"
-            android:background="?attr/selectableItemBackground"
             android:drawableTop="@drawable/threedots"
             android:gravity="center"
             android:backgroundTint="#D3D3D3"

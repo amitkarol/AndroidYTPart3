@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.entities.Video;
@@ -53,8 +54,10 @@ public class VideosViewModel extends ViewModel {
         Log.d("test6", "updateViews viewmodel end");
     }
 
-    public Boolean isLiked(String id, String pid) {
-        return videoRepository.isLiked(id, pid);
+    public LiveData<Boolean> isLiked(String id, String pid) {
+        MutableLiveData<Boolean> isLiked = new MutableLiveData<>(false);
+        videoRepository.isLiked(id, pid, isLiked);
+        return isLiked;
     }
 
     public void setLikes(String id, String pid, String userEmail) {
