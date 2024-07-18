@@ -1,5 +1,8 @@
 # YouTube Server
 
+
+__Pay attention__: The server part for section 2 is under the branch `main` and for section 3 under the branch `Maintpart3`.
+
 ## Run the server
 1. Clone the repository to your computer.
 2. Open terminal in the cloned folder.
