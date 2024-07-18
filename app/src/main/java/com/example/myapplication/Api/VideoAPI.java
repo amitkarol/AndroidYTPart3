@@ -151,17 +151,12 @@ public class VideoAPI {
     public void deleteVideo(Video video, Runnable onSuccess) {
         CurrentUser currentUser = CurrentUser.getInstance();
         String token = "bearer " + currentUser.getToken().getValue();
-        Log.d("test10", "video " + video.getOwner() + " " + video.get_id());
-        Log.d("test10", "token " + token);
         Call<Void> deleteVideo = webServiceAPI.deleteVideo(video.getOwner(), video.get_id(), token);
         deleteVideo.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Log.d("test10", "reached api");
-                Log.d("test10", "api response: " + response.isSuccessful());
                 if (response.isSuccessful()) {
                     new Thread(() -> {
-                        Log.d("test10", "entered thread");
                         videoDao.delete(video);
                         onSuccess.run();
                     }).start();
@@ -182,16 +177,10 @@ public class VideoAPI {
         updateViews.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(Call<Video> call, Response<Video> response) {
-                Log.d("test6", "reached api");
-                Log.d("test6", "api response: " + response.isSuccessful());
-                Log.d("test6", "api response body: " + response.body());
                 if (response.isSuccessful() && response.body() != null) {
                     new Thread(() -> {
-                        Log.d("test6z", "entered thread");
                         Video updatedVideo = response.body();
-                        Log.d("test6", "api video: " + updatedVideo);
                         videoDao.update(updatedVideo);
-                        Log.d("test6", "api update: " + updatedVideo);
                         onSuccess.run();
                     }).start();
                 } else {
@@ -213,24 +202,24 @@ public class VideoAPI {
         isLiked.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                Log.d("test3", "reached api");
-                Log.d("test3", "api response: " + response.isSuccessful());
+                Log.d("liketest", "reached api");
+                Log.d("liketest", "api response: " + response.isSuccessful());
                 if (response.isSuccessful()) {
                     new Thread(() -> {
-                        Log.d("test1", "entered thread");
-                        Log.d("test1", "response " + response.body());
-                        Log.d("test1", "response value " + response.body().booleanValue());
-                        Log.d("test1", "entered thread");
+                        Log.d("liketest", "entered thread");
+                        Log.d("liketest", "response " + response.body());
+                        Log.d("liketest", "response value " + response.body().booleanValue());
+                        Log.d("liketest", "entered thread");
                         liked.postValue(response.body());
                     }).start();
                 } else {
-                    Log.d("test3", "response failed api");
+                    Log.d("liketest", "response failed api");
                 }
             }
 
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
-                Log.d("test3", "failed api");
+                Log.d("liketest", "failed api");
             }
         });
     }

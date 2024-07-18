@@ -49,7 +49,6 @@ public interface WebServiceAPI {
             @Part MultipartBody.Part photo
     );
 
-
     @GET("/api/users/{id}")
     Call<User> getUserByEmail(@Path("id") String id);
 
@@ -93,7 +92,6 @@ public interface WebServiceAPI {
 
     @DELETE("/api/users/{id}/videos/{pid}")
     Call<Void> deleteVideo(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
-
 
     @GET("/api/users/{id}/videos/{pid}/likes")
     Call<Boolean> isLiked(@Path("id") String id, @Path("pid") String pid, @Header("authorization") String token);
