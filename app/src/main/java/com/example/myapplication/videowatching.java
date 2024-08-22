@@ -15,6 +15,8 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.ViewModels.UsersViewModel;
 import com.example.myapplication.ViewModels.VideosViewModel;
@@ -24,6 +26,11 @@ import com.example.myapplication.utils.ImageLoader;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.example.myapplication.Fragments.ShareFragment;
 import com.example.myapplication.Fragments.Comments;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import adapter.VideoListAdapter;
 
 public class videowatching extends FragmentActivity {
 
@@ -46,11 +53,16 @@ public class videowatching extends FragmentActivity {
     private Boolean hasLiked = false; // Initialize with a default value
     private int likes;
 
+    private RecyclerView recyclerViewVideos;
+    private VideoListAdapter videoAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtil.applyTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.videowatching);
+
+        // Initialize ViewModels
         videoViewModel = new ViewModelProvider(this).get(VideosViewModel.class);
 
         // Initialize GestureDetector
@@ -72,12 +84,21 @@ public class videowatching extends FragmentActivity {
         // Apply theme to all relevant views
         applyThemeToViews();
 
+        // Initialize RecyclerView
+        recyclerViewVideos = findViewById(R.id.recyclerViewVideos);
+        recyclerViewVideos.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize the adapter with an empty list initially
+        videoAdapter = new VideoListAdapter(new ArrayList<>(), this);
+        recyclerViewVideos.setAdapter(videoAdapter);
+
         // Get the data passed from homescreen activity
         Intent intent = getIntent();
         if (intent != null) {
             currentVideo = (Video) intent.getSerializableExtra("video");
             loggedInUser = (User) intent.getSerializableExtra("user");
             likes = currentVideo.getLikes();
+
             videoViewModel.isLiked(currentVideo.getOwner(), currentVideo.get_id()).observe(this, new Observer<Boolean>() {
                 @Override
                 public void onChanged(Boolean liked) {
@@ -88,50 +109,10 @@ public class videowatching extends FragmentActivity {
                     }
                 }
             });
+
             setLikeButton();
-            currentVideo = videoViewModel.getVideoById(currentVideo.get_id());
-
-            if (currentVideo != null) {
-                userViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-                userViewModel.getUserByEmail(currentVideo.getOwner()).observe(this, new Observer<User>() {
-                    @Override
-                    public void onChanged(User owner) {
-                        if (owner != null) {
-                            // Update the UI with the owner's information
-                            channelTextView.setText(owner.getEmail());
-                            String photoUriString = owner.getPhoto();
-                            Log.d("test5", "video photo " + photoUriString);
-                            if (photoUriString != null) {
-                                String baseUrl = getResources().getString(R.string.BaseUrl);
-                                new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + photoUriString);
-                            } else {
-                                userPhotoImageView.setImageResource(R.drawable.dog3);
-                            }
-                        } else {
-                            Log.d("test5", "Owner not found");
-                        }
-                    }
-                });
-
-                // Set data to views
-                titleTextView.setText(currentVideo.getTitle());
-                descriptionTextView.setText(currentVideo.getDescription());
-                viewCountTextView.setText("Views " + (currentVideo.getViews() + 1));
-
-                String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
-                Log.d("test5", videoUrl);
-                Log.d("videowatching", videoUrl);
-                videoView.setVideoPath(videoUrl);
-                videoView.start();
-
-                // Update view count
-                videoViewModel.updateViews(currentVideo.getOwner(), currentVideo.get_id());
-
-                // Check if the logged-in user is the owner of the video
-                if (loggedInUser == null || !loggedInUser.getEmail().equals(currentVideo.getOwner())) {
-                    editButton.setVisibility(View.GONE); // Hide the edit button
-                }
-            }
+            displayVideoInfo();
+            loadTrendingVideos();
         }
 
         // Like button listener
@@ -209,24 +190,6 @@ public class videowatching extends FragmentActivity {
         pauseResumeButton.setColorFilter(textColor); // Adjust color filter for the ImageButton
     }
 
-    private void updateLikeButton() {
-        Log.d("like", "in function");
-        if (loggedInUser == null) {
-            likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
-        }
-        if (currentVideo != null && loggedInUser != null) {
-            if (hasLiked) {
-                likes++;
-                likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.unlike, 0, 0, 0);
-            } else {
-                likes--;
-                likeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like, 0, 0, 0);
-            }
-            likeButton.setText(likes + " likes ");
-            hasLiked = !hasLiked;
-        }
-    }
-
     private void setLikeButton() {
         if (loggedInUser == null) {
             likeButton.setText(likes + " likes ");
@@ -236,6 +199,64 @@ public class videowatching extends FragmentActivity {
             likeButton.setText(likes + " likes ");
             likeButton.setCompoundDrawablesWithIntrinsicBounds(hasLiked ? R.drawable.unlike : R.drawable.like, 0, 0, 0);
         }
+    }
+
+    private void displayVideoInfo() {
+        if (currentVideo != null) {
+            userViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+            userViewModel.getUserByEmail(currentVideo.getOwner()).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(User owner) {
+                    if (owner != null) {
+                        // Update the UI with the owner's information
+                        channelTextView.setText(owner.getEmail());
+                        String photoUriString = owner.getPhoto();
+                        Log.d("test5", "video photo " + photoUriString);
+                        if (photoUriString != null) {
+                            String baseUrl = getResources().getString(R.string.BaseUrl);
+                            new ImageLoader.LoadImageTask(userPhotoImageView, R.drawable.dog3).execute(baseUrl + photoUriString);
+                        } else {
+                            userPhotoImageView.setImageResource(R.drawable.dog3);
+                        }
+                    } else {
+                        Log.d("test5", "Owner not found");
+                    }
+                }
+            });
+
+            // Set data to views
+            titleTextView.setText(currentVideo.getTitle());
+            descriptionTextView.setText(currentVideo.getDescription());
+            viewCountTextView.setText("Views " + (currentVideo.getViews() + 1));
+
+            String videoUrl = getResources().getString(R.string.BaseUrl) + currentVideo.getVideo();
+            Log.d("test5", videoUrl);
+            Log.d("videowatching", videoUrl);
+            videoView.setVideoPath(videoUrl);
+            videoView.start();
+
+            // Update view count
+            videoViewModel.updateViews(currentVideo.getOwner(), currentVideo.get_id());
+
+            // Check if the logged-in user is the owner of the video
+            if (loggedInUser == null || !loggedInUser.getEmail().equals(currentVideo.getOwner())) {
+                editButton.setVisibility(View.GONE); // Hide the edit button
+            }
+        }
+    }
+
+    private void loadTrendingVideos() {
+        videoViewModel.getTrendingVideos().observe(this, new Observer<List<Video>>() {
+            @Override
+            public void onChanged(List<Video> videos) {
+                if (videos != null && !videos.isEmpty()) {
+                    Log.d("videowatching", "Number of videos received: " + videos.size());
+                    videoAdapter.setVideos(videos);
+                } else {
+                    Log.d("videowatching", "No videos received or list is empty");
+                }
+            }
+        });
     }
 
     @Override
