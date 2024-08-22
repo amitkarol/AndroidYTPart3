@@ -110,6 +110,12 @@ public class VideosRepository {
         return trendingVideos;
     }
 
+    public LiveData<List<Video>> getRecommendedVideos() {
+        MutableLiveData<List<Video>> recommendedVideos = new MutableLiveData<>();
+        videoAPI.getRecommendedVideos(recommendedVideos);
+        return recommendedVideos;
+    }
+
 //    public LiveData<Video> getVideoById(String id) {
 //        MutableLiveData<Video> videoData = new MutableLiveData<>();
 //        new Thread(() -> {

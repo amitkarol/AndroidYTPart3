@@ -273,5 +273,25 @@ public class VideoAPI {
         });
     }
 
+    public void getRecommendedVideos(MutableLiveData<List<Video>> recommendedVideos) {
+        Call<List<Video>> call = webServiceAPI.getRecommendedVideos();
+        call.enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Video> videos = response.body();
+                    recommendedVideos.postValue(videos);
+                } else {
+                    Log.e("VideoAPI", "Failed to fetch recommended videos: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Video>> call, Throwable t) {
+                Log.e("VideoAPI", "Failed to fetch recommended videos", t);
+            }
+        });
+    }
+
 
 }

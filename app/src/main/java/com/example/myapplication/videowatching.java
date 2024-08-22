@@ -112,7 +112,7 @@ public class videowatching extends FragmentActivity {
 
             setLikeButton();
             displayVideoInfo();
-            loadTrendingVideos();
+            loadRecommendedVideos();
         }
 
         // Like button listener
@@ -245,8 +245,8 @@ public class videowatching extends FragmentActivity {
         }
     }
 
-    private void loadTrendingVideos() {
-        videoViewModel.getTrendingVideos().observe(this, new Observer<List<Video>>() {
+    private void loadRecommendedVideos() {
+        videoViewModel.getRecommendedVideos().observe(this, new Observer<List<Video>>() {
             @Override
             public void onChanged(List<Video> videos) {
                 if (videos != null && !videos.isEmpty()) {

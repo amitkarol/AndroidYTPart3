@@ -155,4 +155,7 @@ public interface WebServiceAPI {
 
     @GET("/api/videos/")
     Call<List<Video>> getTrendingVideos();
+
+    @GET("/api/users/{id}/videos/{pid}/recommendations")
+    Call<List<Video>> getRecommendedVideos();
 }
