@@ -157,11 +157,11 @@ public interface WebServiceAPI {
     @GET("/api/videos/")
     Call<List<Video>> getTrendingVideos();
 
-    @GET("/api/users/{id}/videos/{pid}/recommendations")
+    @GET("/api/users/{id}/videos/{pid}/recommendations/{userEmail}")
     Call<List<Video>> getRecommendedVideos(
             @Path("id") String id,
             @Path("pid") String pid,
-            @Query("userEmail") String userEmail
+            @Path("userEmail") String userEmail
     );
 
 }
