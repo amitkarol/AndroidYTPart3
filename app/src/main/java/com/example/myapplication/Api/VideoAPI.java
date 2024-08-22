@@ -273,8 +273,8 @@ public class VideoAPI {
         });
     }
 
-    public void getRecommendedVideos(MutableLiveData<List<Video>> recommendedVideos) {
-        Call<List<Video>> call = webServiceAPI.getRecommendedVideos();
+    public void getRecommendedVideos(String userEmail, String id , String pid ,MutableLiveData<List<Video>> recommendedVideos) {
+        Call<List<Video>> call = webServiceAPI.getRecommendedVideos(userEmail, id, pid);
         call.enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {

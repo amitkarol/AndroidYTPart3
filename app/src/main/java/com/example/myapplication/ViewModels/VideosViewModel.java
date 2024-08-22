@@ -67,7 +67,7 @@ public class VideosViewModel extends ViewModel {
     public LiveData<List<Video>> getTrendingVideos() {
         return videoRepository.getTrendingVideos();
     }
-    public  LiveData<List<Video>> getRecommendedVideos() {return  videoRepository.getRecommendedVideos();}
+    public  LiveData<List<Video>> getRecommendedVideos(String userEmail, String id , String pid) {return  videoRepository.getRecommendedVideos(userEmail, id,pid);}
 
 //    public LiveData<Video> getVideoById(String id) {
 //        return videoRepository.getVideoById(id);

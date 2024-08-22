@@ -246,14 +246,20 @@ public class videowatching extends FragmentActivity {
     }
 
     private void loadRecommendedVideos() {
-        videoViewModel.getRecommendedVideos().observe(this, new Observer<List<Video>>() {
+        String userEmail;
+        if (loggedInUser == null){
+            userEmail = "testuser@example.com";
+        } else {
+            userEmail = loggedInUser.getEmail();
+        }
+        videoViewModel.getRecommendedVideos(userEmail, currentVideo.getOwner(), currentVideo.get_id()).observe(this, new Observer<List<Video>>() {
             @Override
             public void onChanged(List<Video> videos) {
                 if (videos != null && !videos.isEmpty()) {
-                    Log.d("videowatching", "Number of videos received: " + videos.size());
+                    Log.d("vwatch", "Number of videos received: " + videos.size());
                     videoAdapter.setVideos(videos);
                 } else {
-                    Log.d("videowatching", "No videos received or list is empty");
+                    Log.d("vwatch", "No videos received or list is empty");
                 }
             }
         });
