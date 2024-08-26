@@ -248,7 +248,7 @@ public class videowatching extends FragmentActivity {
     private void loadRecommendedVideos() {
         String userEmail;
         if (loggedInUser == null){
-            userEmail = "testuser@example.com";
+            userEmail = "noUser";
         } else {
             userEmail = loggedInUser.getEmail();
         }

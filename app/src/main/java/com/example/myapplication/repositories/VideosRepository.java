@@ -111,8 +111,10 @@ public class VideosRepository {
     }
 
     public LiveData<List<Video>> getRecommendedVideos(String userEmail, String id , String pid) {
+        Log.d("ViewVideo" , "repo before");
         MutableLiveData<List<Video>> recommendedVideos = new MutableLiveData<>();
         videoAPI.getRecommendedVideos(userEmail, id, pid ,recommendedVideos);
+        Log.d("ViewVideo" , "repo after " + recommendedVideos.getValue());
         return recommendedVideos;
     }
 
