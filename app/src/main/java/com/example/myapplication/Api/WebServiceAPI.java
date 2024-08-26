@@ -159,9 +159,9 @@ public interface WebServiceAPI {
 
     @GET("/api/users/{id}/videos/{pid}/recommendations/{userEmail}")
     Call<List<Video>> getRecommendedVideos(
+            @Path("userEmail") String userEmail,
             @Path("id") String id,
-            @Path("pid") String pid,
-            @Path("userEmail") String userEmail
+            @Path("pid") String pid
     );
 
 }
