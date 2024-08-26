@@ -16,6 +16,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import com.example.myapplication.entities.Comment;
 import com.example.myapplication.entities.Token;
@@ -155,4 +156,12 @@ public interface WebServiceAPI {
 
     @GET("/api/videos/")
     Call<List<Video>> getTrendingVideos();
+
+    @GET("/api/users/{id}/videos/{pid}/recommendations/{userEmail}")
+    Call<List<Video>> getRecommendedVideos(
+            @Path("id") String id,
+            @Path("pid") String pid,
+            @Path("userEmail") String userEmail
+    );
+
 }

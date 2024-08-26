@@ -110,6 +110,14 @@ public class VideosRepository {
         return trendingVideos;
     }
 
+    public LiveData<List<Video>> getRecommendedVideos(String userEmail, String id , String pid) {
+        Log.d("ViewVideo" , "repo before");
+        MutableLiveData<List<Video>> recommendedVideos = new MutableLiveData<>();
+        videoAPI.getRecommendedVideos(userEmail, id, pid ,recommendedVideos);
+        Log.d("ViewVideo" , "repo after " + recommendedVideos.getValue());
+        return recommendedVideos;
+    }
+
 //    public LiveData<Video> getVideoById(String id) {
 //        MutableLiveData<Video> videoData = new MutableLiveData<>();
 //        new Thread(() -> {
