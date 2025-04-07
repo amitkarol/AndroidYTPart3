@@ -78,6 +78,7 @@ We divided the tasks into separate components, focusing on:
 ### Multer Integration
 We also integrated Multer for handling file uploads in both the server and Android application, enabling smooth video and image uploads.
 
+__To run the full application [click here](https://github.com/maayanzahavi/YouTubeProject-CppServer/wiki)__
 
 ## Enjoy!
 
